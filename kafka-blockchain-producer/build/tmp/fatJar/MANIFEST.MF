@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: Kafka Blockchain Producer
+Implementation-Version: 1.0-SNAPSHOT
+Main-Class: kafka.blockchain.producer.ApplicationKt
+
