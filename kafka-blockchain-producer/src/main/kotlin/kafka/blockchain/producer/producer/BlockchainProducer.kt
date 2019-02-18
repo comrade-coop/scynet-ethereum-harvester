@@ -31,10 +31,14 @@ class BlockchainProducer(
             .replayPastAndFutureBlocksFlowable(DefaultBlockParameter.valueOf(firstBlockNumber), true)
             .subscribe {
                 val ethBlock = it.block
-                val block = blockchainMessageBuilder.buildBlock(ethBlock)
-                println(block.number)
-                val acknowledged = producer.send(ProducerRecord("ethereum_blocks", block.number, block))
-                acknowledged.get()
+                try {
+                    val block = blockchainMessageBuilder.buildBlock(ethBlock)
+                    println(block.number)
+                    val acknowledged = producer.send(ProducerRecord("ethereum_blocks", block.number, block))
+                    acknowledged.get()
+                } catch (e: Exception) {
+                    System.err.println(e.toString() + ":" + e.cause)
+                }
             }
     }
 

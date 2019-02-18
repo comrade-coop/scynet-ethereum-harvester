@@ -18,7 +18,7 @@ class BlockchainMessageBuilder {
         return Block.newBuilder()
             .setHash(ethBlock.hash)
             .setNumber(ethBlock.number.toString())
-            .setTimestamp(ethBlock.timestamp.toString())
+            .setTimestamp(ethBlock.timestamp?.toString().orEmpty())
             .addAllTransactions(transactions)
             .addAllTraces(blockTraces)
             .build()
@@ -50,57 +50,57 @@ class BlockchainMessageBuilder {
         val traceAddresses = blockTrace.traceAddress.map { ta -> ta.toString() }
         traceBuilder
             .setResult(result)
-            .setSubtracesCount(blockTrace.subtraces.toString())
-            .setType(blockTrace.type)
+            .setSubtracesCount(blockTrace.subtraces?.toString().orEmpty())
+            .setType(blockTrace.type.orEmpty())
             .addAllTraceAddress(traceAddresses)
-            .setError(blockTrace.error ?: "")
-            .setTransactionPosition(blockTrace.transactionPosition?.toString() ?: "")
+            .setError(blockTrace.error.orEmpty())
+            .setTransactionPosition(blockTrace.transactionPosition?.toString().orEmpty())
         val trace = traceBuilder.build()
         return trace
     }
 
     private fun buildResult(blockTrace: Trace): Result {
         return Result.newBuilder()
-            .setAddress(blockTrace.result?.address ?: "")
-            .setCode(blockTrace.result?.code ?: "")
-            .setGasUsed(blockTrace.result?.gasUsed.toString())
-            .setOutput(blockTrace.result?.output ?: "")
+            .setAddress(blockTrace.result?.address.orEmpty())
+            .setCode(blockTrace.result?.code.orEmpty())
+            .setGasUsed(blockTrace.result?.gasUsed?.toString().orEmpty())
+            .setOutput(blockTrace.result?.output.orEmpty())
             .build()
     }
 
     private fun buildSuicideAction(traceAction: Trace.SuicideAction): Suicide {
         return Suicide.newBuilder()
-            .setAddress(traceAction.address)
-            .setBalance(traceAction.balance.toString())
-            .setRefundAddress(traceAction.refundAddress)
+            .setAddress(traceAction.address.orEmpty())
+            .setBalance(traceAction.balance?.toString().orEmpty())
+            .setRefundAddress(traceAction.refundAddress.orEmpty())
             .build()
     }
 
     private fun buildRewardAction(traceAction: Trace.RewardAction): Messages.Reward {
         return Messages.Reward.newBuilder()
-            .setAuthor(traceAction.author)
-            .setValue(traceAction.value.toString())
-            .setType(traceAction.rewardType)
+            .setAuthor(traceAction.author.orEmpty())
+            .setValue(traceAction.value?.toString().orEmpty())
+            .setType(traceAction.rewardType.orEmpty())
             .build()
     }
 
     private fun buildCallAction(traceAction: Trace.CallAction): Messages.Call {
         return Messages.Call.newBuilder()
-            .setType(traceAction.callType)
-            .setFrom(traceAction.from)
-            .setGas(traceAction.gas.toString())
-            .setInput(traceAction.input)
-            .setTo(traceAction.to)
-            .setValue(traceAction.value.toString())
+            .setType(traceAction.callType.orEmpty())
+            .setFrom(traceAction.from.orEmpty())
+            .setGas(traceAction.gas?.toString().orEmpty())
+            .setInput(traceAction.input.orEmpty())
+            .setTo(traceAction.to.orEmpty())
+            .setValue(traceAction.value?.toString().orEmpty())
             .build()
     }
 
     private fun buildCreateAction(traceAction: Trace.CreateAction): Messages.Create {
         return Messages.Create.newBuilder()
-            .setFrom(traceAction.from)
-            .setGas(traceAction.gas.toString())
-            .setInit(traceAction.init)
-            .setValue(traceAction.value.toString())
+            .setFrom(traceAction.from.orEmpty())
+            .setGas(traceAction.gas?.toString().orEmpty())
+            .setInit(traceAction.init.orEmpty())
+            .setValue(traceAction.value?.toString().orEmpty())
             .build()
     }
 
@@ -119,9 +119,9 @@ class BlockchainMessageBuilder {
 
     private fun buildReceipt(receipt: TransactionReceipt): Receipt {
         return Receipt.newBuilder()
-            .setGasUsed(receipt.gasUsed.toString())
-            .setStatus(receipt.status)
-            .build()
+            .setGasUsed(receipt.gasUsed?.toString().orEmpty())
+            .setStatus(receipt.status.orEmpty())
+            .build();
     }
 
     private fun getBlockTraces(blockNumber: BigInteger?): List<Messages.Trace> {
@@ -134,24 +134,32 @@ class BlockchainMessageBuilder {
     private fun buildTransaction(transaction: EthBlock.TransactionObject): Messages.Transaction {
         val traces = getTraces(transaction.hash)
         val receipt = getReceipt(transaction.hash)
-        val transactionBuilder = Messages.Transaction.newBuilder()
-            .setChainId(transaction.chainId)
-            .setCreates(transaction.creates)
-            .setFrom(transaction.from)
-            .setGas(transaction.gas.toString())
-            .setGas(transaction.gasPrice.toString())
-            .setHash(transaction.hash)
-            .setInput(transaction.input)
-            .setNonce(transaction.nonce.toString())
-            .setPublicKey(transaction.publicKey)
-            .setTo(transaction.to)
-            .setIndex(transaction.transactionIndex.toString())
-            .setIndexRaw(transaction.transactionIndexRaw)
-            .setValue(transaction.value.toString())
-            .setSrv(Messages.SRV.newBuilder().setS(transaction.s).setR(transaction.r).setV(transaction.v).build())
+        return Messages.Transaction.newBuilder()
+            .setChainId(transaction.chainId ?: 0L)
+            .setCreates(transaction.creates.orEmpty())
+            .setFrom(transaction.from.orEmpty())
+            .setGas(transaction.gas?.toString().orEmpty())
+            .setGasPrice(transaction.gasPrice?.toString().orEmpty())
+            .setHash(transaction.hash.orEmpty())
+            .setInput(transaction.input.orEmpty())
+            .setNonce(transaction.nonce?.toString().orEmpty())
+            .setPublicKey(transaction.publicKey.orEmpty())
+            .setTo(transaction.to.orEmpty())
+            .setIndex(transaction.transactionIndex?.toString().orEmpty())
+            .setIndexRaw(transaction.transactionIndexRaw.orEmpty())
+            .setValue(transaction.value?.toString().orEmpty())
+            .setSrv(buildSRV(transaction))
             .addAllTraces(traces)
             .setReceipt(receipt)
-        return transactionBuilder.build()
+            .build()
+    }
+
+    private fun buildSRV(transaction: EthBlock.TransactionObject): Messages.SRV {
+        return Messages.SRV.newBuilder()
+            .setS(transaction.s.orEmpty())
+            .setR(transaction.r.orEmpty())
+            .setV(transaction.v)
+            .build()
     }
 
     private fun getTraces(transactionHash: String?): List<Messages.Trace> {
