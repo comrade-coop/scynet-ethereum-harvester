@@ -12,7 +12,6 @@ class ParityWebSocketsService {
         val includeRawResponses = false
         val webSocketService = WebSocketService(webSocketClient, includeRawResponses)
         webSocketService.connect()
-        val parity = Parity.build(webSocketService)
-        return parity
+        return Parity.build(webSocketService)
     }
 }

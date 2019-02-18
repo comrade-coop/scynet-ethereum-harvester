@@ -32,7 +32,9 @@ class BlockchainProducer(
             .subscribe {
                 val ethBlock = it.block
                 val block = blockchainMessageBuilder.buildBlock(ethBlock)
-                producer.send(ProducerRecord("ethereum_blocks", block.number, block))
+                println(block.number)
+                val acknowledged = producer.send(ProducerRecord("ethereum_blocks", block.number, block))
+                acknowledged.get()
             }
     }
 
