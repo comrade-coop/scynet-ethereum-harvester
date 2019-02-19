@@ -29,19 +29,19 @@ class BlockchainMessageBuilder {
         val traceAction = blockTrace.action
         when (traceAction) {
             is Trace.CreateAction -> {
-                buildCreateAction(traceAction)
+                traceBuilder.setCreate(buildCreateAction(traceAction))
                 traceBuilder.setAction(Messages.Trace.Action.CREATE)
             }
             is Trace.CallAction -> {
-                buildCallAction(traceAction)
+                traceBuilder.setCall(buildCallAction(traceAction))
                 traceBuilder.setAction(Messages.Trace.Action.CALL)
             }
             is Trace.RewardAction -> {
-                buildRewardAction(traceAction)
+                traceBuilder.setReward(buildRewardAction(traceAction))
                 traceBuilder.setAction(Messages.Trace.Action.REWARD)
             }
             is Trace.SuicideAction -> {
-                buildSuicideAction(traceAction)
+                traceBuilder.setSuicide(buildSuicideAction(traceAction))
                 traceBuilder.setAction(Messages.Trace.Action.SUICIDE)
             }
             else -> null
