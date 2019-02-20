@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="ai.scynet.harvester.kafka-balance-stream.main" target="11" />
+      <module name="ai.scynet.harvester.kafka-balance-stream.test" target="11" />
+      <module name="kafka-balance-stream.main" target="11" />
+      <module name="kafka-balance-stream.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
