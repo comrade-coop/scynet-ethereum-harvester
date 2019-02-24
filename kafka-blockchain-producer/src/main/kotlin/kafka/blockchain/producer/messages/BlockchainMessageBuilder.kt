@@ -16,6 +16,7 @@ class BlockchainMessageBuilder {
         val blockTraces = getBlockTraces(ethBlock.number)
         val transactions = getTransactions(ethBlock.transactions)
         return Block.newBuilder()
+            .setAuthor(ethBlock.author)
             .setHash(ethBlock.hash)
             .setNumber(ethBlock.number.toString())
             .setTimestamp(ethBlock.timestamp?.toString().orEmpty())
@@ -104,14 +105,6 @@ class BlockchainMessageBuilder {
             .build()
     }
 
-    private fun getTransactions(transactions: List<EthBlock.TransactionResult<Any>>): List<Messages.Transaction> {
-        return transactions
-            .map { t ->
-                val ethTransaction: EthBlock.TransactionObject = t as EthBlock.TransactionObject
-                buildTransaction(ethTransaction)
-            }
-    }
-
     private fun getReceipt(transactionHash: String?): Receipt {
         val receipt = parityService.ethGetTransactionReceipt(transactionHash).send().transactionReceipt.get()
         return buildReceipt(receipt)
@@ -130,6 +123,16 @@ class BlockchainMessageBuilder {
             .map { trace: Trace -> buildTrace(trace) }
             .toList()
     }
+
+    private fun getTransactions(transactions: List<EthBlock.TransactionResult<Any>>): List<Messages.Transaction> {
+        return transactions
+            .map { t ->
+                val ethTransaction: EthBlock.TransactionObject = t as EthBlock.TransactionObject
+                buildTransaction(ethTransaction)
+            }
+    }
+
+
 
     private fun buildTransaction(transaction: EthBlock.TransactionObject): Messages.Transaction {
         val traces = getTraces(transaction.hash)

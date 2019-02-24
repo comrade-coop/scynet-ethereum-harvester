@@ -1,13 +1,14 @@
-syntax="proto3";
+bsyntax="proto3";
 
-option java_outer_classname = "messages.Messages";
+option java_outer_classname = "Messages";
 
 message Block {
     string hash = 1;
     string number = 2;
     string timestamp = 3;
     repeated Transaction transactions = 4;
-    repeated Trace traces = 5;
+    repeated Trace traces = 5; 
+    string author = 6;
 }
 
 message Transaction {

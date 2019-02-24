@@ -7,7 +7,7 @@ import kafka.blockchain.producer.producer.CustomKafkaProducer
 
 fun main(args: Array<String>) {
 
-    val producer = CustomKafkaProducer().create("127.0.0.1:29092")
+    val producer = CustomKafkaProducer().create("127.0.0.1:9092")
     val parityService = ParityWebSocketsService().startParity()
     val blockchainMessageBuilder = BlockchainMessageBuilder()
 

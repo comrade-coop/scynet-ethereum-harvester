@@ -16,7 +16,7 @@ class BlockchainProducer(
 ) {
 
     fun start() {
-        val firstBlockNumber = BigInteger.valueOf(1000L)
+        val firstBlockNumber = BigInteger.valueOf(1000000L)
         try {
             subscribeToBlockFlowable(firstBlockNumber)
         } catch (e: Exception) {
@@ -34,7 +34,7 @@ class BlockchainProducer(
                 try {
                     val block = blockchainMessageBuilder.buildBlock(ethBlock)
                     println(block.number)
-                    val acknowledged = producer.send(ProducerRecord("ethereum_blocks", block.number, block))
+                    val acknowledged = producer.send(ProducerRecord("ethereum_blockss", block.number, block))
                     acknowledged.get()
                 } catch (e: Exception) {
                     System.err.println(e.toString() + ":" + e.cause)
