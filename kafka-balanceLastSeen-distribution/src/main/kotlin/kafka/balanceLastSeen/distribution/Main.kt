@@ -44,7 +44,7 @@ fun main(args: Array<String>) {
     val result = lastSeenStream.join(balanceStream) { lastSeenString, balanceString ->
 
         val lastSeen = lastSeenString.toLong()
-        val balance = (BigInteger(balanceString) / BigInteger("1000000000000000000" /* 0.1 ETH in wei */)).longValueExact()
+        val balance = (BigInteger(balanceString) / BigInteger("1000000000000000000")).longValueExact()
 
         val lastSeenIndex = Math.log10(lastSeen.toDouble()) / Math.log10(1.2)
         val balanceIndex =  Math.log10(balance.toDouble()) / Math.log10(1.2)
