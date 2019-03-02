@@ -82,13 +82,12 @@ class BalanceStream(private val streamBuilder: StreamsBuilder,
     private fun addressBalanceFromTraces(block: Block, addressBalance: ArrayList<KeyValue<String, String>>){
         val traces = block.transactionsList
                 .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
-        traces.map { trace ->
+        traces.forEach { trace ->
             when (trace.type) {
                 "reward" -> addressBalance.add(KeyValue(trace.reward.author, trace.reward.value))
                 "call" -> addressBalance.addAll(listOf(KeyValue(trace.call.from, "-" + trace.call.value), KeyValue(trace.call.to, trace.call.value)))
                 "suicide" ->   addressBalance.add(KeyValue(trace.suicide.refundAddress, trace.suicide.balance))
                 "create" -> addressBalance.add(KeyValue(trace.create.from, trace.create.value))
-                else -> null
             }
         }
     }
