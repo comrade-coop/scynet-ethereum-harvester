@@ -16,8 +16,8 @@ fun main(args: Array<String>) {
     BalanceStream("127.0.0.1:9092").start()
 }
 
-class BalanceStream(private val broker: String){
-    fun start(){
+class BalanceStream(private val broker: String) {
+    fun start() {
 
         val properties = Properties().apply {
             setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, broker)
@@ -28,28 +28,26 @@ class BalanceStream(private val broker: String){
         val builder = StreamsBuilder()
 
         val blockStream = builder.stream<String, Block>("ethereum_blocks", Consumed.with(Serdes.String(), BlockSerdes()))
-
-        val groupedByAddressTimestamp = blockStream.flatMap { _, block ->
+        blockStream.flatMap { _, block ->
 
             val addressBalance = ArrayList<KeyValue<String, String>>()
             accountForGas(block, addressBalance)
 
             val traces = block.transactionsList
                     .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
-            traces.map { trace ->
+            traces.forEach { trace ->
                 when (trace.type) {
                     "reward" -> addressBalance.add(KeyValue(trace.reward.author, trace.reward.value))
                     "call" -> addressBalance.addAll(listOf(KeyValue(trace.call.from, "-" + trace.call.value), KeyValue(trace.call.to, trace.call.value)))
                     "suicide" -> addressBalance.add(KeyValue(trace.suicide.refundAddress, trace.suicide.balance))
                     "create" -> addressBalance.add(KeyValue(trace.create.from, trace.create.value))
-                    else -> null
                 }
             }
             addressBalance
         }.groupBy { address, balance -> address }
                 .aggregate(
                         { BigInteger.ZERO.toString() },
-                        { address, balance, previousBalance -> sum(balance,previousBalance)  },
+                        { address, balance, previousBalance -> sum(balance, previousBalance) },
                         Materialized.`as`("balance")
                 ).toStream().to("balance")
 
@@ -57,26 +55,25 @@ class BalanceStream(private val broker: String){
         balanceStream.start()
     }
 
-    private fun accountForGas(block: Block, addressBalance: ArrayList<KeyValue<String,String>>){
+    private fun accountForGas(block: Block, addressBalance: ArrayList<KeyValue<String, String>>) {
 
         var rewardForBlockAuthor = BigInteger.ZERO
         block.transactionsList.map { transaction ->
             addressBalance.add(KeyValue(transaction.from, "-" + multiplyGasByPrice(transaction.gas, transaction.gasPrice).toString()))
-            rewardForBlockAuthor += multiplyGasByPrice(transaction.gas,transaction.gasPrice)
+            rewardForBlockAuthor += multiplyGasByPrice(transaction.gas, transaction.gasPrice)
         }
         addressBalance.add(KeyValue(block.author, rewardForBlockAuthor.toString()))
     }
 
-    private  fun sum(balance: String, previousBalance: String) : String{
+    private fun sum(balance: String, previousBalance: String): String {
         var result = BigInteger(balance) + BigInteger(previousBalance)
-        if(result < BigInteger.ZERO){
+        if (result < BigInteger.ZERO) {
             result = BigInteger.ZERO
         }
         return result.toString()
     }
 
-
-    private fun multiplyGasByPrice(gas: String, gasPrice: String): BigInteger{
+    private fun multiplyGasByPrice(gas: String, gasPrice: String): BigInteger {
         return BigInteger(gas) * BigInteger(gasPrice)
     }
 }
