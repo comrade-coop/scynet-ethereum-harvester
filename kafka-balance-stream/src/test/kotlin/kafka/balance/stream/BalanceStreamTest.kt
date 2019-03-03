@@ -1,10 +1,11 @@
 package kafka.balance.stream
 
-
-import org.apache.kafka.common.serialization.IntegerDeserializer
-import org.apache.kafka.common.serialization.IntegerSerializer
-import org.apache.kafka.common.serialization.Serdes
+import kafka.balance.stream.messages.Messages
+import kafka.balance.stream.serialization.BlockSerializer
+import org.apache.kafka.common.serialization.*
+import kotlin.test.Test
 import org.apache.kafka.streams.StreamsBuilder
+import java.util.*
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.TopologyTestDriver
 import org.apache.kafka.streams.kstream.Materialized
@@ -13,47 +14,101 @@ import org.apache.kafka.streams.test.OutputVerifier
 import java.math.BigInteger
 import java.util.*
 import kotlin.test.Test
-
+import org.junit.After
+import org.junit.Before
+import kafka.balance.stream.block.mock.getMockedBlock
 
 class BalanceStreamTest {
 
-    @Test
-    fun testAggregation() {
-        val builder = StreamsBuilder();
-        builder.stream<Int, Int>("input-topic")
-                .groupBy{ address, balance -> address}
-                .aggregate(
-                        { 0 },
-                        { address, balance, previousBalance ->  balance + previousBalance },
-                        Materialized.`as`("balance")
-
-                ) to "output-topic"
-        val topology = builder.build();
-
-        val props = Properties()
-        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Integer().javaClass.getName())
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Integer().javaClass.getName())
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "test")
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234")
-
-        val testDriver = TopologyTestDriver(topology, props)
-        val factory = ConsumerRecordFactory<Int, Int>("input-topic",IntegerSerializer(), IntegerSerializer())
-
-        testDriver.pipeInput(factory.create( Integer.valueOf(101), Integer.valueOf(101)))
-        testDriver.pipeInput(factory.create( Integer.valueOf(101), Integer.valueOf(101)))
-        testDriver.pipeInput(factory.create( Integer.valueOf(101), Integer.valueOf(101)))
-
-        val outputRecord = testDriver.readOutput("output-topic", IntegerDeserializer(), IntegerDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, 101, 303)
-        testDriver.close();
-    }
+    private var testDriver: TopologyTestDriver? = null
+    private val factory = ConsumerRecordFactory<Int, Messages.Block>("ethereum_blocks",IntegerSerializer(), BlockSerializer())
 
 
-    private fun sum(balance: String, previousBalance: String): String {
-        var result = BigInteger(balance) + BigInteger(previousBalance)
-        if (result < BigInteger.ZERO) {
-            result = BigInteger.ZERO
+    @Before
+    fun setup() {
+        val properties = Properties().apply {
+            setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "test")
+            setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234")
+            setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
+            setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
         }
-        return result.toString()
+        val builder = StreamsBuilder()
+        val topology = BalanceStream(builder, properties).getTopology()
+        testDriver = TopologyTestDriver(topology, properties)
     }
+    @After
+    fun tearDown() {
+        testDriver?.close()
+    }
+
+    @Test
+    fun testAggregationWithMockedBlcok(){
+        val blocks = getMockedBlock(1, 2, 3)
+        for(block: Messages.Block in blocks){
+            testDriver?.pipeInput(factory.create(0, block))
+        }
+        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "transaction_sender", "-2")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "transaction_sender", "-4")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "block_author", "4")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-1")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "1")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-3")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "3")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-6")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "6")
+
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-10")
+    }
+
+    @Test
+    fun testAggregationWitTwoBlocks(){
+        val blocks = getMockedBlock(2,1,1)
+        for(block: Messages.Block in blocks){
+            testDriver?.pipeInput(factory.create(0, block))
+        }
+        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "transaction_sender", "-2")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "block_author", "2")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-1")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "1")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "transaction_sender", "-4")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "block_author", "4")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-2")
+
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
+        OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "2")
+
+    }
+
 }
