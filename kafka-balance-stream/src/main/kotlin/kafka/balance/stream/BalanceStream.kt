@@ -29,7 +29,6 @@ class BalanceStream(private val streamBuilder: StreamsBuilder,
         balanceStream.start()
     }
     fun getTopology(): Topology{
-        val streamBuilder = StreamsBuilder()
         val blockStream = streamBuilder.stream<String, Block>("ethereum_blocks", Consumed.with(Serdes.String(), BlockSerdes()))
         val groupedBalancesByAddress = groupBalancesByAddress(blockStream)
         val aggregated = aggregate(groupedBalancesByAddress)

@@ -8,12 +8,8 @@ import org.apache.kafka.streams.StreamsBuilder
 import java.util.*
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.TopologyTestDriver
-import org.apache.kafka.streams.kstream.Materialized
 import org.apache.kafka.streams.test.ConsumerRecordFactory
 import org.apache.kafka.streams.test.OutputVerifier
-import java.math.BigInteger
-import java.util.*
-import kotlin.test.Test
 import org.junit.After
 import org.junit.Before
 import kafka.balance.stream.block.mock.getMockedBlock
