@@ -3,7 +3,7 @@ package kafka.balance.stream.serialization
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serializer
-
+import kafka.balance.stream.messages.AddressBalance
 
 
 class AddressBalanceSerdes: Serde<AddressBalance.AddressBalanceMap> {

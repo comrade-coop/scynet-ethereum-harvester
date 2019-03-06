@@ -1,7 +1,7 @@
 package kafka.balance.stream.serialization
 
 import org.apache.kafka.common.serialization.Serializer
-
+import kafka.balance.stream.messages.AddressBalance
 
 class AddressBalanceMapSerializer : Serializer<AddressBalance.AddressBalanceMap> {
 

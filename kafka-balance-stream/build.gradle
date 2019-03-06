@@ -9,7 +9,7 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Kafka Balance Stream',
                 'Implementation-Version': version,
-                'Main-Class': 'kafka.balance.stream.LastSeenStreamKt'
+                'Main-Class': 'kafka.balance.stream.BalanceStreamKt'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
