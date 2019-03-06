@@ -13,6 +13,9 @@ import org.apache.kafka.streams.test.OutputVerifier
 import org.junit.After
 import org.junit.Before
 import kafka.balance.stream.block.mock.getMockedBlock
+import kafka.balance.stream.serialization.AddressBalanceMapDeserializer
+import org.apache.kafka.streams.Topology
+import org.apache.kafka.streams.state.Stores
 
 class BalanceStreamTest {
 
@@ -28,8 +31,17 @@ class BalanceStreamTest {
             setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
             setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
         }
-        val builder = StreamsBuilder()
-        val topology = BalanceStream(builder, properties).getTopology()
+        val addressBalanceStoreSupplier = Stores.keyValueStoreBuilder(
+                Stores.persistentKeyValueStore("AccountBalance"),
+                Serdes.String(),
+                Serdes.String()
+        ).withLoggingDisabled() //enable in production
+
+        val topology = Topology()
+        topology.addSource("source", "input-topic")
+        topology.addProcessor("processor", Supplier(), "source")
+        topology.addStateStore(addressBalanceStoreSupplier, "processor")
+        topology.addSink("sink", "output-topic", "processor")
         testDriver = TopologyTestDriver(topology, properties)
     }
     @After
@@ -43,36 +55,10 @@ class BalanceStreamTest {
         for(block: Messages.Block in blocks){
             testDriver?.pipeInput(factory.create(0, block))
         }
-        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "transaction_sender", "-2")
-
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "transaction_sender", "-4")
-
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "block_author", "4")
-
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-1")
-
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "1")
-
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-3")
-
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "3")
-
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-6")
-
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "6")
+        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressBalanceMapDeserializer())
+//        OutputVerifier.compareKeyValue(outputRecord, "0", "-2")
 
 
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
-        OutputVerifier.compareKeyValue(outputRecord, "trace_sender", "-10")
     }
 
     @Test
