@@ -1,6 +1,7 @@
 package kafka.balance.stream.processor
 
-import kafka.balance.stream.messages.*
+import kafka.balance.stream.messages.AddressBalance
+import kafka.balance.stream.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
@@ -39,8 +40,8 @@ class AddressBalanceProcessor(val addressBalanceExtractor: AddressBalanceExtract
             if (previousBalance == null){
                 kvStore!!.put(address, balance)
             } else {
-                kvStore!!.put(address, BalanceSummator.sum(balance, previousBalance))
-                addressBalance!!.put(address, BalanceSummator.sum(balance, previousBalance))
+                kvStore!!.put(address, BalanceCalculator.sum(balance, previousBalance))
+                addressBalance!!.put(address, BalanceCalculator.sum(balance, previousBalance))
             }
         }
     }

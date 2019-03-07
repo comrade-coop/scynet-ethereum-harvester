@@ -1,25 +1,21 @@
 package kafka.balance.stream.serialization
 
+import kafka.balance.stream.messages.AddressBalance
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serializer
-import kafka.balance.stream.messages.AddressBalance
 
 
-class AddressBalanceSerdes: Serde<AddressBalance.AddressBalanceMap> {
+class AddressBalanceSerdes : Serde<AddressBalance.AddressBalanceMap> {
 
     private val addressBalanceMapSerializer = AddressBalanceMapSerializer()
     private val addressBalanceMapDeserializer = AddressBalanceMapDeserializer()
 
-    override fun configure(map: Map<String, *>, b: Boolean) {
-
-
-    }
+    override fun configure(map: Map<String, *>, b: Boolean) {}
 
     override fun close() {
         addressBalanceMapSerializer.close()
         addressBalanceMapDeserializer.close()
-
     }
 
     override fun serializer(): Serializer<AddressBalance.AddressBalanceMap> {

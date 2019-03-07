@@ -6,28 +6,26 @@ import java.math.BigInteger
 
 class AddressBalanceExtractor {
 
-    private var addressBalance: HashMap<String, String>? = null
-    fun extract(block: Messages.Block): HashMap<String, String>?{
-        addressBalance = HashMap()
-        accountForGas(block)
-        addressBalanceFromTraces(block)
-        return  addressBalance
+    private var addressBalanceMap: HashMap<String, String>? = null
+    fun extract(block: Messages.Block): HashMap<String, String>? {
+        addressBalanceMap = HashMap()
+        addAddressBalanceForGas(block)
+        addAddressBalanceFromTraces(block)
+        return addressBalanceMap
     }
 
-    private fun accountForGas(block: Messages.Block) {
+    private fun addAddressBalanceForGas(block: Messages.Block) {
 
         var rewardForBlockAuthor = BigInteger.ZERO
-        block.transactionsList.map { transaction ->
-            addToAddressBalance(transaction.from, "-" + multiplyGasByPrice(transaction.gas, transaction.gasPrice).toString())
-            rewardForBlockAuthor += multiplyGasByPrice(transaction.gas, transaction.gasPrice)
+        block.transactionsList.forEach { transaction ->
+            val gasByPrice = BigInteger(transaction.gas).multiply(BigInteger(transaction.gasPrice))
+            addToAddressBalance(transaction.from, "-" + gasByPrice.toString())
+            rewardForBlockAuthor = rewardForBlockAuthor.add(gasByPrice)
         }
         addToAddressBalance(block.author, rewardForBlockAuthor.toString())
     }
-    private fun multiplyGasByPrice(gas: String, gasPrice: String): BigInteger{
-        return BigInteger(gas) * BigInteger(gasPrice)
-    }
 
-    private fun addressBalanceFromTraces(block: Messages.Block){
+    private fun addAddressBalanceFromTraces(block: Messages.Block) {
         val traces = block.transactionsList
                 .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
         traces.forEach { trace ->
@@ -37,21 +35,20 @@ class AddressBalanceExtractor {
                     addToAddressBalance(trace.call.from, "-" + trace.call.value)
                     addToAddressBalance(trace.call.to, trace.call.value)
                 }
-                "suicide" ->   addToAddressBalance(trace.suicide.refundAddress, trace.suicide.balance)
+                "suicide" -> addToAddressBalance(trace.suicide.refundAddress, trace.suicide.balance)
                 "create" -> addToAddressBalance(trace.create.from, trace.create.value)
             }
         }
     }
 
-    private fun addToAddressBalance(address: String, amount: String){
-        val previousBalance = addressBalance!!.get(address)
-        if(previousBalance == null){
-            addressBalance!!.put(address, amount)
+    private fun addToAddressBalance(address: String, amount: String) {
+        val previousBalance = addressBalanceMap!!.get(address)
+        if (previousBalance == null) {
+            addressBalanceMap!!.put(address, amount)
         } else {
-            addressBalance!!.put(address, BalanceSummator.sum(amount, previousBalance))
+            addressBalanceMap!!.put(address, BalanceCalculator.sum(amount, previousBalance))
         }
     }
-
 
 
 }
