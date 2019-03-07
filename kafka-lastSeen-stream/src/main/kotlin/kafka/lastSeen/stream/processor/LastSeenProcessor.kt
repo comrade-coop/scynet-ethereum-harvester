@@ -13,16 +13,17 @@ class LastSeenProcessor(private val addressLastSeenExtractor: LastSeenExtractor)
     private val firstBlockTimestamp: Long = 1438269973
 
     override fun process(blockNumber: String?, block: Messages.Block?) {
+        println(blockNumber)
         addressLastSeen = addressLastSeenExtractor.extract(block!!)
         synchronizeAddressLastSeenAndStore()
 
 
-        val addressLastSeenBuilder = AddressLastSeen.AddressLastSeenMap.newBuilder()
+        val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
         addressLastSeen!!.forEach { entry ->
-            addressLastSeenBuilder.putAddressLastSeen(entry.key, entry.value)
+            addressFeatureBuilder.putAddressFeature(entry.key, entry.value)
         }
 
-        context!!.forward(blockNumber, addressLastSeenBuilder.build())
+        context!!.forward(blockNumber, addressFeatureBuilder.build())
         context!!.commit()
     }
 

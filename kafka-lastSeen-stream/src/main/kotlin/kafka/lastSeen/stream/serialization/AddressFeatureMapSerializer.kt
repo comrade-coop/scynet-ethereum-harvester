@@ -1,11 +1,11 @@
 package kafka.lastSeen.stream.serialization
 
 import org.apache.kafka.common.serialization.Serializer
-import kafka.lastSeen.stream.messages.AddressLastSeen
+import kafka.lastSeen.stream.messages.AddressFeature
 
-class AddressLastSeenMapSerializer : Serializer<AddressLastSeen.AddressLastSeenMap> {
+class AddressFeatureMapSerializer : Serializer<AddressFeature.AddressFeatureMap> {
 
-    override fun serialize(topic: String?, data: AddressLastSeen.AddressLastSeenMap): ByteArray {
+    override fun serialize(topic: String?, data: AddressFeature.AddressFeatureMap): ByteArray {
         return data.toByteArray()
     }
 

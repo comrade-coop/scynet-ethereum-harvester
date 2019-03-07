@@ -14,14 +14,14 @@ class BalanceStream(){
         val balanceStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
         balanceStream.cleanUp()
         balanceStream.start()
-        Runtime.getRuntime().addShutdownHook( Thread(balanceStream::close));
+        Runtime.getRuntime().addShutdownHook(Thread(balanceStream::close));
     }
 
     fun getTopology(): Topology{
         val topology = Topology()
         topology.addSource("Blockchain-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
                .addProcessor("Processor", AddressBalanceProcessorSupplier(), "Blockchain-producer")
-               .addStateStore(StreamConfig.getBalanceStoreSupplier(), "Processor")
+               .addStateStore(StreamConfig.getAddressBalanceStoreSupplier(), "Processor")
                .addSink("Balance-stream", "balance", "Processor")
 
         return topology

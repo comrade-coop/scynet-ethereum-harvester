@@ -45,7 +45,7 @@ class AddressBalanceExtractor {
 
     private fun addToAddressBalance(address: String, amount: String){
         val previousBalance = addressBalance!!.get(address)
-        if(previousBalance == null){
+        if(previousBalance.isNullOrEmpty()){
             addressBalance!!.put(address, amount)
         } else {
             addressBalance!!.put(address, BalanceSummator.sum(amount, previousBalance))

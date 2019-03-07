@@ -15,12 +15,12 @@ class AddressBalanceProcessor(val addressBalanceExtractor: AddressBalanceExtract
         addressBalance = addressBalanceExtractor.extract(block)
         synchronizeAddressBalanceAndStore()
 
-        val addressBalanceBuilder = AddressBalance.AddressBalanceMap.newBuilder()
+        val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
         addressBalance!!.forEach { entry->
-            addressBalanceBuilder.putAddressBalance(entry.key, entry.value)
+            addressFeatureBuilder.putAddressFeature(entry.key, entry.value)
         }
 
-        context!!.forward(blockNumber, addressBalanceBuilder.build())
+        context!!.forward(blockNumber, addressFeatureBuilder.build())
         context!!.commit()
     }
 

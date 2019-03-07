@@ -1,6 +1,6 @@
 package kafka.lastSeen.stream
 
-import kafka.lastSeen.stream.serialization.AddressLastSeenSerdes
+import kafka.lastSeen.stream.serialization.AddressFeatureSerdes
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.state.KeyValueStore
@@ -13,10 +13,10 @@ class StreamConfig {
     companion object {
         fun getLasSeenStreamProperites(): Properties{
             return Properties().apply {
-                setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:29092")
+                setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092")
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "lastSeen")
                 setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
-                setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressLastSeenSerdes().javaClass.name)
+                setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
             }
         }
 

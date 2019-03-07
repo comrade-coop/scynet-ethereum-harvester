@@ -2,7 +2,6 @@ package kafka.balance.stream
 
 import kafka.balance.stream.messages.Messages
 import kafka.balance.stream.block.mock.getMockedBlock
-import kafka.balance.stream.messages.AddressBalance
 import kafka.balance.stream.serialization.*
 import org.apache.kafka.common.serialization.*
 import kotlin.test.Test
@@ -26,7 +25,7 @@ class BalanceStreamTest {
             setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "test")
             setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234")
             setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
-            setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressBalanceSerdes().javaClass.name)
+            setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
         }
 
         val topology = BalanceStream().getTopology()

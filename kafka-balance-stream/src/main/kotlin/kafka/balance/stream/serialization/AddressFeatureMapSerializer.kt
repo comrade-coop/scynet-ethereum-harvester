@@ -1,11 +1,11 @@
 package kafka.balance.stream.serialization
 
 import org.apache.kafka.common.serialization.Serializer
-import kafka.balance.stream.messages.AddressBalance
+import kafka.balance.stream.messages.AddressFeature
 
-class AddressBalanceMapSerializer : Serializer<AddressBalance.AddressBalanceMap> {
+class AddressFeatureMapSerializer : Serializer<AddressFeature.AddressFeatureMap> {
 
-    override fun serialize(topic: String?, data: AddressBalance.AddressBalanceMap): ByteArray {
+    override fun serialize(topic: String?, data: AddressFeature.AddressFeatureMap): ByteArray {
         return data.toByteArray()
     }
 
