@@ -10,11 +10,11 @@ fun main(args: Array<String>) {
 }
 
 class LastSeenStream {
-    public fun start(){
-        val lastSeenStream = KafkaStreams(getTopology(), StreamConfig.getLasSeenStreamProperites())
+    fun start(){
+        val lastSeenStream = KafkaStreams(getTopology(), StreamConfig.getLasSeenStreamProperties())
         lastSeenStream.cleanUp()
         lastSeenStream.start()
-        Runtime.getRuntime().addShutdownHook(Thread(lastSeenStream::close));
+        Runtime.getRuntime().addShutdownHook(Thread(lastSeenStream::close))
     }
 
     fun getTopology():Topology{
