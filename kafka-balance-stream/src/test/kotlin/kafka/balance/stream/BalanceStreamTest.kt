@@ -1,7 +1,7 @@
 package kafka.balance.stream
 
 import kafka.balance.stream.messages.Messages
-import kafka.balance.stream.block.mock.getMockedBlock
+import kafka.balance.stream.messages.AddressFeature
 import kafka.balance.stream.serialization.*
 import org.apache.kafka.common.serialization.*
 import kotlin.test.Test
@@ -43,16 +43,16 @@ class BalanceStreamTest {
         for(block: Messages.Block in blocks){
                 testDriver?.pipeInput(factory.create("ethereum_blocks", "0",  block))
         }
-        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressBalanceMapDeserializer())
+        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressFeatureMapDeserializer())
         val correctOutputMap = HashMap<String, String>()
         correctOutputMap.put("transaction_sender", "-4")
         correctOutputMap.put("trace_sender", "-21")
         correctOutputMap.put("trace_receiver", "21")
         correctOutputMap.put("block_author", "4")
-        val correctOutput = AddressBalance.AddressBalanceMap.newBuilder().putAllAddressBalance(correctOutputMap).build()
+        val correctOutput = AddressFeature.AddressFeatureMap.newBuilder().putAllAddressFeature(correctOutputMap).build()
         OutputVerifier.compareKeyValue(outputRecord, "0", correctOutput)
 
-        Assert.assertNull(testDriver?.readOutput("balance", StringDeserializer(), AddressBalanceMapDeserializer()))
+        Assert.assertNull(testDriver?.readOutput("balance", StringDeserializer(), AddressFeatureMapDeserializer()))
     }
 
     @Test
@@ -62,24 +62,24 @@ class BalanceStreamTest {
             testDriver?.pipeInput(factory.create("ethereum_blocks","0", block))
         }
 
-        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressBalanceMapDeserializer())
+        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressFeatureMapDeserializer())
         val correctOutputMap = HashMap<String, String>()
         correctOutputMap.put("transaction_sender", "-2")
         correctOutputMap.put("trace_sender", "-1")
         correctOutputMap.put("trace_receiver", "1")
         correctOutputMap.put("block_author", "2")
-        var correctOutput = AddressBalance.AddressBalanceMap.newBuilder().putAllAddressBalance(correctOutputMap).build()
+        var correctOutput = AddressFeature.AddressFeatureMap.newBuilder().putAllAddressFeature(correctOutputMap).build()
         OutputVerifier.compareKeyValue(outputRecord, "0", correctOutput)
 
-        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressBalanceMapDeserializer())
+        outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressFeatureMapDeserializer())
         correctOutputMap.put("transaction_sender", "-4")
         correctOutputMap.put("trace_sender", "-2")
         correctOutputMap.put("trace_receiver", "2")
         correctOutputMap.put("block_author", "4")
-        correctOutput = AddressBalance.AddressBalanceMap.newBuilder().putAllAddressBalance(correctOutputMap).build()
+        correctOutput = AddressFeature.AddressFeatureMap.newBuilder().putAllAddressFeature(correctOutputMap).build()
         OutputVerifier.compareKeyValue(outputRecord, "0", correctOutput)
 
-        Assert.assertNull(testDriver?.readOutput("balance", StringDeserializer(), AddressBalanceMapDeserializer()))
+        Assert.assertNull(testDriver?.readOutput("balance", StringDeserializer(), AddressFeatureMapDeserializer()))
     }
 
 }

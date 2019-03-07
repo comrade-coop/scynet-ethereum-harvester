@@ -11,7 +11,7 @@ import java.util.*
 
 class StreamConfig {
     companion object {
-        fun getLasSeenStreamProperites(): Properties{
+        fun getLasSeenStreamProperties(): Properties{
             return Properties().apply {
                 setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092")
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "lastSeen")

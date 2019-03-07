@@ -48,7 +48,7 @@ class AddressBalanceExtractor {
         if(previousBalance.isNullOrEmpty()){
             addressBalance!!.put(address, amount)
         } else {
-            addressBalance!!.put(address, BalanceSummator.sum(amount, previousBalance))
+            addressBalance!!.put(address, BalanceCalculator.sum(amount, previousBalance))
         }
     }
 
