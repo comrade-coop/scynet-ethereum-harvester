@@ -1,23 +1,21 @@
 package kafka.lastSeen.stream.processor
 
-import kafka.lastSeen.stream.messages.AddressLastSeen
 import org.apache.kafka.streams.processor.Processor
-import kafka.lastSeen.stream.messages.Messages
+import kafka.lastSeen.stream.messages.*
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
-import java.math.BigInteger
-import java.time.Instant
 
 class LastSeenProcessor(private val addressLastSeenExtractor: LastSeenExtractor) : Processor<String, Messages.Block> {
 
     private var context: ProcessorContext? = null
     private var addressLastSeenStore: KeyValueStore<String, String>? = null
     private var addressLastSeen: HashMap<String, String>? = null
+    private val firstBlockTimestamp: Long = 1438269973
 
     override fun process(blockNumber: String?, block: Messages.Block?) {
         addressLastSeen = addressLastSeenExtractor.extract(block!!)
-        val timestampNow = Instant.now().toEpochMilli() / 1000
-        synchronizeAddressLastSeenStore(BigInteger.valueOf(timestampNow))
+        synchronizeAddressLastSeenAndStore()
+
 
         val addressLastSeenBuilder = AddressLastSeen.AddressLastSeenMap.newBuilder()
         addressLastSeen!!.forEach { entry ->
@@ -37,10 +35,18 @@ class LastSeenProcessor(private val addressLastSeenExtractor: LastSeenExtractor)
     override fun close() {
     }
 
-    private fun synchronizeAddressLastSeenStore(timestampNow: BigInteger) {
-        addressLastSeen!!.forEach { address, transactionTimestamp ->
-            val secondsSinceLastTransaction = timestampNow.subtract(BigInteger(transactionTimestamp)).toString()
-            addressLastSeenStore!!.put(address, secondsSinceLastTransaction)
+    private fun synchronizeAddressLastSeenAndStore() {
+        addressLastSeen!!.forEach { address, timestamp ->
+            val lastSeen = addressLastSeenStore!!.get(address)
+            if(lastSeen.isNullOrEmpty()){
+                val initialLastSeenInSeconds = timestamp.toLong() - firstBlockTimestamp
+                addressLastSeenStore!!.put(address, initialLastSeenInSeconds.toString())
+                addressLastSeen!!.put(address, initialLastSeenInSeconds.toString())
+            } else {
+                val updatedLastSeenInSeconds = timestamp.toLong() - lastSeen.toLong()
+                addressLastSeenStore!!.put(address, updatedLastSeenInSeconds.toString())
+                addressLastSeen!!.put(address, updatedLastSeenInSeconds.toString())
+            }
         }
     }
 }
