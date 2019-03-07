@@ -2,23 +2,23 @@ package kafka.balance.stream
 
 import kafka.balance.stream.messages.Messages
 import kafka.balance.stream.serialization.BlockSerializer
-import org.apache.kafka.common.serialization.*
-import kotlin.test.Test
+import org.apache.kafka.common.serialization.IntegerSerializer
+import org.apache.kafka.common.serialization.Serdes
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.StreamsBuilder
-import java.util.*
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.TopologyTestDriver
 import org.apache.kafka.streams.test.ConsumerRecordFactory
 import org.apache.kafka.streams.test.OutputVerifier
 import org.junit.After
 import org.junit.Before
-import kafka.balance.stream.block.mock.getMockedBlock
+import java.util.*
+import kotlin.test.Test
 
 class BalanceStreamTest {
 
     private var testDriver: TopologyTestDriver? = null
-    private val factory = ConsumerRecordFactory<Int, Messages.Block>("ethereum_blocks",IntegerSerializer(), BlockSerializer())
-
+    private val factory = ConsumerRecordFactory<Int, Messages.Block>("ethereum_blocks", IntegerSerializer(), BlockSerializer())
 
     @Before
     fun setup() {
@@ -32,15 +32,16 @@ class BalanceStreamTest {
         val topology = BalanceStream(builder, properties).getTopology()
         testDriver = TopologyTestDriver(topology, properties)
     }
+
     @After
     fun tearDown() {
         testDriver?.close()
     }
 
     @Test
-    fun testAggregationWithMockedBlcok(){
+    fun testAggregationWithMockedBlcok() {
         val blocks = getMockedBlock(1, 2, 3)
-        for(block: Messages.Block in blocks){
+        for (block: Messages.Block in blocks) {
             testDriver?.pipeInput(factory.create(0, block))
         }
         var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
@@ -76,9 +77,9 @@ class BalanceStreamTest {
     }
 
     @Test
-    fun testAggregationWitTwoBlocks(){
-        val blocks = getMockedBlock(2,1,1)
-        for(block: Messages.Block in blocks){
+    fun testAggregationWitTwoBlocks() {
+        val blocks = getMockedBlock(2, 1, 1)
+        for (block: Messages.Block in blocks) {
             testDriver?.pipeInput(factory.create(0, block))
         }
         var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
@@ -104,7 +105,6 @@ class BalanceStreamTest {
 
         outputRecord = testDriver?.readOutput("balance", StringDeserializer(), StringDeserializer())
         OutputVerifier.compareKeyValue(outputRecord, "trace_receiver", "2")
-
     }
 
 }

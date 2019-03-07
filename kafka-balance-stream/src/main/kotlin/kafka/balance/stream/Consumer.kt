@@ -3,9 +3,7 @@ package kafka.balance.stream
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.kafka.common.serialization.StringSerializer
-import org.apache.kafka.streams.kstream.WindowedSerdes
-import org.apache.kafka.streams.kstream.internals.WindowedSerializer
+import java.time.Duration
 import java.util.*
 
 fun main(){
@@ -13,7 +11,7 @@ fun main(){
     consumer.subscribe(listOf("balance"))
 
     while(true){
-        val consumerRecords = consumer.poll(1000)
+        val consumerRecords = consumer.poll(Duration.ofSeconds(1))
 
         consumerRecords.forEach { record ->
             println(record.key())

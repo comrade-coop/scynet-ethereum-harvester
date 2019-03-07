@@ -1,24 +1,20 @@
 package kafka.balance.stream.serialization
 
+import kafka.balance.stream.messages.Messages.Block
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
-import kafka.balance.stream.messages.Messages.Block
 import org.apache.kafka.common.serialization.Serializer
 
-class BlockSerdes: Serde<Block> {
+class BlockSerdes : Serde<Block> {
 
     private val blockSerializer = BlockSerializer()
     private val blockDeserializer = BlockDeserializer()
 
-    override fun configure(map: Map<String, *>, b: Boolean) {
-
-
-    }
+    override fun configure(map: Map<String, *>, b: Boolean) {}
 
     override fun close() {
         blockSerializer.close()
         blockDeserializer.close()
-
     }
 
     override fun serializer(): Serializer<Block> {
