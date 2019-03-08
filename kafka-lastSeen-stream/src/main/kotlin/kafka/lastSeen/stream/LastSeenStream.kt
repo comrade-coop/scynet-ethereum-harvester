@@ -1,5 +1,6 @@
 package kafka.lastSeen.stream
 
+import kafka.lastSeen.stream.config.StreamConfig
 import kafka.lastSeen.stream.serialization.BlockDeserializer
 import kafka.lastSeen.stream.processor.LastSeenProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
