@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
     val lastSeenStream = builder.table<String, String>("lastSeen")
     val balanceStream = builder.table<String, String>("balance")
 
-    val result = lastSeenStream.jo(balanceStream) { lastSeenString, balanceString ->
+    val result = lastSeenStream.join(balanceStream) { lastSeenString, balanceString ->
 
         val lastSeen = lastSeenString.toLong()
         val balance = (BigInteger(balanceString) / BigInteger("1000000000000000000")).longValueExact()
