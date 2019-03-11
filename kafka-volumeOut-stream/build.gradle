@@ -7,9 +7,9 @@ group 'ai.scynet.harvester'
 version '1.0-SNAPSHOT'
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'Kafka Balance Stream',
+        attributes 'Implementation-Title': 'Kafka VolumeOut Stream',
                 'Implementation-Version': version,
-                'Main-Class': 'kafka.balance.stream.BalanceStreamKt'
+                'Main-Class': 'kafka.balance.stream.VolumeOutStream'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }

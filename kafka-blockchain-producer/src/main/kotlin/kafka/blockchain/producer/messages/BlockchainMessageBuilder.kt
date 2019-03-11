@@ -13,6 +13,7 @@ class BlockchainMessageBuilder {
     private val parityService = ParityWebSocketsService().startParity()
 
     fun buildBlock(ethBlock: EthBlock.Block): Block {
+        println()
         val blockTraces = getBlockTraces(ethBlock.number)
         val transactions = getTransactions(ethBlock.transactions)
         return Block.newBuilder()
@@ -131,7 +132,6 @@ class BlockchainMessageBuilder {
                 buildTransaction(ethTransaction)
             }
     }
-
 
 
     private fun buildTransaction(transaction: EthBlock.TransactionObject): Messages.Transaction {
