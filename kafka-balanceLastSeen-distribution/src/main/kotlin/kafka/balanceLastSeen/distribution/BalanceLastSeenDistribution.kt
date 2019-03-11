@@ -43,6 +43,9 @@ class BalanceLastSeenDistribution{
 
                 val lastSeenGroup = Math.min((scaleDown(addressLastSeenEntry.value.toDouble())) , maxLastSeen - 1)
                 var balance = weiToTenthOfEth(addressBalanceMap.getAddressFeatureOrThrow(addressLastSeenEntry.key))
+                if(balance <= 0){
+                    return@forEach
+                }
                 val balanceGroup = Math.min(scaleDown(balance.toDouble()), maxBalance - 1)
 
                 matrix[lastSeenGroup][balanceGroup]++
