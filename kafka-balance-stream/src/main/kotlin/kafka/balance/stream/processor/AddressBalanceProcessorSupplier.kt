@@ -6,6 +6,6 @@ import org.apache.kafka.streams.processor.ProcessorSupplier
 
 class AddressBalanceProcessorSupplier : ProcessorSupplier<String, Messages.Block> {
     override fun get(): Processor<String, Messages.Block> {
-        return AddressBalanceProcessor(AddressBalanceExtractor())
+        return AddressBalanceProcessor()
     }
 }

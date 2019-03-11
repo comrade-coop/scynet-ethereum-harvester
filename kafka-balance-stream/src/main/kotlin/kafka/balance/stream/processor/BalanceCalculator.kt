@@ -12,5 +12,9 @@ class BalanceCalculator {
 //          }
             return result.toString()
         }
+
+        fun multiply(gas: String, gasPrice: String): String{
+            return (BigInteger(gas) * BigInteger(gasPrice)).toString()
+        }
     }
 }

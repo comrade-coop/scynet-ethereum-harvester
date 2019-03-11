@@ -5,25 +5,17 @@ import kafka.lastSeen.stream.messages.*
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 
-class LastSeenProcessor(private val addressLastSeenExtractor: LastSeenExtractor) : Processor<String, Messages.Block> {
+class LastSeenProcessor() : Processor<String, Messages.Block> {
 
     private var context: ProcessorContext? = null
     private var addressLastSeenStore: KeyValueStore<String, String>? = null
-    private var addressLastSeen: HashMap<String, String>? = null
-    private val firstBlockTimestamp: Long = 1438269973
 
-    override fun process(blockNumber: String?, block: Messages.Block?) {
-        println(blockNumber)
-        addressLastSeen = addressLastSeenExtractor.extract(block!!)
-        synchronizeAddressLastSeenAndStore()
+    override fun process(blockNumber: String, block: Messages.Block) {
+        populateAddressLastSeenStore(block)
 
+        val addressFeatureMap  = buildAddressFeatureMap(block.timestamp)
 
-        val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
-        addressLastSeen!!.forEach { entry ->
-            addressFeatureBuilder.putAddressFeature(entry.key, entry.value)
-        }
-
-        context!!.forward(blockNumber, addressFeatureBuilder.build())
+        context!!.forward(blockNumber, addressFeatureMap)
         context!!.commit()
     }
 
@@ -36,18 +28,34 @@ class LastSeenProcessor(private val addressLastSeenExtractor: LastSeenExtractor)
     override fun close() {
     }
 
-    private fun synchronizeAddressLastSeenAndStore() {
-        addressLastSeen!!.forEach { address, timestamp ->
-            val lastSeen = addressLastSeenStore!!.get(address)
-            if(lastSeen.isNullOrEmpty()){
-                val initialLastSeenInSeconds = timestamp.toLong() - firstBlockTimestamp
-                addressLastSeenStore!!.put(address, initialLastSeenInSeconds.toString())
-                addressLastSeen!!.put(address, initialLastSeenInSeconds.toString())
-            } else {
-                val updatedLastSeenInSeconds = timestamp.toLong() - lastSeen.toLong()
-                addressLastSeenStore!!.put(address, updatedLastSeenInSeconds.toString())
-                addressLastSeen!!.put(address, updatedLastSeenInSeconds.toString())
+    fun buildAddressFeatureMap(blockTimestamp: String): AddressFeature.AddressFeatureMap{
+        val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
+        addressLastSeenStore!!.all().forEach { entry ->
+            addressFeatureBuilder.putAddressFeature(entry.key, (blockTimestamp.toBigInteger() - entry.value.toBigInteger()).toString())
+        }
+        return addressFeatureBuilder.build()
+    }
+
+    private fun populateAddressLastSeenStore(block: Messages.Block){
+        val traces = getTraces(block)
+
+        traces.forEach{
+            trace ->
+            when(trace.type){
+                "reward" -> addressLastSeenStore!!.put(trace.reward.author, block.timestamp)
+                "call" -> {
+                    addressLastSeenStore!!.put(trace.call.from, block.timestamp)
+                    addressLastSeenStore!!.put(trace.call.to, block.timestamp)
+                }
+                "suicide" -> addressLastSeenStore!!.put(trace.suicide.refundAddress, block.timestamp)
+                "create" -> addressLastSeenStore!!.put(trace.create.from, block.timestamp)
             }
         }
     }
+
+    private fun getTraces(block: Messages.Block): List<Messages.Trace>{
+        return block.transactionsList
+                .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
+    }
+
 }
