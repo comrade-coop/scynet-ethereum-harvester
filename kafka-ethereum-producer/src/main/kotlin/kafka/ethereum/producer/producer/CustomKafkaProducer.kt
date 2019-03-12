@@ -1,7 +1,7 @@
-package kafka.blockchain.producer.producer
+package kafka.ethereum.producer.producer
 
-import kafka.blockchain.producer.messages.Messages
-import kafka.blockchain.producer.serialization.BlockSerializer
+import kafka.ethereum.producer.messages.Messages
+import kafka.ethereum.producer.serialization.BlockSerializer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer

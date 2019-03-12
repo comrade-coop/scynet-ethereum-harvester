@@ -7,9 +7,9 @@ group 'ai.scynet.harvester'
 version '1.0-SNAPSHOT'
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'Kafka Blockchain Producer',
+        attributes 'Implementation-Title': 'Kafka Ethereum Producer',
                 'Implementation-Version': version,
-                'Main-Class': 'kafka.blockchain.producer.ApplicationKt'
+                'Main-Class': 'kafka.ethereum.producer.ApplicationKt'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
