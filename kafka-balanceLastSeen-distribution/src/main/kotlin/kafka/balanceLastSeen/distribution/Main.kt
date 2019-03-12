@@ -27,6 +27,7 @@ fun main(args: Array<String>) {
         p.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
         p.put("cleanup.policy", TopicConfig.CLEANUP_POLICY_COMPACT)
         p.put("segment.ms", "0")
+		p.put("log.retention.hours", Int.MAX_VALUE.toString())
 
         p.put("schema.registry.url", System.getenv("SCHEMA_REGISTRY") ?: "http://127.0.0.1:29092")
         p

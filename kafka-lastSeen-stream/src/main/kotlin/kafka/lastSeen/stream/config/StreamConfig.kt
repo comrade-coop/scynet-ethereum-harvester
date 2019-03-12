@@ -16,6 +16,7 @@ class StreamConfig {
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "lastSeen")
                 setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
                 setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
+				setProperty("log.retention.hours", Int.MAX_VALUE.toString())
             }
         }
 
