@@ -23,8 +23,8 @@ class VolumeOutStream(){
 
     fun getTopology(): Topology{
         val topology = Topology()
-        topology.addSource("Blockchain-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
-                .addProcessor("Processor", VolumeOutProcessorSupplier(), "Blockchain-producer")
+        topology.addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
+                .addProcessor("Processor", VolumeOutProcessorSupplier(), "Ethereum-producer")
                 .addStateStore(StreamConfig.getAddressBalanceStoreSupplier(), "Processor")
                 .addSink("Balance-stream", "balance", "Processor")
 
