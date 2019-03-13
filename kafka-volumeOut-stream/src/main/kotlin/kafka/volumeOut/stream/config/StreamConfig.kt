@@ -1,5 +1,6 @@
 package kafka.volumeOut.stream.config
 
+import kafka.volumeOut.stream.messages.AddressFeature
 import kafka.volumeOut.stream.serialization.AddressFeatureSerdes
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
@@ -7,6 +8,7 @@ import org.apache.kafka.streams.state.KeyValueStore
 import org.apache.kafka.streams.state.StoreBuilder
 import org.apache.kafka.streams.state.Stores
 import java.util.*
+import kotlin.collections.HashMap
 
 class StreamConfig {
     companion object {
@@ -21,10 +23,18 @@ class StreamConfig {
 
         fun getAddressBalanceStoreSupplier(): StoreBuilder<KeyValueStore<String, String>> {
             return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("AddressBalance"),
+                    Stores.persistentKeyValueStore("AddressVolumeOut"),
                     Serdes.String(),
                     Serdes.String()
-            ).withLoggingDisabled() //enable in production
+            )//.withLoggingDisabled()
+        }
+
+        fun getBlockAddressBalanceStoreSupplier(): StoreBuilder<KeyValueStore<Int, AddressFeature.AddressFeatureMap>> {
+            return Stores.keyValueStoreBuilder(
+                    Stores.persistentKeyValueStore("BlockNumberAddressVolumeOut"),
+                    Serdes.Integer(),
+                    AddressFeatureSerdes()
+            )//.withLoggingDisabled()
         }
     }
 }

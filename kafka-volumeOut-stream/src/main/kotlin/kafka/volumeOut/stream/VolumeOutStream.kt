@@ -15,10 +15,10 @@ fun main(args: Array<String>) {
 
 class VolumeOutStream(){
     fun start(){
-        val balanceStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
-        balanceStream.cleanUp()
-        balanceStream.start()
-        Runtime.getRuntime().addShutdownHook(Thread(balanceStream::close));
+        val volumeOutStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
+        volumeOutStream.cleanUp()
+        volumeOutStream.start()
+        Runtime.getRuntime().addShutdownHook(Thread(volumeOutStream::close));
     }
 
     fun getTopology(): Topology{
@@ -26,8 +26,8 @@ class VolumeOutStream(){
         topology.addSource("Blockchain-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
                 .addProcessor("Processor", VolumeOutProcessorSupplier(), "Blockchain-producer")
                 .addStateStore(StreamConfig.getAddressBalanceStoreSupplier(), "Processor")
-                .addSink("Balance-stream", "balance", "Processor")
-
+                .addStateStore(StreamConfig.getBlockAddressBalanceStoreSupplier(), "Processor")
+                .addSink("VolumeOut-stream", "volumeOut", "Processor")
         return topology
     }
 
