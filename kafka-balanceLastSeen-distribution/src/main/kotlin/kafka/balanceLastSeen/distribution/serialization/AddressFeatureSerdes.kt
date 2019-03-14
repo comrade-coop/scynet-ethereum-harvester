@@ -11,8 +11,6 @@ class AddressFeatureSerdes: Serde<AddressFeature.AddressFeatureMap> {
     private val addressFeatureMapDeserializer = AddressFeatureMapDeserializer()
 
     override fun configure(map: Map<String, *>, b: Boolean) {
-
-
     }
 
     override fun close() {

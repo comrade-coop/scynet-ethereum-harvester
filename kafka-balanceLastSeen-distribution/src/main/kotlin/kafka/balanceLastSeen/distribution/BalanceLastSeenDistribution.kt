@@ -1,6 +1,5 @@
 package kafka.balanceLastSeen.distribution
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import kafka.balanceLastSeen.distribution.config.StreamConfig
 import kafka.balanceLastSeen.distribution.serialization.AddressFeatureSerdes
 import org.apache.kafka.common.serialization.Serdes
@@ -8,6 +7,7 @@ import org.apache.kafka.streams.kstream.Consumed
 import java.math.BigInteger
 import kotlin.math.roundToInt
 import kafka.balanceLastSeen.distribution.messages.AddressFeature
+import kafka.balanceLastSeen.distribution.messages.MatrixBlob
 import org.apache.kafka.streams.*
 
 
@@ -52,7 +52,8 @@ class BalanceLastSeenDistribution{
             }
             matrix
         }.toStream().map { blockNumber, distributionMatrix ->
-            KeyValue(blockNumber, ObjectMapper().writeValueAsString(distributionMatrix))
+            println(blockNumber)
+            KeyValue(blockNumber, buildBlob(distributionMatrix))
         }.to("distribution-balanceLastSeen")
 
         return builder.build()
@@ -67,5 +68,20 @@ class BalanceLastSeenDistribution{
 
     private fun weiToTenthOfEth(balance: String): Long{
        return (balance.toBigInteger() / divideWeiToGetTenthOfEthereum).toLong()
+    }
+
+    private fun buildBlob(distributionMatrix: Array<Array<Long>>): MatrixBlob.Blob{
+        val blobBuilder = MatrixBlob.Blob.newBuilder()
+        val shape = MatrixBlob.Shape.newBuilder()
+                .addDimension(maxBalance)
+                .addDimension( maxLastSeen)
+                .build()
+        blobBuilder.setShape(shape)
+        for (balanceGroup in 0..(maxBalance - 1)){
+            for (lastSeenGroup in 0..(maxLastSeen - 1)){
+                blobBuilder.addData(distributionMatrix[lastSeenGroup][balanceGroup].toFloat())
+            }
+        }
+        return blobBuilder.build()
     }
 }
