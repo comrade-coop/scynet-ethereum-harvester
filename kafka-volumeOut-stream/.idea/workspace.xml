@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6d0b199-d796-4249-8c03-5d82aa86872b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../kafka-balance-stream/src/test/kotlin/kafka/balance/stream/BalanceStreamTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../kafka-balance-stream/src/test/kotlin/kafka/balance/stream/BalanceStreamTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../kafka-balance-stream/src/test/kotlin/kafka/balance/stream/BlockMock.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../kafka-balance-stream/src/test/kotlin/kafka/balance/stream/BlockMock.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/VolumeOutStream.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/VolumeOutStream.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/config/StreamConfig.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/config/StreamConfig.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutExtractor.kt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessorSupplier.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessorSupplier.kt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -28,34 +24,22 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/VolumeOutStream.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="348">
-              <caret line="33" column="1" lean-forward="true" selection-start-line="33" selection-start-column="1" selection-end-line="33" selection-end-column="1" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/config/StreamConfig.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="719">
-              <caret line="36" column="37" selection-start-line="36" selection-start-column="37" selection-end-line="36" selection-end-column="37" />
+            <state relative-caret-position="675">
+              <caret line="45" column="35" selection-start-line="45" selection-start-column="35" selection-end-line="45" selection-end-column="35" />
               <folding>
-                <element signature="e#39#456#0" expanded="true" />
+                <element signature="e#39#472#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/2.1.0/d68999645df4ed4ad65985f91bc99911ed111c24/kafka-streams-2.1.0-sources.jar!/org/apache/kafka/streams/state/StoreBuilder.java">
+        <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-clients/2.1.0/599beefb02e633d23b635e6fb1d0279a45611f64/kafka-clients-2.1.0-sources.jar!/org/apache/kafka/common/config/TopicConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="45" column="7" selection-start-line="45" selection-start-column="5" selection-end-line="45" selection-end-column="7" />
+            <state relative-caret-position="240">
+              <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -63,7 +47,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessorSupplier.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
+            <state relative-caret-position="90">
               <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
             </state>
           </provider>
@@ -72,26 +56,38 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="62" column="98" selection-start-line="62" selection-start-column="98" selection-end-line="62" selection-end-column="98" />
+            <state relative-caret-position="1500">
+              <caret line="79" lean-forward="true" selection-start-line="79" selection-end-line="79" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutCalculator.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="17" column="5" selection-start-line="17" selection-start-column="5" selection-end-line="17" selection-end-column="5" />
+            <state relative-caret-position="150">
+              <caret line="10" column="13" lean-forward="true" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/serialization/BlockDeserializer.kt">
+        <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/VolumeOutStream.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="48">
-              <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
+            <state relative-caret-position="621">
+              <caret line="31" column="23" lean-forward="true" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/2.1.0/d68999645df4ed4ad65985f91bc99911ed111c24/kafka-streams-2.1.0-sources.jar!/org/apache/kafka/streams/Topology.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1853">
+              <caret line="526" column="18" selection-start-line="526" selection-start-column="14" selection-end-line="526" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -99,7 +95,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/messages/Messages.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="12">
+            <state relative-caret-position="15">
               <caret line="1" selection-start-line="1" selection-end-line="1" />
               <folding>
                 <element signature="e#3395#3396#0" expanded="true" />
@@ -146,8 +142,6 @@
                 <element signature="e#57884#57885#0" expanded="true" />
                 <element signature="e#61501#61502#0" expanded="true" />
                 <element signature="e#61548#61549#0" expanded="true" />
-                <element signature="e#61639#62040#0" expanded="true" />
-                <element signature="e#62039#62040#0" expanded="true" />
                 <element signature="e#62108#62109#0" expanded="true" />
                 <element signature="e#62145#62146#0" expanded="true" />
                 <element signature="e#62234#62235#0" expanded="true" />
@@ -206,8 +200,6 @@
                 <element signature="e#154074#154075#0" expanded="true" />
                 <element signature="e#160649#160650#0" expanded="true" />
                 <element signature="e#160696#160697#0" expanded="true" />
-                <element signature="e#160793#161212#0" expanded="true" />
-                <element signature="e#161211#161212#0" expanded="true" />
                 <element signature="e#161286#161287#0" expanded="true" />
                 <element signature="e#161323#161324#0" expanded="true" />
                 <element signature="e#161418#161419#0" expanded="true" />
@@ -242,8 +234,6 @@
                 <element signature="e#183755#183756#0" expanded="true" />
                 <element signature="e#184848#184849#0" expanded="true" />
                 <element signature="e#184895#184896#0" expanded="true" />
-                <element signature="e#184984#185379#0" expanded="true" />
-                <element signature="e#185378#185379#0" expanded="true" />
                 <element signature="e#185445#185446#0" expanded="true" />
                 <element signature="e#185482#185483#0" expanded="true" />
                 <element signature="e#185569#185570#0" expanded="true" />
@@ -272,8 +262,6 @@
                 <element signature="e#201932#201933#0" expanded="true" />
                 <element signature="e#208016#208017#0" expanded="true" />
                 <element signature="e#208063#208064#0" expanded="true" />
-                <element signature="e#208156#208563#0" expanded="true" />
-                <element signature="e#208562#208563#0" expanded="true" />
                 <element signature="e#208633#208634#0" expanded="true" />
                 <element signature="e#208670#208671#0" expanded="true" />
                 <element signature="e#208761#208762#0" expanded="true" />
@@ -376,8 +364,6 @@
                 <element signature="e#288417#288418#0" expanded="true" />
                 <element signature="e#295131#295132#0" expanded="true" />
                 <element signature="e#295178#295179#0" expanded="true" />
-                <element signature="e#295269#295670#0" expanded="true" />
-                <element signature="e#295669#295670#0" expanded="true" />
                 <element signature="e#295738#295739#0" expanded="true" />
                 <element signature="e#295775#295776#0" expanded="true" />
                 <element signature="e#295864#295865#0" expanded="true" />
@@ -408,8 +394,6 @@
                 <element signature="e#314399#314400#0" expanded="true" />
                 <element signature="e#322693#322694#0" expanded="true" />
                 <element signature="e#322740#322741#0" expanded="true" />
-                <element signature="e#322832#323236#0" expanded="true" />
-                <element signature="e#323235#323236#0" expanded="true" />
                 <element signature="e#323305#323306#0" expanded="true" />
                 <element signature="e#323342#323343#0" expanded="true" />
                 <element signature="e#323432#323433#0" expanded="true" />
@@ -440,8 +424,6 @@
                 <element signature="e#348602#348603#0" expanded="true" />
                 <element signature="e#363586#363587#0" expanded="true" />
                 <element signature="e#363633#363634#0" expanded="true" />
-                <element signature="e#363723#364121#0" expanded="true" />
-                <element signature="e#364120#364121#0" expanded="true" />
                 <element signature="e#364188#364189#0" expanded="true" />
                 <element signature="e#364225#364226#0" expanded="true" />
                 <element signature="e#364313#364314#0" expanded="true" />
@@ -472,8 +454,6 @@
                 <element signature="e#385039#385040#0" expanded="true" />
                 <element signature="e#395536#395537#0" expanded="true" />
                 <element signature="e#395583#395584#0" expanded="true" />
-                <element signature="e#395675#396079#0" expanded="true" />
-                <element signature="e#396078#396079#0" expanded="true" />
                 <element signature="e#396148#396149#0" expanded="true" />
                 <element signature="e#396185#396186#0" expanded="true" />
                 <element signature="e#396275#396276#0" expanded="true" />
@@ -502,8 +482,6 @@
                 <element signature="e#415223#415224#0" expanded="true" />
                 <element signature="e#423757#423758#0" expanded="true" />
                 <element signature="e#423804#423805#0" expanded="true" />
-                <element signature="e#423897#424304#0" expanded="true" />
-                <element signature="e#424303#424304#0" expanded="true" />
                 <element signature="e#424374#424375#0" expanded="true" />
                 <element signature="e#424411#424412#0" expanded="true" />
                 <element signature="e#424502#424503#0" expanded="true" />
@@ -534,8 +512,6 @@
                 <element signature="e#445477#445478#0" expanded="true" />
                 <element signature="e#456131#456132#0" expanded="true" />
                 <element signature="e#456178#456179#0" expanded="true" />
-                <element signature="e#456270#456674#0" expanded="true" />
-                <element signature="e#456673#456674#0" expanded="true" />
                 <element signature="e#456743#456744#0" expanded="true" />
                 <element signature="e#456780#456781#0" expanded="true" />
                 <element signature="e#456870#456871#0" expanded="true" />
@@ -552,7 +528,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/messages/AddressFeature.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
+            <state relative-caret-position="165">
               <caret line="11" column="53" selection-start-line="11" selection-start-column="53" selection-end-line="11" selection-end-column="53" />
               <folding>
                 <element signature="e#15266#15267#0" expanded="true" />
@@ -565,7 +541,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/serialization/AddressFeatureSerdes.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
+            <state relative-caret-position="345">
               <caret line="26" selection-start-line="26" selection-end-line="26" />
             </state>
           </provider>
@@ -597,10 +573,10 @@
         <option value="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutExtractor.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/BalanceCalculator.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutCalculator.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/VolumeOutStream.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessorSupplier.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/config/StreamConfig.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/VolumeOutStream.kt" />
       </list>
     </option>
   </component>
@@ -615,6 +591,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -670,13 +648,11 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552484057547" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552646007539" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../kafka-blockchain-producer" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -729,18 +705,18 @@
     <frame x="-3" y="0" width="1926" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.25212315" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2588997" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
       <window_info id="Capture Tool" order="4" />
       <window_info id="UI Designer" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="0" weight="0.32873806" />
+      <window_info anchor="bottom" id="Messages" order="0" weight="0.32731378" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Find" order="2" />
-      <window_info anchor="bottom" id="Run" order="3" weight="0.7433722" />
-      <window_info anchor="bottom" id="Debug" order="4" weight="0.3902439" />
+      <window_info anchor="bottom" id="Run" order="3" visible="true" weight="0.33747178" />
+      <window_info anchor="bottom" id="Debug" order="4" weight="0.43002257" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="7" />
@@ -759,18 +735,18 @@
       <window_info anchor="right" id="Palette&#9;" order="8" />
     </layout>
     <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.25212315" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.2588997" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
       <window_info id="Capture Tool" order="4" />
       <window_info id="UI Designer" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="0" weight="0.32873806" />
+      <window_info anchor="bottom" id="Messages" order="0" weight="0.32731378" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Find" order="2" />
-      <window_info anchor="bottom" id="Run" order="3" weight="0.7433722" />
-      <window_info active="true" anchor="bottom" id="Debug" order="4" visible="true" weight="0.3902439" />
+      <window_info active="true" anchor="bottom" id="Run" order="3" visible="true" weight="0.33747178" />
+      <window_info anchor="bottom" id="Debug" order="4" weight="0.43002257" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="7" />
@@ -794,27 +770,15 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt</url>
-          <line>42</line>
-          <properties />
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt</url>
-          <line>45</line>
-          <properties />
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt</url>
-          <line>54</line>
-          <properties />
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt</url>
-          <line>71</line>
+          <line>50</line>
           <properties />
           <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt</url>
+          <line>28</line>
+          <properties />
+          <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -854,23 +818,44 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutExtractor.kt" />
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutCalculator.kt">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/2.1.0/d68999645df4ed4ad65985f91bc99911ed111c24/kafka-streams-2.1.0-sources.jar!/org/apache/kafka/streams/state/StoreBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="17" column="5" selection-start-line="17" selection-start-column="5" selection-end-line="17" selection-end-column="5" />
+        <state relative-caret-position="648">
+          <caret line="71" column="33" selection-start-line="71" selection-start-column="24" selection-end-line="71" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/2.1.0/d68999645df4ed4ad65985f91bc99911ed111c24/kafka-streams-2.1.0-sources.jar!/org/apache/kafka/streams/state/Stores.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12">
+          <caret line="82" column="45" selection-start-line="82" selection-start-column="45" selection-end-line="82" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/2.1.0/d68999645df4ed4ad65985f91bc99911ed111c24/kafka-streams-2.1.0-sources.jar!/org/apache/kafka/streams/StreamsConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3695">
+          <caret line="445" column="31" selection-start-line="445" selection-start-column="31" selection-end-line="445" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/2.1.0/d68999645df4ed4ad65985f91bc99911ed111c24/kafka-streams-2.1.0-sources.jar!/org/apache/kafka/streams/processor/Processor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="41" column="9" selection-start-line="41" selection-start-column="9" selection-end-line="41" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/serialization/BlockDeserializer.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
+        <state relative-caret-position="60">
           <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/messages/Messages.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12">
+        <state relative-caret-position="15">
           <caret line="1" selection-start-line="1" selection-end-line="1" />
           <folding>
             <element signature="e#3395#3396#0" expanded="true" />
@@ -917,8 +902,6 @@
             <element signature="e#57884#57885#0" expanded="true" />
             <element signature="e#61501#61502#0" expanded="true" />
             <element signature="e#61548#61549#0" expanded="true" />
-            <element signature="e#61639#62040#0" expanded="true" />
-            <element signature="e#62039#62040#0" expanded="true" />
             <element signature="e#62108#62109#0" expanded="true" />
             <element signature="e#62145#62146#0" expanded="true" />
             <element signature="e#62234#62235#0" expanded="true" />
@@ -977,8 +960,6 @@
             <element signature="e#154074#154075#0" expanded="true" />
             <element signature="e#160649#160650#0" expanded="true" />
             <element signature="e#160696#160697#0" expanded="true" />
-            <element signature="e#160793#161212#0" expanded="true" />
-            <element signature="e#161211#161212#0" expanded="true" />
             <element signature="e#161286#161287#0" expanded="true" />
             <element signature="e#161323#161324#0" expanded="true" />
             <element signature="e#161418#161419#0" expanded="true" />
@@ -1013,8 +994,6 @@
             <element signature="e#183755#183756#0" expanded="true" />
             <element signature="e#184848#184849#0" expanded="true" />
             <element signature="e#184895#184896#0" expanded="true" />
-            <element signature="e#184984#185379#0" expanded="true" />
-            <element signature="e#185378#185379#0" expanded="true" />
             <element signature="e#185445#185446#0" expanded="true" />
             <element signature="e#185482#185483#0" expanded="true" />
             <element signature="e#185569#185570#0" expanded="true" />
@@ -1043,8 +1022,6 @@
             <element signature="e#201932#201933#0" expanded="true" />
             <element signature="e#208016#208017#0" expanded="true" />
             <element signature="e#208063#208064#0" expanded="true" />
-            <element signature="e#208156#208563#0" expanded="true" />
-            <element signature="e#208562#208563#0" expanded="true" />
             <element signature="e#208633#208634#0" expanded="true" />
             <element signature="e#208670#208671#0" expanded="true" />
             <element signature="e#208761#208762#0" expanded="true" />
@@ -1147,8 +1124,6 @@
             <element signature="e#288417#288418#0" expanded="true" />
             <element signature="e#295131#295132#0" expanded="true" />
             <element signature="e#295178#295179#0" expanded="true" />
-            <element signature="e#295269#295670#0" expanded="true" />
-            <element signature="e#295669#295670#0" expanded="true" />
             <element signature="e#295738#295739#0" expanded="true" />
             <element signature="e#295775#295776#0" expanded="true" />
             <element signature="e#295864#295865#0" expanded="true" />
@@ -1179,8 +1154,6 @@
             <element signature="e#314399#314400#0" expanded="true" />
             <element signature="e#322693#322694#0" expanded="true" />
             <element signature="e#322740#322741#0" expanded="true" />
-            <element signature="e#322832#323236#0" expanded="true" />
-            <element signature="e#323235#323236#0" expanded="true" />
             <element signature="e#323305#323306#0" expanded="true" />
             <element signature="e#323342#323343#0" expanded="true" />
             <element signature="e#323432#323433#0" expanded="true" />
@@ -1211,8 +1184,6 @@
             <element signature="e#348602#348603#0" expanded="true" />
             <element signature="e#363586#363587#0" expanded="true" />
             <element signature="e#363633#363634#0" expanded="true" />
-            <element signature="e#363723#364121#0" expanded="true" />
-            <element signature="e#364120#364121#0" expanded="true" />
             <element signature="e#364188#364189#0" expanded="true" />
             <element signature="e#364225#364226#0" expanded="true" />
             <element signature="e#364313#364314#0" expanded="true" />
@@ -1243,8 +1214,6 @@
             <element signature="e#385039#385040#0" expanded="true" />
             <element signature="e#395536#395537#0" expanded="true" />
             <element signature="e#395583#395584#0" expanded="true" />
-            <element signature="e#395675#396079#0" expanded="true" />
-            <element signature="e#396078#396079#0" expanded="true" />
             <element signature="e#396148#396149#0" expanded="true" />
             <element signature="e#396185#396186#0" expanded="true" />
             <element signature="e#396275#396276#0" expanded="true" />
@@ -1273,8 +1242,6 @@
             <element signature="e#415223#415224#0" expanded="true" />
             <element signature="e#423757#423758#0" expanded="true" />
             <element signature="e#423804#423805#0" expanded="true" />
-            <element signature="e#423897#424304#0" expanded="true" />
-            <element signature="e#424303#424304#0" expanded="true" />
             <element signature="e#424374#424375#0" expanded="true" />
             <element signature="e#424411#424412#0" expanded="true" />
             <element signature="e#424502#424503#0" expanded="true" />
@@ -1305,8 +1272,6 @@
             <element signature="e#445477#445478#0" expanded="true" />
             <element signature="e#456131#456132#0" expanded="true" />
             <element signature="e#456178#456179#0" expanded="true" />
-            <element signature="e#456270#456674#0" expanded="true" />
-            <element signature="e#456673#456674#0" expanded="true" />
             <element signature="e#456743#456744#0" expanded="true" />
             <element signature="e#456780#456781#0" expanded="true" />
             <element signature="e#456870#456871#0" expanded="true" />
@@ -1321,7 +1286,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/messages/AddressFeature.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
+        <state relative-caret-position="165">
           <caret line="11" column="53" selection-start-line="11" selection-start-column="53" selection-end-line="11" selection-end-column="53" />
           <folding>
             <element signature="e#15266#15267#0" expanded="true" />
@@ -1332,49 +1297,63 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/serialization/AddressFeatureSerdes.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
+        <state relative-caret-position="345">
           <caret line="26" selection-start-line="26" selection-end-line="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/2.1.0/d68999645df4ed4ad65985f91bc99911ed111c24/kafka-streams-2.1.0-sources.jar!/org/apache/kafka/streams/Topology.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1853">
+          <caret line="526" column="18" selection-start-line="526" selection-start-column="14" selection-end-line="526" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-clients/2.1.0/599beefb02e633d23b635e6fb1d0279a45611f64/kafka-clients-2.1.0-sources.jar!/org/apache/kafka/common/config/TopicConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1500">
+          <caret line="79" lean-forward="true" selection-start-line="79" selection-end-line="79" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessorSupplier.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/config/StreamConfig.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="675">
+          <caret line="45" column="35" selection-start-line="45" selection-start-column="35" selection-end-line="45" selection-end-column="35" />
+          <folding>
+            <element signature="e#39#472#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/VolumeOutStream.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="33" column="1" lean-forward="true" selection-start-line="33" selection-start-column="1" selection-end-line="33" selection-end-column="1" />
+        <state relative-caret-position="621">
+          <caret line="31" column="23" lean-forward="true" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessorSupplier.kt">
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutCalculator.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="8" column="34" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/processor/VolumeOutProcessor.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="62" column="98" selection-start-line="62" selection-start-column="98" selection-end-line="62" selection-end-column="98" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-streams/2.1.0/d68999645df4ed4ad65985f91bc99911ed111c24/kafka-streams-2.1.0-sources.jar!/org/apache/kafka/streams/state/StoreBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="45" column="7" selection-start-line="45" selection-start-column="5" selection-end-line="45" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/kafka/volumeOut/stream/config/StreamConfig.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="719">
-          <caret line="36" column="37" selection-start-line="36" selection-start-column="37" selection-end-line="36" selection-end-column="37" />
-          <folding>
-            <element signature="e#39#456#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="150">
+          <caret line="10" column="13" lean-forward="true" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
         </state>
       </provider>
     </entry>

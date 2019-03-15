@@ -27,8 +27,8 @@ class VolumeOutStream(){
                 .addProcessor("Processor", VolumeOutProcessorSupplier(), "Blockchain-producer")
                 .addStateStore(StreamConfig.getAddressBalanceStoreSupplier(), "Processor")
                 .addStateStore(StreamConfig.getBlockAddressBalanceStoreSupplier(), "Processor")
+                .addStateStore(StreamConfig.getSynchronizationStoreSupplier(), "Processor")
                 .addSink("VolumeOut-stream", "volumeOut", "Processor")
         return topology
     }
-
 }
