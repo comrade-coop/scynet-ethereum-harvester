@@ -34,7 +34,9 @@ class EthereumProducer(
                 try {
                     val block = ethereumMessageBuilder.buildBlock(ethBlock)
                     println(block.number)
-                    val acknowledged = producer.send(ProducerRecord("ethereum_blocks", block.number, block))
+                    val blockTimestamp = if (block.timestamp != null) block.timestamp.toLong() else null
+                    val acknowledged =
+                        producer.send(ProducerRecord("ethereum_blocks", null, blockTimestamp, block.number, block))
                     acknowledged.get()
                 } catch (e: Exception) {
                     System.err.println(e.toString() + ":" + e.cause)
