@@ -12,10 +12,11 @@ class StreamConfig {
     companion object {
         fun getStreamProperties(): Properties {
             return Properties().apply {
-                setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092")
+                setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:29092")
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "balance")
                 setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
                 setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
+				setProperty("log.retention.hours", Int.MAX_VALUE.toString())
             }
         }
 

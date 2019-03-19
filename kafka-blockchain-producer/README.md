@@ -1,1 +1,0 @@
-# kafka-blockchain-producer

@@ -20,8 +20,8 @@ class LastSeenStream {
 
     fun getTopology():Topology{
         val topology = Topology()
-                .addSource("Blockchain-producer", StringDeserializer(), BlockDeserializer(), "ethereumm_blocks")
-                .addProcessor("Processor", LastSeenProcessorSupplier(), "Blockchain-producer")
+                .addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
+                .addProcessor("Processor", LastSeenProcessorSupplier(), "Ethereum-producer")
                 .addStateStore(StreamConfig.getLastSeenStoreSupplier(), "Processor")
                 .addSink("LastSeen-stream", "lastSeen", "Processor")
         return topology

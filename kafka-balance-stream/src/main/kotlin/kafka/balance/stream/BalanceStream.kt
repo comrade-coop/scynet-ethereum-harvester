@@ -23,8 +23,8 @@ class BalanceStream(){
 
     fun getTopology(): Topology{
         val topology = Topology()
-        topology.addSource("Blockchain-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
-               .addProcessor("Processor", AddressBalanceProcessorSupplier(), "Blockchain-producer")
+        topology.addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
+               .addProcessor("Processor", AddressBalanceProcessorSupplier(), "Ethereum-producer")
                .addStateStore(StreamConfig.getAddressBalanceStoreSupplier(), "Processor")
                .addSink("Balance-stream", "balance", "Processor")
 
