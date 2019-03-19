@@ -18,13 +18,14 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
     private var currentBlockNumber: Int? = null
 
     override fun process(blockNumber: String, block: Messages.Block) {
-        skipIfProcessed(blockNumber.toInt())
+        if(processed(blockNumber.toInt()){
+            return
+        }
         if(notSetEndOfTick()){
             setEndOfTick(block.timestamp.toBigInteger())
             setFirstBlockNumber(blockNumber.toInt())
         }
-        println(blockNumber)
-        currentBlockInitialization(block)
+        addAddressFeatureBuilderWithTimestampForBlock(block)
 
         if (notInTick(block.timestamp.toBigInteger())) {
             commitVolumeOut()
@@ -41,24 +42,24 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
         this.blockNumberAddressVolumeOutStore = context.getStateStore("BlockNumberAddressVolumeOut") as KeyValueStore<Int, AddressFeature.AddressFeatureMap>
         this.synchronizationStore = context.getStateStore("SynchronizationStore") as KeyValueStore<String, String>
 
-        val fbn = synchronizationStore!!.get("firstBlockNumber")
-        firstBlockNumber = if (fbn.isNullOrEmpty()) -1 else fbn.toInt()
+        val firstBlockNumberString = synchronizationStore!!.get("firstBlockNumber")
+        firstBlockNumber = if (firstBlockNumberString.isNullOrEmpty()) -1 else firstBlockNumberString.toInt()
 
-        val eot = synchronizationStore!!.get("endOfTick")
-        endOfTick = if (eot.isNullOrEmpty()) BigInteger.valueOf(-1) else eot.toBigInteger()
+        val endOfTickString = synchronizationStore!!.get("endOfTick")
+        endOfTick = if (endOfTickString.isNullOrEmpty()) BigInteger.valueOf(-1) else endOfTickString.toBigInteger()
 
-        val lpbn = synchronizationStore!!.get("lastProcessedBlockNumber")
-        lastProcessedBlockNumber = if(lpbn.isNullOrEmpty()) -1 else lpbn.toInt()
+        val lastProcessedBlockNumberString = synchronizationStore!!.get("lastProcessedBlockNumber")
+        lastProcessedBlockNumber = if(lastProcessedBlockNumberString.isNullOrEmpty()) -1 else lastProcessedBlockNumberString.toInt()
     }
 
     override fun close() {
     }
 
-    private fun skipIfProcessed(blockNumber: Int){
-        if(blockNumber.toInt() <= lastProcessedBlockNumber!!){
-            println("already processed")
-            return
+    private fun processed(blockNumber: Int): Boolean{
+        if(blockNumber <= lastProcessedBlockNumber!!){
+            return true
         }
+        return false
     }
 
     private fun notSetEndOfTick(): Boolean {
@@ -73,12 +74,12 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
     }
 
     private fun setFirstBlockNumber(blockNumber: Int){
-        firstBlockNumber = blockNumber.toInt()
+        firstBlockNumber = blockNumber
         synchronizationStore!!.put("firstBlockNumber", firstBlockNumber.toString())
     }
 
 
-    private fun currentBlockInitialization(block: Messages.Block){
+    private fun addAddressFeatureBuilderForBlock(block: Messages.Block){
         currentBlockNumber = block.number.toInt()
         val builder = AddressFeature.AddressFeatureMap.newBuilder().putAddressFeature("timestamp", block.timestamp)
         blockNumberAddressVolumeOutStore!!.put(currentBlockNumber, builder.build())
@@ -126,7 +127,7 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
 
     private fun extract(block: Messages.Block) {
         accountForGas(block)
-        addressVolumeOutFromTraces(block)
+        extractAddressVolumeOutFromTraces(block)
     }
 
     private fun accountForGas(block: Messages.Block) {
@@ -135,7 +136,7 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
         }
     }
 
-    private fun addressVolumeOutFromTraces(block: Messages.Block) {
+    private fun extractAddressVolumeOutFromTraces(block: Messages.Block) {
         val traces = block.transactionsList
                 .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
         traces.forEach { trace ->
