@@ -18,7 +18,7 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
     private var currentBlockNumber: Int? = null
 
     override fun process(blockNumber: String, block: Messages.Block) {
-        if(processed(blockNumber.toInt()){
+        if(processed(blockNumber.toInt())){
             return
         }
         if(notSetEndOfTick()){
@@ -79,7 +79,7 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
     }
 
 
-    private fun addAddressFeatureBuilderForBlock(block: Messages.Block){
+    private fun addAddressFeatureBuilderWithTimestampForBlock(block: Messages.Block){
         currentBlockNumber = block.number.toInt()
         val builder = AddressFeature.AddressFeatureMap.newBuilder().putAddressFeature("timestamp", block.timestamp)
         blockNumberAddressVolumeOutStore!!.put(currentBlockNumber, builder.build())
