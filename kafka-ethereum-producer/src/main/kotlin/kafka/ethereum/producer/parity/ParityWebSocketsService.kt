@@ -1,4 +1,4 @@
-package kafka.blockchain.producer.parity
+package kafka.ethereum.producer.parity
 
 import org.web3j.protocol.parity.Parity
 import org.web3j.protocol.websocket.WebSocketClient

@@ -1,7 +1,7 @@
-package kafka.blockchain.producer.serialization
+package kafka.ethereum.producer.serialization
 
-import kafka.blockchain.producer.messages.Messages.Block
-import org.apache.kafka.common.serialization.Deserializer;
+import kafka.ethereum.producer.messages.Messages.Block
+import org.apache.kafka.common.serialization.Deserializer
 
 class BlockDeserializer : Deserializer<Block> {
 

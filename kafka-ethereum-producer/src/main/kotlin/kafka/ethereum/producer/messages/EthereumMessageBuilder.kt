@@ -1,19 +1,18 @@
-package kafka.blockchain.producer.messages
+package kafka.ethereum.producer.messages
 
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.response.EthBlock
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.protocol.parity.methods.response.Trace
 import java.math.BigInteger
-import kafka.blockchain.producer.messages.Messages.*
-import kafka.blockchain.producer.parity.ParityWebSocketsService
+import kafka.ethereum.producer.messages.Messages.*
+import kafka.ethereum.producer.parity.ParityWebSocketsService
 
-class BlockchainMessageBuilder {
+class EthereumMessageBuilder {
 
     private val parityService = ParityWebSocketsService().startParity()
 
     fun buildBlock(ethBlock: EthBlock.Block): Block {
-        println()
         val blockTraces = getBlockTraces(ethBlock.number)
         val transactions = getTransactions(ethBlock.transactions)
         return Block.newBuilder()
@@ -46,7 +45,6 @@ class BlockchainMessageBuilder {
                 traceBuilder.setSuicide(buildSuicideAction(traceAction))
                 traceBuilder.setAction(Messages.Trace.Action.SUICIDE)
             }
-            else -> null
         }
         val result = buildResult(blockTrace)
         val traceAddresses = blockTrace.traceAddress.map { ta -> ta.toString() }
@@ -115,7 +113,7 @@ class BlockchainMessageBuilder {
         return Receipt.newBuilder()
             .setGasUsed(receipt.gasUsed?.toString().orEmpty())
             .setStatus(receipt.status.orEmpty())
-            .build();
+            .build()
     }
 
     private fun getBlockTraces(blockNumber: BigInteger?): List<Messages.Trace> {

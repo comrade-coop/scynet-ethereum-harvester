@@ -20,6 +20,7 @@ class StreamConfig {
                 setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
                 setProperty("cleanup.policy", TopicConfig.CLEANUP_POLICY_COMPACT) // currently set up manually for Sink
                 setProperty(TopicConfig.DELETE_RETENTION_MS_CONFIG, "0") // currently set up manually
+
             }
         }
 

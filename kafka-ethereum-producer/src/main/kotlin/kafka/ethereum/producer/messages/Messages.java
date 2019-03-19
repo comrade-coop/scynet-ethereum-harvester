@@ -1,4 +1,4 @@
-package kafka.blockchain.producer.messages;
+package kafka.ethereum.producer.messages;
 
 public final class Messages {
   private Messages() {}
