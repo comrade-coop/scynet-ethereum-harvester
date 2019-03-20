@@ -20,27 +20,31 @@ class VolumeInProcessor() : Processor<String, Messages.Block> {
 
     override fun process(blockNumber: String, block: Messages.Block) {
         try {
-            if (processed(blockNumber.toInt())) {
-                return
-            }
-            if (notSetEndOfTick()) {
-                setEndOfTick(block.timestamp.toBigInteger())
-                setFirstBlockNumber(blockNumber.toInt())
-            }
-            addAddressFeatureBuilderWithTimestampForBlock(block)
-
-            if (notInTick(block.timestamp.toBigInteger())) {
-                commitVolumeIn()
-                slideTickForward(block.timestamp.toBigInteger())
-            }
-
-            extract(block)
-            setLastProcessedBlock(blockNumber)
-
+            process(block)
         } catch (e: Exception) {
             // TODO use logger for this
             println("Exception occurred: $e while processing block: $blockNumber")
         }
+    }
+
+    private fun process(block: Messages.Block) {
+        val blockNumber = block.number
+        if (processed(blockNumber.toInt())) {
+            return
+        }
+        if (notSetEndOfTick()) {
+            setEndOfTick(block.timestamp.toBigInteger())
+            setFirstBlockNumber(blockNumber.toInt())
+        }
+        addAddressFeatureBuilderWithTimestampForBlock(block)
+
+        if (notInTick(block.timestamp.toBigInteger())) {
+            commitVolumeIn()
+            slideTickForward(block.timestamp.toBigInteger())
+        }
+
+        extract(block)
+        setLastProcessedBlock(blockNumber)
     }
 
     override fun init(context: ProcessorContext) {
