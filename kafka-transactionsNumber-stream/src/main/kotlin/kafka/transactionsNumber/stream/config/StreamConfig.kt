@@ -15,7 +15,7 @@ class StreamConfig {
         fun getStreamProperties(): Properties {
             return Properties().apply {
                 setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092")
-                setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "volumeOut")
+                setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "transactionsNumber")
                 setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
                 setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
                 setProperty("cleanup.policy", TopicConfig.CLEANUP_POLICY_COMPACT) // currently set up manually for Sink

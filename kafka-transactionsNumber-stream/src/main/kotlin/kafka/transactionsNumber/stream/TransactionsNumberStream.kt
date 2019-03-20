@@ -7,18 +7,18 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
 
 fun main(args: Array<String>) {
-    VolumeOutStream().start()
+    TransactionsNumberStream().start()
 }
 
-class VolumeOutStream(){
+class TransactionsNumberStream(){
     fun start(){
-        val volumeOutStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
-        volumeOutStream.cleanUp()
-        volumeOutStream.start()
-        Runtime.getRuntime().addShutdownHook(Thread(volumeOutStream::close));
+        val transactionsNumberStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
+        transactionsNumberStream.cleanUp()
+        transactionsNumberStream.start()
+        Runtime.getRuntime().addShutdownHook(Thread(transactionsNumberStream::close));
     }
 
-    fun getTopology(): Topology{
+    private fun getTopology(): Topology{
         val topology = Topology()
         topology.addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
 
@@ -26,7 +26,7 @@ class VolumeOutStream(){
                 .addStateStore(StreamConfig.getAddressTransactionsNumberStoreSupplier(), "Processor")
                 .addStateStore(StreamConfig.getBlockAddressTransactionsNumberSupplier(), "Processor")
                 .addStateStore(StreamConfig.getSynchronizationStoreSupplier(), "Processor")
-                .addSink("VolumeOut-stream", "transactionsNumber", "Processor")
+                .addSink("TransactionsNumber-stream", "transactionsNumber", "Processor")
         return topology
     }
 }
