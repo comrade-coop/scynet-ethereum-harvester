@@ -32,7 +32,7 @@ class VolumeInProcessor() : Processor<String, Messages.Block> {
             commitVolumeIn()
             slideTickForward(block.timestamp.toBigInteger())
         }
-        println(block.number)
+
         extract(block)
         setLastProcessedBlock(blockNumber)
     }
