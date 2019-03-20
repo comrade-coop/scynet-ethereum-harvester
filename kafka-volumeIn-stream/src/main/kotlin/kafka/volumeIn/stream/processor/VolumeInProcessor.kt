@@ -134,7 +134,7 @@ class VolumeInProcessor() : Processor<String, Messages.Block> {
 
     private fun accountForGas(block: Messages.Block) {
         block.transactionsList.forEach { transaction ->
-            addToStores(transaction.from, VolumeInCalculator.multiply(transaction.receipt.gasUsed, transaction.gasPrice))
+            addToStores(block.author, VolumeInCalculator.multiply(transaction.receipt.gasUsed, transaction.gasPrice))
         }
     }
 
@@ -145,7 +145,7 @@ class VolumeInProcessor() : Processor<String, Messages.Block> {
             when (trace.type) {
                 "call" -> addToStores(trace.call.to, trace.call.value)
                 "suicide" -> addToStores(trace.suicide.refundAddress, trace.suicide.balance)
-                "create" -> addToStores(trace.create.from, trace.create.value)
+                "create" -> addToStores(trace.result.address, trace.create.value)
                 "reward" -> addToStores(trace.reward.author, trace.reward.value)
             }
         }
