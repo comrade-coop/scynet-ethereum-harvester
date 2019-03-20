@@ -18,21 +18,26 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
     private var currentBlockNumber: Int? = null
 
     override fun process(blockNumber: String, block: Messages.Block) {
-        if(processed(blockNumber.toInt())){
-            return
-        }
-        if(notSetEndOfTick()){
-            setEndOfTick(block.timestamp.toBigInteger())
-            setFirstBlockNumber(blockNumber.toInt())
-        }
-        addAddressFeatureBuilderWithTimestampForBlock(block)
+        try {
+            if (processed(blockNumber.toInt())) {
+                return
+            }
+            if (notSetEndOfTick()) {
+                setEndOfTick(block.timestamp.toBigInteger())
+                setFirstBlockNumber(blockNumber.toInt())
+            }
+            addAddressFeatureBuilderWithTimestampForBlock(block)
 
-        if (notInTick(block.timestamp.toBigInteger())) {
-            commitVolumeOut()
-            slideTickForward(block.timestamp.toBigInteger())
+            if (notInTick(block.timestamp.toBigInteger())) {
+                commitVolumeOut()
+                slideTickForward(block.timestamp.toBigInteger())
+            }
+            extract(block)
+            setLastProcessedBlock(blockNumber)
+        }catch (e: Exception) {
+            // TODO use logger for this
+            println("Exception occurred: $e while processing block: $blockNumber")
         }
-        extract(block)
-        setLastProcessedBlock(blockNumber)
     }
 
     override fun init(context: ProcessorContext) {
