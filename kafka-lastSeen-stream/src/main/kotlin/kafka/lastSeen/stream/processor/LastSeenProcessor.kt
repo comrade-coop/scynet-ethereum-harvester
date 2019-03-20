@@ -11,9 +11,19 @@ class LastSeenProcessor() : Processor<String, Messages.Block> {
     private var addressLastSeenStore: KeyValueStore<String, String>? = null
 
     override fun process(blockNumber: String, block: Messages.Block) {
+        try {
+            process(block)
+        } catch (e: Exception) {
+            // TODO use logger for this
+            println("Exception occurred: $e while processing block: $blockNumber")
+        }
+    }
+
+    private fun process(block: Messages.Block) {
+        val blockNumber = block.number
         populateAddressLastSeenStore(block)
 
-        val addressFeatureMap  = buildAddressFeatureMap(block.timestamp)
+        val addressFeatureMap = buildAddressFeatureMap(block.timestamp)
 
         context!!.forward(blockNumber, addressFeatureMap)
         context!!.commit()
@@ -28,7 +38,7 @@ class LastSeenProcessor() : Processor<String, Messages.Block> {
     override fun close() {
     }
 
-    fun buildAddressFeatureMap(blockTimestamp: String): AddressFeature.AddressFeatureMap{
+    fun buildAddressFeatureMap(blockTimestamp: String): AddressFeature.AddressFeatureMap {
         val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
         addressLastSeenStore!!.all().forEach { entry ->
             addressFeatureBuilder.putAddressFeature(entry.key, (blockTimestamp.toBigInteger() - entry.value.toBigInteger()).toString())
@@ -36,12 +46,11 @@ class LastSeenProcessor() : Processor<String, Messages.Block> {
         return addressFeatureBuilder.build()
     }
 
-    private fun populateAddressLastSeenStore(block: Messages.Block){
+    private fun populateAddressLastSeenStore(block: Messages.Block) {
         val traces = getTraces(block)
 
-        traces.forEach{
-            trace ->
-            when(trace.type){
+        traces.forEach { trace ->
+            when (trace.type) {
                 "reward" -> addressLastSeenStore!!.put(trace.reward.author, block.timestamp)
                 "call" -> {
                     addressLastSeenStore!!.put(trace.call.from, block.timestamp)
@@ -53,7 +62,7 @@ class LastSeenProcessor() : Processor<String, Messages.Block> {
         }
     }
 
-    private fun getTraces(block: Messages.Block): List<Messages.Trace>{
+    private fun getTraces(block: Messages.Block): List<Messages.Trace> {
         return block.transactionsList
                 .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
     }
