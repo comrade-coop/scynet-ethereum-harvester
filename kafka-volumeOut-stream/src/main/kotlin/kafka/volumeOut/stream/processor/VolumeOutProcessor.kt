@@ -6,7 +6,7 @@ import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
 
-class VolumeOutProcessor(): Processor<String, Messages.Block> {
+class VolumeOutProcessor() : Processor<String, Messages.Block> {
 
     private var context: ProcessorContext? = null
     private var addressVolumeOutStore: KeyValueStore<String, String>? = null
@@ -19,25 +19,30 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
 
     override fun process(blockNumber: String, block: Messages.Block) {
         try {
-            if (processed(blockNumber.toInt())) {
-                return
-            }
-            if (notSetEndOfTick()) {
-                setEndOfTick(block.timestamp.toBigInteger())
-                setFirstBlockNumber(blockNumber.toInt())
-            }
-            addAddressFeatureBuilderWithTimestampForBlock(block)
-
-            if (notInTick(block.timestamp.toBigInteger())) {
-                commitVolumeOut()
-                slideTickForward(block.timestamp.toBigInteger())
-            }
-            extract(block)
-            setLastProcessedBlock(blockNumber)
-        }catch (e: Exception) {
+            process(block)
+        } catch (e: Exception) {
             // TODO use logger for this
             println("Exception occurred: $e while processing block: $blockNumber")
         }
+    }
+
+    private fun process(block: Messages.Block) {
+        val blockNumber = block.number
+        if (processed(blockNumber.toInt())) {
+            return
+        }
+        if (notSetEndOfTick()) {
+            setEndOfTick(block.timestamp.toBigInteger())
+            setFirstBlockNumber(blockNumber.toInt())
+        }
+        addAddressFeatureBuilderWithTimestampForBlock(block)
+
+        if (notInTick(block.timestamp.toBigInteger())) {
+            commitVolumeOut()
+            slideTickForward(block.timestamp.toBigInteger())
+        }
+        extract(block)
+        setLastProcessedBlock(blockNumber)
     }
 
     override fun init(context: ProcessorContext) {
@@ -54,14 +59,14 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
         endOfTick = if (endOfTickString.isNullOrEmpty()) BigInteger.valueOf(-1) else endOfTickString.toBigInteger()
 
         val lastProcessedBlockNumberString = synchronizationStore!!.get("lastProcessedBlockNumber")
-        lastProcessedBlockNumber = if(lastProcessedBlockNumberString.isNullOrEmpty()) -1 else lastProcessedBlockNumberString.toInt()
+        lastProcessedBlockNumber = if (lastProcessedBlockNumberString.isNullOrEmpty()) -1 else lastProcessedBlockNumberString.toInt()
     }
 
     override fun close() {
     }
 
-    private fun processed(blockNumber: Int): Boolean{
-        if(blockNumber <= lastProcessedBlockNumber!!){
+    private fun processed(blockNumber: Int): Boolean {
+        if (blockNumber <= lastProcessedBlockNumber!!) {
             return true
         }
         return false
@@ -73,36 +78,36 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
         return false
     }
 
-    private fun setEndOfTick(timestamp: BigInteger){
+    private fun setEndOfTick(timestamp: BigInteger) {
         endOfTick = timestamp + BigInteger.valueOf(3600)
         synchronizationStore!!.put("endOfTick", endOfTick.toString())
     }
 
-    private fun setFirstBlockNumber(blockNumber: Int){
+    private fun setFirstBlockNumber(blockNumber: Int) {
         firstBlockNumber = blockNumber
         synchronizationStore!!.put("firstBlockNumber", firstBlockNumber.toString())
     }
 
 
-    private fun addAddressFeatureBuilderWithTimestampForBlock(block: Messages.Block){
+    private fun addAddressFeatureBuilderWithTimestampForBlock(block: Messages.Block) {
         currentBlockNumber = block.number.toInt()
         val builder = AddressFeature.AddressFeatureMap.newBuilder().putAddressFeature("timestamp", block.timestamp)
         blockNumberAddressVolumeOutStore!!.put(currentBlockNumber, builder.build())
     }
 
-    private fun notInTick(timestamp: BigInteger): Boolean{
-        if(timestamp > endOfTick)
+    private fun notInTick(timestamp: BigInteger): Boolean {
+        if (timestamp > endOfTick)
             return true
         return false
     }
 
-    private fun commitVolumeOut(){
+    private fun commitVolumeOut() {
         val addressVolumeOutMap = buildAddressVolumeOutMap()
         context!!.forward(endOfTick.toString(), addressVolumeOutMap)
         context!!.commit()
     }
 
-    private fun slideTickForward(timestamp:BigInteger){
+    private fun slideTickForward(timestamp: BigInteger) {
         while (notInTick(timestamp)) {
             val firstBlockAddressVolumeOut = blockNumberAddressVolumeOutStore!!.get(firstBlockNumber)
             removeBlockEntriesFromAddressVolumeOutStore(firstBlockAddressVolumeOut)
@@ -118,13 +123,13 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
         }
     }
 
-    private fun setLastProcessedBlock(blockNumber: String){
+    private fun setLastProcessedBlock(blockNumber: String) {
         synchronizationStore!!.put("lastProcessedBlockNumber", blockNumber)
     }
 
-    private fun buildAddressVolumeOutMap(): AddressFeature.AddressFeatureMap{
+    private fun buildAddressVolumeOutMap(): AddressFeature.AddressFeatureMap {
         val builder = AddressFeature.AddressFeatureMap.newBuilder()
-        addressVolumeOutStore!!.all().forEach {addressVolumeOut ->
+        addressVolumeOutStore!!.all().forEach { addressVolumeOut ->
             builder.putAddressFeature(addressVolumeOut.key, addressVolumeOut.value)
         }
         return builder.build()
@@ -180,9 +185,9 @@ class VolumeOutProcessor(): Processor<String, Messages.Block> {
         blockNumberAddressVolumeOutStore!!.put(currentBlockNumber, builder.build())
     }
 
-    private fun removeBlockEntriesFromAddressVolumeOutStore(firstBlockAddressVolumeOut: AddressFeature.AddressFeatureMap){
+    private fun removeBlockEntriesFromAddressVolumeOutStore(firstBlockAddressVolumeOut: AddressFeature.AddressFeatureMap) {
         firstBlockAddressVolumeOut.addressFeatureMap.forEach { address, volumeOut ->
-            if(address == "timestamp") return@forEach
+            if (address == "timestamp") return@forEach
             val previousVolumeOut = addressVolumeOutStore!!.get(address)
             addressVolumeOutStore!!.put(address, VolumeOutCalculator.sum("-" + volumeOut, previousVolumeOut))
         }
