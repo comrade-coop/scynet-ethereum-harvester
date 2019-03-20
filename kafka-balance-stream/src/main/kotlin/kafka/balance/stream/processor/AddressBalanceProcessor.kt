@@ -6,16 +6,26 @@ import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 
-class AddressBalanceProcessor: Processor<String, Messages.Block> {
+class AddressBalanceProcessor : Processor<String, Messages.Block> {
 
     private var context: ProcessorContext? = null
     private var AddressBalanceStore: KeyValueStore<String, String>? = null
 
     override fun process(blockNumber: String, block: Messages.Block) {
+        try {
+            process(block)
+        } catch (e: Exception) {
+            // TODO use logger for this
+            println("Exception occurred: $e while processing block: $blockNumber")
+        }
+    }
+
+    private fun process(block: Messages.Block) {
+        val blockNumber = block.number
         extract(block)
 
         val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
-        AddressBalanceStore!!.all().forEach { entry->
+        AddressBalanceStore!!.all().forEach { entry ->
             addressFeatureBuilder.putAddressFeature(entry.key, entry.value)
         }
 
@@ -33,7 +43,7 @@ class AddressBalanceProcessor: Processor<String, Messages.Block> {
     }
 
 
-    private fun extract(block: Messages.Block){
+    private fun extract(block: Messages.Block) {
         accountForGas(block)
         addressBalanceFromTraces(block)
     }
@@ -48,7 +58,7 @@ class AddressBalanceProcessor: Processor<String, Messages.Block> {
         addToAddressBalanceStore(block.author, rewardForBlockAuthor)
     }
 
-    private fun addressBalanceFromTraces(block: Messages.Block){
+    private fun addressBalanceFromTraces(block: Messages.Block) {
         val traces = block.transactionsList
                 .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
         traces.forEach { trace ->
@@ -58,15 +68,15 @@ class AddressBalanceProcessor: Processor<String, Messages.Block> {
                     addToAddressBalanceStore(trace.call.from, "-" + trace.call.value)
                     addToAddressBalanceStore(trace.call.to, trace.call.value)
                 }
-                "suicide" ->   addToAddressBalanceStore(trace.suicide.refundAddress, trace.suicide.balance)
+                "suicide" -> addToAddressBalanceStore(trace.suicide.refundAddress, trace.suicide.balance)
                 "create" -> addToAddressBalanceStore(trace.create.from, trace.create.value)
             }
         }
     }
 
-    private fun addToAddressBalanceStore(address: String, amount: String){
+    private fun addToAddressBalanceStore(address: String, amount: String) {
         val previousBalance = AddressBalanceStore!!.get(address)
-        if(previousBalance.isNullOrEmpty()){
+        if (previousBalance.isNullOrEmpty()) {
             AddressBalanceStore!!.put(address, amount)
         } else {
             AddressBalanceStore!!.put(address, BalanceCalculator.sum(amount, previousBalance))
