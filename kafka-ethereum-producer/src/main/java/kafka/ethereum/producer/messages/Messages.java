@@ -5225,6 +5225,30 @@ public final class Messages {
      */
     com.google.protobuf.ByteString
         getStatusBytes();
+
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    java.util.List<Messages.Log> 
+        getLogsList();
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    Messages.Log getLogs(int index);
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    int getLogsCount();
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    java.util.List<? extends Messages.LogOrBuilder> 
+        getLogsOrBuilderList();
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    Messages.LogOrBuilder getLogsOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code Receipt}
@@ -5240,6 +5264,7 @@ public final class Messages {
     private Receipt() {
       gasUsed_ = "";
       status_ = "";
+      logs_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -5279,6 +5304,15 @@ public final class Messages {
               status_ = s;
               break;
             }
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                logs_ = new java.util.ArrayList<Messages.Log>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              logs_.add(
+                  input.readMessage(Messages.Log.parser(), extensionRegistry));
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -5287,6 +5321,9 @@ public final class Messages {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          logs_ = java.util.Collections.unmodifiableList(logs_);
+        }
         makeExtensionsImmutable();
       }
     }
@@ -5302,6 +5339,7 @@ public final class Messages {
               Messages.Receipt.class, Messages.Receipt.Builder.class);
     }
 
+    private int bitField0_;
     public static final int GAS_USED_FIELD_NUMBER = 1;
     private volatile java.lang.Object gasUsed_;
     /**
@@ -5370,6 +5408,41 @@ public final class Messages {
       }
     }
 
+    public static final int LOGS_FIELD_NUMBER = 3;
+    private java.util.List<Messages.Log> logs_;
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    public java.util.List<Messages.Log> getLogsList() {
+      return logs_;
+    }
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    public java.util.List<? extends Messages.LogOrBuilder> 
+        getLogsOrBuilderList() {
+      return logs_;
+    }
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    public int getLogsCount() {
+      return logs_.size();
+    }
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    public Messages.Log getLogs(int index) {
+      return logs_.get(index);
+    }
+    /**
+     * <code>repeated .Log logs = 3;</code>
+     */
+    public Messages.LogOrBuilder getLogsOrBuilder(
+        int index) {
+      return logs_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -5388,6 +5461,9 @@ public final class Messages {
       if (!getStatusBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, status_);
       }
+      for (int i = 0; i < logs_.size(); i++) {
+        output.writeMessage(3, logs_.get(i));
+      }
     }
 
     public int getSerializedSize() {
@@ -5400,6 +5476,10 @@ public final class Messages {
       }
       if (!getStatusBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, status_);
+      }
+      for (int i = 0; i < logs_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, logs_.get(i));
       }
       memoizedSize = size;
       return size;
@@ -5421,6 +5501,8 @@ public final class Messages {
           .equals(other.getGasUsed());
       result = result && getStatus()
           .equals(other.getStatus());
+      result = result && getLogsList()
+          .equals(other.getLogsList());
       return result;
     }
 
@@ -5435,6 +5517,10 @@ public final class Messages {
       hash = (53 * hash) + getGasUsed().hashCode();
       hash = (37 * hash) + STATUS_FIELD_NUMBER;
       hash = (53 * hash) + getStatus().hashCode();
+      if (getLogsCount() > 0) {
+        hash = (37 * hash) + LOGS_FIELD_NUMBER;
+        hash = (53 * hash) + getLogsList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -5549,6 +5635,7 @@ public final class Messages {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getLogsFieldBuilder();
         }
       }
       public Builder clear() {
@@ -5557,6 +5644,12 @@ public final class Messages {
 
         status_ = "";
 
+        if (logsBuilder_ == null) {
+          logs_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          logsBuilder_.clear();
+        }
         return this;
       }
 
@@ -5579,8 +5672,20 @@ public final class Messages {
 
       public Messages.Receipt buildPartial() {
         Messages.Receipt result = new Messages.Receipt(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.gasUsed_ = gasUsed_;
         result.status_ = status_;
+        if (logsBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            logs_ = java.util.Collections.unmodifiableList(logs_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.logs_ = logs_;
+        } else {
+          result.logs_ = logsBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -5630,6 +5735,32 @@ public final class Messages {
           status_ = other.status_;
           onChanged();
         }
+        if (logsBuilder_ == null) {
+          if (!other.logs_.isEmpty()) {
+            if (logs_.isEmpty()) {
+              logs_ = other.logs_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureLogsIsMutable();
+              logs_.addAll(other.logs_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.logs_.isEmpty()) {
+            if (logsBuilder_.isEmpty()) {
+              logsBuilder_.dispose();
+              logsBuilder_ = null;
+              logs_ = other.logs_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              logsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getLogsFieldBuilder() : null;
+            } else {
+              logsBuilder_.addAllMessages(other.logs_);
+            }
+          }
+        }
         onChanged();
         return this;
       }
@@ -5655,6 +5786,7 @@ public final class Messages {
         }
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object gasUsed_ = "";
       /**
@@ -5793,6 +5925,246 @@ public final class Messages {
         onChanged();
         return this;
       }
+
+      private java.util.List<Messages.Log> logs_ =
+        java.util.Collections.emptyList();
+      private void ensureLogsIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          logs_ = new java.util.ArrayList<Messages.Log>(logs_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          Messages.Log, Messages.Log.Builder, Messages.LogOrBuilder> logsBuilder_;
+
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public java.util.List<Messages.Log> getLogsList() {
+        if (logsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(logs_);
+        } else {
+          return logsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public int getLogsCount() {
+        if (logsBuilder_ == null) {
+          return logs_.size();
+        } else {
+          return logsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Messages.Log getLogs(int index) {
+        if (logsBuilder_ == null) {
+          return logs_.get(index);
+        } else {
+          return logsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder setLogs(
+          int index, Messages.Log value) {
+        if (logsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLogsIsMutable();
+          logs_.set(index, value);
+          onChanged();
+        } else {
+          logsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder setLogs(
+          int index, Messages.Log.Builder builderForValue) {
+        if (logsBuilder_ == null) {
+          ensureLogsIsMutable();
+          logs_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          logsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder addLogs(Messages.Log value) {
+        if (logsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLogsIsMutable();
+          logs_.add(value);
+          onChanged();
+        } else {
+          logsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder addLogs(
+          int index, Messages.Log value) {
+        if (logsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureLogsIsMutable();
+          logs_.add(index, value);
+          onChanged();
+        } else {
+          logsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder addLogs(
+          Messages.Log.Builder builderForValue) {
+        if (logsBuilder_ == null) {
+          ensureLogsIsMutable();
+          logs_.add(builderForValue.build());
+          onChanged();
+        } else {
+          logsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder addLogs(
+          int index, Messages.Log.Builder builderForValue) {
+        if (logsBuilder_ == null) {
+          ensureLogsIsMutable();
+          logs_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          logsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder addAllLogs(
+          java.lang.Iterable<? extends Messages.Log> values) {
+        if (logsBuilder_ == null) {
+          ensureLogsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, logs_);
+          onChanged();
+        } else {
+          logsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder clearLogs() {
+        if (logsBuilder_ == null) {
+          logs_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          logsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Builder removeLogs(int index) {
+        if (logsBuilder_ == null) {
+          ensureLogsIsMutable();
+          logs_.remove(index);
+          onChanged();
+        } else {
+          logsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Messages.Log.Builder getLogsBuilder(
+          int index) {
+        return getLogsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Messages.LogOrBuilder getLogsOrBuilder(
+          int index) {
+        if (logsBuilder_ == null) {
+          return logs_.get(index);  } else {
+          return logsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public java.util.List<? extends Messages.LogOrBuilder> 
+           getLogsOrBuilderList() {
+        if (logsBuilder_ != null) {
+          return logsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(logs_);
+        }
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Messages.Log.Builder addLogsBuilder() {
+        return getLogsFieldBuilder().addBuilder(
+            Messages.Log.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public Messages.Log.Builder addLogsBuilder(
+          int index) {
+        return getLogsFieldBuilder().addBuilder(
+            index, Messages.Log.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .Log logs = 3;</code>
+       */
+      public java.util.List<Messages.Log.Builder> 
+           getLogsBuilderList() {
+        return getLogsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          Messages.Log, Messages.Log.Builder, Messages.LogOrBuilder> 
+          getLogsFieldBuilder() {
+        if (logsBuilder_ == null) {
+          logsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              Messages.Log, Messages.Log.Builder, Messages.LogOrBuilder>(
+                  logs_,
+                  ((bitField0_ & 0x00000004) == 0x00000004),
+                  getParentForChildren(),
+                  isClean());
+          logs_ = null;
+        }
+        return logsBuilder_;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return this;
@@ -5837,6 +6209,563 @@ public final class Messages {
     }
 
     public Messages.Receipt getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface LogOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:Log)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated string topics = 1;</code>
+     */
+    java.util.List<java.lang.String>
+        getTopicsList();
+    /**
+     * <code>repeated string topics = 1;</code>
+     */
+    int getTopicsCount();
+    /**
+     * <code>repeated string topics = 1;</code>
+     */
+    java.lang.String getTopics(int index);
+    /**
+     * <code>repeated string topics = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getTopicsBytes(int index);
+  }
+  /**
+   * Protobuf type {@code Log}
+   */
+  public  static final class Log extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:Log)
+      LogOrBuilder {
+    // Use Log.newBuilder() to construct.
+    private Log(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private Log() {
+      topics_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    }
+    private Log(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!input.skipField(tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                topics_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              topics_.add(s);
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          topics_ = topics_.getUnmodifiableView();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return Messages.internal_static_Log_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return Messages.internal_static_Log_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              Messages.Log.class, Messages.Log.Builder.class);
+    }
+
+    public static final int TOPICS_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList topics_;
+    /**
+     * <code>repeated string topics = 1;</code>
+     */
+    public com.google.protobuf.ProtocolStringList
+        getTopicsList() {
+      return topics_;
+    }
+    /**
+     * <code>repeated string topics = 1;</code>
+     */
+    public int getTopicsCount() {
+      return topics_.size();
+    }
+    /**
+     * <code>repeated string topics = 1;</code>
+     */
+    public java.lang.String getTopics(int index) {
+      return topics_.get(index);
+    }
+    /**
+     * <code>repeated string topics = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTopicsBytes(int index) {
+      return topics_.getByteString(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < topics_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, topics_.getRaw(i));
+      }
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < topics_.size(); i++) {
+          dataSize += computeStringSizeNoTag(topics_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getTopicsList().size();
+      }
+      memoizedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof Messages.Log)) {
+        return super.equals(obj);
+      }
+      Messages.Log other = (Messages.Log) obj;
+
+      boolean result = true;
+      result = result && getTopicsList()
+          .equals(other.getTopicsList());
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptorForType().hashCode();
+      if (getTopicsCount() > 0) {
+        hash = (37 * hash) + TOPICS_FIELD_NUMBER;
+        hash = (53 * hash) + getTopicsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static Messages.Log parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static Messages.Log parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static Messages.Log parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static Messages.Log parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static Messages.Log parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static Messages.Log parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static Messages.Log parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static Messages.Log parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static Messages.Log parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static Messages.Log parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(Messages.Log prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code Log}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:Log)
+        Messages.LogOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return Messages.internal_static_Log_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return Messages.internal_static_Log_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                Messages.Log.class, Messages.Log.Builder.class);
+      }
+
+      // Construct using Messages.Log.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        topics_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return Messages.internal_static_Log_descriptor;
+      }
+
+      public Messages.Log getDefaultInstanceForType() {
+        return Messages.Log.getDefaultInstance();
+      }
+
+      public Messages.Log build() {
+        Messages.Log result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public Messages.Log buildPartial() {
+        Messages.Log result = new Messages.Log(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          topics_ = topics_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.topics_ = topics_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof Messages.Log) {
+          return mergeFrom((Messages.Log)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(Messages.Log other) {
+        if (other == Messages.Log.getDefaultInstance()) return this;
+        if (!other.topics_.isEmpty()) {
+          if (topics_.isEmpty()) {
+            topics_ = other.topics_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureTopicsIsMutable();
+            topics_.addAll(other.topics_);
+          }
+          onChanged();
+        }
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        Messages.Log parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (Messages.Log) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.LazyStringList topics_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureTopicsIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          topics_ = new com.google.protobuf.LazyStringArrayList(topics_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public com.google.protobuf.ProtocolStringList
+          getTopicsList() {
+        return topics_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public int getTopicsCount() {
+        return topics_.size();
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public java.lang.String getTopics(int index) {
+        return topics_.get(index);
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTopicsBytes(int index) {
+        return topics_.getByteString(index);
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public Builder setTopics(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureTopicsIsMutable();
+        topics_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public Builder addTopics(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureTopicsIsMutable();
+        topics_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public Builder addAllTopics(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureTopicsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, topics_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public Builder clearTopics() {
+        topics_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string topics = 1;</code>
+       */
+      public Builder addTopicsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureTopicsIsMutable();
+        topics_.add(value);
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:Log)
+    }
+
+    // @@protoc_insertion_point(class_scope:Log)
+    private static final Messages.Log DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new Messages.Log();
+    }
+
+    public static Messages.Log getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Log>
+        PARSER = new com.google.protobuf.AbstractParser<Log>() {
+      public Log parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new Log(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Log> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Log> getParserForType() {
+      return PARSER;
+    }
+
+    public Messages.Log getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12856,6 +13785,11 @@ public final class Messages {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_Receipt_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_Log_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_Log_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_Trace_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -12906,26 +13840,27 @@ public final class Messages {
       "\005index\030\014 \001(\t\022\021\n\tindex_raw\030\r \001(\t\022\r\n\005value",
       "\030\016 \001(\t\022\021\n\003srv\030\017 \001(\0132\004.SRV\022\017\n\007creates\030\020 \001" +
       "(\t\"&\n\003SRV\022\t\n\001s\030\001 \001(\t\022\t\n\001r\030\002 \001(\t\022\t\n\001v\030\003 \001" +
-      "(\004\"+\n\007Receipt\022\020\n\010gas_used\030\001 \001(\t\022\016\n\006statu" +
-      "s\030\002 \001(\t\"\337\002\n\005Trace\022\027\n\017subtraces_count\030\001 \001" +
-      "(\t\022\025\n\rtrace_address\030\002 \003(\t\022\030\n\020transaction" +
-      "_hash\030\003 \001(\t\022\034\n\024transaction_position\030\004 \001(" +
-      "\t\022\014\n\004type\030\005 \001(\t\022\035\n\006action\030\006 \001(\0162\r.Trace." +
-      "Action\022\023\n\004call\030\007 \001(\0132\005.Call\022\027\n\006create\030\010 " +
-      "\001(\0132\007.Create\022\027\n\006reward\030\t \001(\0132\007.Reward\022\031\n" +
-      "\007suicide\030\n \001(\0132\010.Suicide\022\027\n\006result\030\013 \001(\013",
-      "2\007.Result\022\r\n\005error\030\014 \001(\t\"7\n\006Action\022\010\n\004CA" +
-      "LL\020\000\022\n\n\006CREATE\020\001\022\n\n\006REWARD\020\002\022\013\n\007SUICIDE\020" +
-      "\003\"5\n\006Reward\022\016\n\006author\030\001 \001(\t\022\r\n\005value\030\002 \001" +
-      "(\t\022\014\n\004type\030\003 \001(\t\"Y\n\004Call\022\014\n\004type\030\001 \001(\t\022\014" +
-      "\n\004from\030\002 \001(\t\022\013\n\003gas\030\003 \001(\t\022\r\n\005input\030\004 \001(\t" +
-      "\022\n\n\002to\030\005 \001(\t\022\r\n\005value\030\006 \001(\t\"@\n\006Create\022\014\n" +
-      "\004from\030\001 \001(\t\022\013\n\003gas\030\002 \001(\t\022\014\n\004init\030\003 \001(\t\022\r" +
-      "\n\005value\030\004 \001(\t\"C\n\007Suicide\022\017\n\007address\030\001 \001(" +
-      "\t\022\017\n\007balance\030\002 \001(\t\022\026\n\016refund_address\030\003 \001" +
-      "(\t\"I\n\006Result\022\017\n\007address\030\001 \001(\t\022\014\n\004code\030\002 ",
-      "\001(\t\022\020\n\010gas_used\030\003 \001(\t\022\016\n\006output\030\004 \001(\tB\nB" +
-      "\010Messagesb\006proto3"
+      "(\004\"?\n\007Receipt\022\020\n\010gas_used\030\001 \001(\t\022\016\n\006statu" +
+      "s\030\002 \001(\t\022\022\n\004logs\030\003 \003(\0132\004.Log\"\025\n\003Log\022\016\n\006to" +
+      "pics\030\001 \003(\t\"\337\002\n\005Trace\022\027\n\017subtraces_count\030" +
+      "\001 \001(\t\022\025\n\rtrace_address\030\002 \003(\t\022\030\n\020transact" +
+      "ion_hash\030\003 \001(\t\022\034\n\024transaction_position\030\004" +
+      " \001(\t\022\014\n\004type\030\005 \001(\t\022\035\n\006action\030\006 \001(\0162\r.Tra" +
+      "ce.Action\022\023\n\004call\030\007 \001(\0132\005.Call\022\027\n\006create" +
+      "\030\010 \001(\0132\007.Create\022\027\n\006reward\030\t \001(\0132\007.Reward",
+      "\022\031\n\007suicide\030\n \001(\0132\010.Suicide\022\027\n\006result\030\013 " +
+      "\001(\0132\007.Result\022\r\n\005error\030\014 \001(\t\"7\n\006Action\022\010\n" +
+      "\004CALL\020\000\022\n\n\006CREATE\020\001\022\n\n\006REWARD\020\002\022\013\n\007SUICI" +
+      "DE\020\003\"5\n\006Reward\022\016\n\006author\030\001 \001(\t\022\r\n\005value\030" +
+      "\002 \001(\t\022\014\n\004type\030\003 \001(\t\"Y\n\004Call\022\014\n\004type\030\001 \001(" +
+      "\t\022\014\n\004from\030\002 \001(\t\022\013\n\003gas\030\003 \001(\t\022\r\n\005input\030\004 " +
+      "\001(\t\022\n\n\002to\030\005 \001(\t\022\r\n\005value\030\006 \001(\t\"@\n\006Create" +
+      "\022\014\n\004from\030\001 \001(\t\022\013\n\003gas\030\002 \001(\t\022\014\n\004init\030\003 \001(" +
+      "\t\022\r\n\005value\030\004 \001(\t\"C\n\007Suicide\022\017\n\007address\030\001" +
+      " \001(\t\022\017\n\007balance\030\002 \001(\t\022\026\n\016refund_address\030",
+      "\003 \001(\t\"I\n\006Result\022\017\n\007address\030\001 \001(\t\022\014\n\004code" +
+      "\030\002 \001(\t\022\020\n\010gas_used\030\003 \001(\t\022\016\n\006output\030\004 \001(\t" +
+      "B\nB\010Messagesb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -12962,39 +13897,45 @@ public final class Messages {
     internal_static_Receipt_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Receipt_descriptor,
-        new java.lang.String[] { "GasUsed", "Status", });
-    internal_static_Trace_descriptor =
+        new java.lang.String[] { "GasUsed", "Status", "Logs", });
+    internal_static_Log_descriptor =
       getDescriptor().getMessageTypes().get(4);
+    internal_static_Log_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_Log_descriptor,
+        new java.lang.String[] { "Topics", });
+    internal_static_Trace_descriptor =
+      getDescriptor().getMessageTypes().get(5);
     internal_static_Trace_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Trace_descriptor,
         new java.lang.String[] { "SubtracesCount", "TraceAddress", "TransactionHash", "TransactionPosition", "Type", "Action", "Call", "Create", "Reward", "Suicide", "Result", "Error", });
     internal_static_Reward_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_Reward_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Reward_descriptor,
         new java.lang.String[] { "Author", "Value", "Type", });
     internal_static_Call_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_Call_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Call_descriptor,
         new java.lang.String[] { "Type", "From", "Gas", "Input", "To", "Value", });
     internal_static_Create_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_Create_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Create_descriptor,
         new java.lang.String[] { "From", "Gas", "Init", "Value", });
     internal_static_Suicide_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_Suicide_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Suicide_descriptor,
         new java.lang.String[] { "Address", "Balance", "RefundAddress", });
     internal_static_Result_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_Result_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Result_descriptor,
