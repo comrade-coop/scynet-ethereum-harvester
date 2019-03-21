@@ -39,6 +39,11 @@ message SRV {
 message Receipt {
     string gas_used = 1;
     string status = 2;
+    repeated Log logs = 3
+}
+
+message Log {
+    repeated string topics = 1;
 }
 
 message Trace {
