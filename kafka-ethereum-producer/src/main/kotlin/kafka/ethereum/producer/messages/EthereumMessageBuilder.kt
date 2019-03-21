@@ -5,17 +5,16 @@ import org.web3j.protocol.core.methods.response.EthBlock
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.protocol.parity.methods.response.Trace
 import java.math.BigInteger
-import kafka.ethereum.producer.messages.Messages.*
-import kafka.ethereum.producer.parity.ParityWebSocketsService
+import org.web3j.protocol.parity.Parity
 
-class EthereumMessageBuilder {
+class EthereumMessageBuilder(
+    private val parityService: Parity
+) {
 
-    private val parityService = ParityWebSocketsService().startParity()
-
-    fun buildBlock(ethBlock: EthBlock.Block): Block {
+    fun buildBlock(ethBlock: EthBlock.Block): Messages.Block {
         val blockTraces = getBlockTraces(ethBlock.number)
         val transactions = getTransactions(ethBlock.transactions)
-        return Block.newBuilder()
+        return Messages.Block.newBuilder()
             .setAuthor(ethBlock.author)
             .setHash(ethBlock.hash)
             .setNumber(ethBlock.number.toString())
@@ -26,6 +25,7 @@ class EthereumMessageBuilder {
     }
 
     private fun buildTrace(blockTrace: Trace): Messages.Trace {
+        Messages.getDescriptor()
         val traceBuilder = Messages.Trace.newBuilder()
         val traceAction = blockTrace.action
         when (traceAction) {
@@ -59,8 +59,8 @@ class EthereumMessageBuilder {
         return trace
     }
 
-    private fun buildResult(blockTrace: Trace): Result {
-        return Result.newBuilder()
+    private fun buildResult(blockTrace: Trace): Messages.Result {
+        return Messages.Result.newBuilder()
             .setAddress(blockTrace.result?.address.orEmpty())
             .setCode(blockTrace.result?.code.orEmpty())
             .setGasUsed(blockTrace.result?.gasUsed?.toString().orEmpty())
@@ -68,8 +68,8 @@ class EthereumMessageBuilder {
             .build()
     }
 
-    private fun buildSuicideAction(traceAction: Trace.SuicideAction): Suicide {
-        return Suicide.newBuilder()
+    private fun buildSuicideAction(traceAction: Trace.SuicideAction): Messages.Suicide {
+        return Messages.Suicide.newBuilder()
             .setAddress(traceAction.address.orEmpty())
             .setBalance(traceAction.balance?.toString().orEmpty())
             .setRefundAddress(traceAction.refundAddress.orEmpty())
@@ -104,13 +104,13 @@ class EthereumMessageBuilder {
             .build()
     }
 
-    private fun getReceipt(transactionHash: String?): Receipt {
+    private fun getReceipt(transactionHash: String?): Messages.Receipt {
         val receipt = parityService.ethGetTransactionReceipt(transactionHash).send().transactionReceipt.get()
         return buildReceipt(receipt)
     }
 
-    private fun buildReceipt(receipt: TransactionReceipt): Receipt {
-        return Receipt.newBuilder()
+    private fun buildReceipt(receipt: TransactionReceipt): Messages.Receipt {
+        return Messages.Receipt.newBuilder()
             .setGasUsed(receipt.gasUsed?.toString().orEmpty())
             .setStatus(receipt.status.orEmpty())
             .build()
