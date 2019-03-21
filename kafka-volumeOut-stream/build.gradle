@@ -9,7 +9,7 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Kafka VolumeOut Stream',
                 'Implementation-Version': version,
-                'Main-Class': 'kafka.balance.stream.VolumeOutStream'
+                'Main-Class': 'kafka.volumeOut.stream.VolumeOutStream'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -39,9 +39,9 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }

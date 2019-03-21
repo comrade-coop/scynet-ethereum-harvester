@@ -6,6 +6,6 @@ import org.apache.kafka.streams.processor.Processor
 
 class VolumeOutProcessorSupplier: ProcessorSupplier<String, Messages.Block> {
     override fun get(): Processor<String, Messages.Block> {
-        return VolumeOutProcessor(VolumeOutExtractor())
+        return VolumeOutProcessor()
     }
 }
