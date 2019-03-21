@@ -1,5 +1,4 @@
 package kafka.transactionsNumber.stream.processor
-import java.math.BigInteger
 
 class TransactionsNumberCalculator {
     companion object {

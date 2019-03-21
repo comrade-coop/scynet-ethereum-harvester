@@ -8,6 +8,9 @@ import java.math.BigInteger
 
 class TransactionsNumberProcessor(): Processor<String, Messages.Block> {
 
+    private val ONE: Int = 1
+    private val NEGATIVE_ONE: Int = -1
+
     private var context: ProcessorContext? = null
     private var addressTransactionsNumberStore: KeyValueStore<String, String>? = null
     private var blockNumberAddressTransactionsNumberStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
@@ -16,8 +19,6 @@ class TransactionsNumberProcessor(): Processor<String, Messages.Block> {
     private var firstBlockNumber: Int? = null
     private var lastProcessedBlockNumber: Int? = null
     private var currentBlockNumber: Int? = null
-    private val one: Int = 1
-    private val negativeOne: Int = -1
 
     override fun process(blockNumber: String, block: Messages.Block) {
         try {
@@ -37,13 +38,13 @@ class TransactionsNumberProcessor(): Processor<String, Messages.Block> {
         this.synchronizationStore = context.getStateStore("SynchronizationStore") as KeyValueStore<String, String>
 
         val firstBlockNumberString = synchronizationStore!!.get("firstBlockNumber")
-        firstBlockNumber = if (firstBlockNumberString.isNullOrEmpty()) negativeOne else firstBlockNumberString.toInt()
+        firstBlockNumber = if (firstBlockNumberString.isNullOrEmpty()) NEGATIVE_ONE else firstBlockNumberString.toInt()
 
         val endOfTickString = synchronizationStore!!.get("endOfTick")
-        endOfTick = if (endOfTickString.isNullOrEmpty()) BigInteger.valueOf(negativeOne.toLong()) else endOfTickString.toBigInteger()
+        endOfTick = if (endOfTickString.isNullOrEmpty()) BigInteger.valueOf(NEGATIVE_ONE.toLong()) else endOfTickString.toBigInteger()
 
         val lastProcessedBlockNumberString = synchronizationStore!!.get("lastProcessedBlockNumber")
-        lastProcessedBlockNumber = if(lastProcessedBlockNumberString.isNullOrEmpty()) negativeOne else lastProcessedBlockNumberString.toInt()
+        lastProcessedBlockNumber = if(lastProcessedBlockNumberString.isNullOrEmpty()) NEGATIVE_ONE else lastProcessedBlockNumberString.toInt()
     }
 
     override fun close() {
@@ -76,7 +77,7 @@ class TransactionsNumberProcessor(): Processor<String, Messages.Block> {
     }
 
     private fun notSetEndOfTick(): Boolean {
-        if (endOfTick == BigInteger.valueOf(negativeOne.toLong()))
+        if (endOfTick == BigInteger.valueOf(NEGATIVE_ONE.toLong()))
             return true
         return false
     }
@@ -115,11 +116,11 @@ class TransactionsNumberProcessor(): Processor<String, Messages.Block> {
             removeBlockEntriesFromAddressTransactionsNumberStore(firstBlockAddressTransactionsNumber)
             blockNumberAddressTransactionsNumberStore!!.delete(firstBlockNumber)
 
-            setFirstBlockNumber(firstBlockNumber!! + one)
+            setFirstBlockNumber(firstBlockNumber!! + ONE)
 
             val firstBlockTimestamp = blockNumberAddressTransactionsNumberStore!!
                     .get(firstBlockNumber)
-                    .getAddressFeatureOrDefault("timestamp", negativeOne.toString())
+                    .getAddressFeatureOrDefault("timestamp", NEGATIVE_ONE.toString())
                     .toBigInteger()
             setEndOfTick(firstBlockTimestamp)
         }
@@ -176,7 +177,7 @@ class TransactionsNumberProcessor(): Processor<String, Messages.Block> {
     private fun addToAddressTransactionNumberStore(address: String) {
         val previousTransactionsNumber = addressTransactionsNumberStore!!.get(address)
         if (previousTransactionsNumber.isNullOrEmpty()) {
-            addressTransactionsNumberStore!!.put(address, one.toString())
+            addressTransactionsNumberStore!!.put(address, ONE.toString())
         } else {
             addressTransactionsNumberStore!!.put(address, TransactionsNumberCalculator.increaseByOne(previousTransactionsNumber))
         }
@@ -184,9 +185,9 @@ class TransactionsNumberProcessor(): Processor<String, Messages.Block> {
 
     private fun addToBlockNumberTransactionsNumberStore(address: String) {
         val builder = blockNumberAddressTransactionsNumberStore!!.get(currentBlockNumber).toBuilder()
-        val previousTransactionsNumber = builder.getAddressFeatureOrDefault(address, negativeOne.toString())
-        if (previousTransactionsNumber == negativeOne.toString()) {
-            builder.putAddressFeature(address, one.toString())
+        val previousTransactionsNumber = builder.getAddressFeatureOrDefault(address, NEGATIVE_ONE.toString())
+        if (previousTransactionsNumber == NEGATIVE_ONE.toString()) {
+            builder.putAddressFeature(address, ONE.toString())
         } else {
             builder.putAddressFeature(address, TransactionsNumberCalculator.increaseByOne(previousTransactionsNumber))
         }
