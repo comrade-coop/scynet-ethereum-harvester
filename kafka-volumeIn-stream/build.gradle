@@ -9,7 +9,7 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Kafka VolumeIn Stream',
                 'Implementation-Version': version,
-                'Main-Class': 'kafka.volumeIn.stream.VolumeInStream'
+                'Main-Class': 'kafka.volumeIn.stream.VolumeInStreamKt'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
