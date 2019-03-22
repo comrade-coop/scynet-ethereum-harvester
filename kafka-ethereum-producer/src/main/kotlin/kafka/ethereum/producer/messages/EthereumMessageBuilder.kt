@@ -2,6 +2,7 @@ package kafka.ethereum.producer.messages
 
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.response.EthBlock
+import org.web3j.protocol.core.methods.response.Log
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.protocol.parity.methods.response.Trace
 import java.math.BigInteger
@@ -113,6 +114,19 @@ class EthereumMessageBuilder(
         return Messages.Receipt.newBuilder()
             .setGasUsed(receipt.gasUsed?.toString().orEmpty())
             .setStatus(receipt.status.orEmpty())
+            .addAllLogs(buildLogs(receipt.logs))
+            .build()
+    }
+
+    private fun buildLogs(ethLogs: List<Log>): List<Messages.Log> {
+        return ethLogs
+            .map { ethLog: Log -> buildLog(ethLog) }
+            .toList()
+    }
+
+    private fun buildLog(ethLog: Log): Messages.Log {
+        return Messages.Log.newBuilder()
+            .addAllTopics(ethLog.topics)
             .build()
     }
 
@@ -130,7 +144,6 @@ class EthereumMessageBuilder(
                 buildTransaction(ethTransaction)
             }
     }
-
 
     private fun buildTransaction(transaction: EthBlock.TransactionObject): Messages.Transaction {
         val traces = getTraces(transaction.hash)
