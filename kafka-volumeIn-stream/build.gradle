@@ -26,8 +26,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation 'com.github.googleapis.gax-kotlin:kgax-grpc:master-SNAPSHOT'
     implementation "org.apache.kafka:kafka-streams:2.1.0"
-    implementation "org.web3j:core:4.1.0"
-    implementation "org.web3j:parity:4.1.0"
     implementation 'com.google.protobuf:protobuf-gradle-plugin:0.8.7'
     testImplementation group: 'org.apache.kafka', name: 'kafka-streams-test-utils', version: '2.1.0'
 

@@ -26,8 +26,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile 'com.github.googleapis.gax-kotlin:kgax-grpc:master-SNAPSHOT'
     compile "org.apache.kafka:kafka-streams:2.1.0"
-    compile "org.web3j:core:4.1.0"
-    compile "org.web3j:parity:4.1.0"
     compile 'com.google.protobuf:protobuf-gradle-plugin:0.8.7'
 }
 
