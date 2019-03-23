@@ -1,7 +1,7 @@
-package kafka.transferLogsNumber.stream.config
+package kafka.transferLogsCount.stream.config
 
-import kafka.transferLogsNumber.stream.messages.AddressFeature
-import kafka.transferLogsNumber.stream.serialization.AddressFeatureSerdes
+import kafka.transferLogsCount.stream.messages.AddressFeature
+import kafka.transferLogsCount.stream.serialization.AddressFeatureSerdes
 import org.apache.kafka.common.config.TopicConfig
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
@@ -15,7 +15,7 @@ class StreamConfig {
         fun getStreamProperties(): Properties {
             return Properties().apply {
                 setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:29092")
-                setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "transferLogsNumber")
+                setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "transferLogsCount")
                 setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
                 setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
                 setProperty("cleanup.policy", TopicConfig.CLEANUP_POLICY_COMPACT) // currently set up manually for Sink
@@ -24,17 +24,17 @@ class StreamConfig {
             }
         }
 
-        fun getAddressTransferLogsNumberStoreSupplier(): StoreBuilder<KeyValueStore<String, String>> {
+        fun getAddressTransferLogsCountStoreSupplier(): StoreBuilder<KeyValueStore<String, String>> {
             return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("AddressTransferLogsNumber"),
+                    Stores.persistentKeyValueStore("AddressTransferLogsCount"),
                     Serdes.String(),
                     Serdes.String()
             )
         }
 
-        fun getBlockAddressTransferLogsNumberSupplier(): StoreBuilder<KeyValueStore<Int, AddressFeature.AddressFeatureMap>> {
+        fun getBlockAddressTransferLogsCountSupplier(): StoreBuilder<KeyValueStore<Int, AddressFeature.AddressFeatureMap>> {
             return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("BlockNumberAddressTransferLogsNumber"),
+                    Stores.persistentKeyValueStore("BlockNumberAddressTransferLogsCount"),
                     Serdes.Integer(),
                     AddressFeatureSerdes()
             )

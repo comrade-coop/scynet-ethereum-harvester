@@ -1,7 +1,7 @@
-package kafka.transferLogsNumber.stream.serialization
+package kafka.transferLogsCount.stream.serialization
 
 import org.apache.kafka.common.serialization.Deserializer
-import kafka.transferLogsNumber.stream.messages.AddressFeature
+import kafka.transferLogsCount.stream.messages.AddressFeature
 
 class AddressFeatureMapDeserializer : Deserializer<AddressFeature.AddressFeatureMap> {
 

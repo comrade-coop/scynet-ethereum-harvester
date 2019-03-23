@@ -7,9 +7,9 @@ group 'ai.scynet.harvester'
 version '1.0-SNAPSHOT'
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'Kafka Tranfer Logs Number Stream',
+        attributes 'Implementation-Title': 'Kafka Tranfer Logs Count Stream',
                 'Implementation-Version': version,
-                'Main-Class': 'kafka.transferLogsNumber.stream.TransferLogsNumberStreamKt'
+                'Main-Class': 'kafka.transferLogsCount.stream.TransferLogsCountStreamKt'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }

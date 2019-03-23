@@ -1,9 +1,9 @@
-package kafka.transferLogsNumber.stream.serialization
+package kafka.transferLogsCount.stream.serialization
 
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serializer
-import kafka.transferLogsNumber.stream.messages.AddressFeature
+import kafka.transferLogsCount.stream.messages.AddressFeature
 
 class AddressFeatureSerdes: Serde<AddressFeature.AddressFeatureMap> {
 

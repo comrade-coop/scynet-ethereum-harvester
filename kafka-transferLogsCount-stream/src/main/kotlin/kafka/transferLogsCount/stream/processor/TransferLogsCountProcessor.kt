@@ -1,21 +1,21 @@
-package kafka.transferLogsNumber.stream.processor
+package kafka.transferLogsCount.stream.processor
 
-import kafka.transferLogsNumber.stream.messages.AddressFeature
-import kafka.transferLogsNumber.stream.messages.Messages
+import kafka.transferLogsCount.stream.messages.AddressFeature
+import kafka.transferLogsCount.stream.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
 
-class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
+class TransferLogsCountProcessor() : Processor<String, Messages.Block> {
 
     private val ONE: Int = 1
     private val NEGATIVE_ONE: Int = -1
     private val TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 
     private var context: ProcessorContext? = null
-    private var addressTransferLogsNumberStore: KeyValueStore<String, String>? = null
-    private var blockNumberAddressTransferLogsNumberStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
+    private var addressTransferLogsCountStore: KeyValueStore<String, String>? = null
+    private var blockNumberAddressTransferLogsCountStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
     private var synchronizationStore: KeyValueStore<String, String>? = null
     private var endOfTick: BigInteger? = null
     private var firstBlockNumber: Int? = null
@@ -35,8 +35,8 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
     override fun init(context: ProcessorContext) {
         this.context = context
 
-        this.addressTransferLogsNumberStore = context.getStateStore("AddressTransferLogsNumber") as KeyValueStore<String, String>
-        this.blockNumberAddressTransferLogsNumberStore = context.getStateStore("BlockNumberAddressTransferLogsNumber") as KeyValueStore<Int, AddressFeature.AddressFeatureMap>
+        this.addressTransferLogsCountStore = context.getStateStore("AddressTransferLogsCount") as KeyValueStore<String, String>
+        this.blockNumberAddressTransferLogsCountStore = context.getStateStore("BlockNumberAddressTransferLogsCount") as KeyValueStore<Int, AddressFeature.AddressFeatureMap>
         this.synchronizationStore = context.getStateStore("SynchronizationStore") as KeyValueStore<String, String>
 
         val firstBlockNumberString = synchronizationStore!!.get("firstBlockNumber")
@@ -64,10 +64,10 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
         addAddressFeatureBuilderWithTimestampForBlock(block)
 
         if (notInTick(block.timestamp.toBigInteger())) {
-            commitTransferLogsNumber()
+            commitTransferLogsCount()
             slideTickForward(block.timestamp.toBigInteger())
         }
-        extractAddressTransferLogsNumberFromTransactions(block)
+        extractAddressTransferLogsCountFromTransactions(block)
         setLastProcessedBlock(blockNumber.toString())
     }
 
@@ -97,7 +97,7 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
     private fun addAddressFeatureBuilderWithTimestampForBlock(block: Messages.Block) {
         currentBlockNumber = block.number.toInt()
         val builder = AddressFeature.AddressFeatureMap.newBuilder().putAddressFeature("timestamp", block.timestamp)
-        blockNumberAddressTransferLogsNumberStore!!.put(currentBlockNumber, builder.build())
+        blockNumberAddressTransferLogsCountStore!!.put(currentBlockNumber, builder.build())
     }
 
     private fun notInTick(timestamp: BigInteger): Boolean {
@@ -106,21 +106,21 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
         return false
     }
 
-    private fun commitTransferLogsNumber() {
-        val addressTransferLogsNumberMap = buildAddressTransferLogsNumberMap()
-        context!!.forward(endOfTick.toString(), addressTransferLogsNumberMap)
+    private fun commitTransferLogsCount() {
+        val addressTransferLogsCountMap = buildAddressTransferLogsCountMap()
+        context!!.forward(endOfTick.toString(), addressTransferLogsCountMap)
         context!!.commit()
     }
 
     private fun slideTickForward(timestamp: BigInteger) {
         while (notInTick(timestamp)) {
-            val firstBlockAddressTransferLogsNumber = blockNumberAddressTransferLogsNumberStore!!.get(firstBlockNumber)
-            removeBlockEntriesFromAddressTransferLogsNumberStore(firstBlockAddressTransferLogsNumber)
-            blockNumberAddressTransferLogsNumberStore!!.delete(firstBlockNumber)
+            val firstBlockAddressTransferLogsCount = blockNumberAddressTransferLogsCountStore!!.get(firstBlockNumber)
+            removeBlockEntriesFromAddressTransferLogsCountStore(firstBlockAddressTransferLogsCount)
+            blockNumberAddressTransferLogsCountStore!!.delete(firstBlockNumber)
 
             setFirstBlockNumber(firstBlockNumber!! + ONE)
 
-            val firstBlockTimestamp = blockNumberAddressTransferLogsNumberStore!!
+            val firstBlockTimestamp = blockNumberAddressTransferLogsCountStore!!
                     .get(firstBlockNumber)
                     .getAddressFeatureOrDefault("timestamp", NEGATIVE_ONE.toString())
                     .toBigInteger()
@@ -132,15 +132,15 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
         synchronizationStore!!.put("lastProcessedBlockNumber", blockNumber)
     }
 
-    private fun buildAddressTransferLogsNumberMap(): AddressFeature.AddressFeatureMap {
+    private fun buildAddressTransferLogsCountMap(): AddressFeature.AddressFeatureMap {
         val builder = AddressFeature.AddressFeatureMap.newBuilder()
-        addressTransferLogsNumberStore!!.all().forEach { addressTransferLogsNumber ->
-            builder.putAddressFeature(addressTransferLogsNumber.key, addressTransferLogsNumber.value)
+        addressTransferLogsCountStore!!.all().forEach { addressTransferLogsCount ->
+            builder.putAddressFeature(addressTransferLogsCount.key, addressTransferLogsCount.value)
         }
         return builder.build()
     }
 
-    private fun extractAddressTransferLogsNumberFromTransactions(block: Messages.Block) {
+    private fun extractAddressTransferLogsCountFromTransactions(block: Messages.Block) {
         block.transactionsList.forEach { transaction ->
             transaction.receipt.logsList.forEach { log ->
                 if (isTransferLog(log)) {
@@ -155,35 +155,35 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
     }
 
     private fun addToStores(address: String) {
-        addToAddressTransferLogsNumberStore(address)
-        addToBlockNumberTransferLogsNumberStore(address)
+        addToAddressTransferLogsCountStore(address)
+        addToBlockNumberTransferLogsCountStore(address)
     }
 
-    private fun addToAddressTransferLogsNumberStore(address: String) {
-        val previousTransferLogsNumber = addressTransferLogsNumberStore!!.get(address)
-        if (previousTransferLogsNumber.isNullOrEmpty()) {
-            addressTransferLogsNumberStore!!.put(address, ONE.toString())
+    private fun addToAddressTransferLogsCountStore(address: String) {
+        val previousTransferLogsCount = addressTransferLogsCountStore!!.get(address)
+        if (previousTransferLogsCount.isNullOrEmpty()) {
+            addressTransferLogsCountStore!!.put(address, ONE.toString())
         } else {
-            addressTransferLogsNumberStore!!.put(address, TransferLogsNumberCalculator.increaseByOne(previousTransferLogsNumber))
+            addressTransferLogsCountStore!!.put(address, TransferLogsCountCalculator.increaseByOne(previousTransferLogsCount))
         }
     }
 
-    private fun addToBlockNumberTransferLogsNumberStore(address: String) {
-        val builder = blockNumberAddressTransferLogsNumberStore!!.get(currentBlockNumber).toBuilder()
-        val previousTransferLogsNumber = builder.getAddressFeatureOrDefault(address, NEGATIVE_ONE.toString())
-        if (previousTransferLogsNumber == NEGATIVE_ONE.toString()) {
+    private fun addToBlockNumberTransferLogsCountStore(address: String) {
+        val builder = blockNumberAddressTransferLogsCountStore!!.get(currentBlockNumber).toBuilder()
+        val previousTransferLogsCount = builder.getAddressFeatureOrDefault(address, NEGATIVE_ONE.toString())
+        if (previousTransferLogsCount == NEGATIVE_ONE.toString()) {
             builder.putAddressFeature(address, ONE.toString())
         } else {
-            builder.putAddressFeature(address, TransferLogsNumberCalculator.increaseByOne(previousTransferLogsNumber))
+            builder.putAddressFeature(address, TransferLogsCountCalculator.increaseByOne(previousTransferLogsCount))
         }
-        blockNumberAddressTransferLogsNumberStore!!.put(currentBlockNumber, builder.build())
+        blockNumberAddressTransferLogsCountStore!!.put(currentBlockNumber, builder.build())
     }
 
-    private fun removeBlockEntriesFromAddressTransferLogsNumberStore(firstBlockAddressTransferLogsNumber: AddressFeature.AddressFeatureMap) {
-        firstBlockAddressTransferLogsNumber.addressFeatureMap.forEach { address, transferLogsNumber ->
+    private fun removeBlockEntriesFromAddressTransferLogsCountStore(firstBlockAddressTransferLogsCount: AddressFeature.AddressFeatureMap) {
+        firstBlockAddressTransferLogsCount.addressFeatureMap.forEach { address, transferLogsCount ->
             if (address == "timestamp") return@forEach
-            val previousTransferLogsNumber = addressTransferLogsNumberStore!!.get(address)
-            addressTransferLogsNumberStore!!.put(address, TransferLogsNumberCalculator.subtract(previousTransferLogsNumber, transferLogsNumber))
+            val previousTransferLogsCount = addressTransferLogsCountStore!!.get(address)
+            addressTransferLogsCountStore!!.put(address, TransferLogsCountCalculator.subtract(previousTransferLogsCount, transferLogsCount))
         }
     }
 }

@@ -1,4 +1,4 @@
-package kafka.transferLogsNumber.stream.messages;
+package kafka.transferLogsCount.stream.messages;
 
 public final class AddressFeature {
   private AddressFeature() {}

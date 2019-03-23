@@ -1,7 +1,7 @@
-package kafka.transferLogsNumber.stream.serialization
+package kafka.transferLogsCount.stream.serialization
 
-import kafka.transferLogsNumber.stream.messages.Messages.Block
-import org.apache.kafka.common.serialization.Deserializer;
+import kafka.transferLogsCount.stream.messages.Messages.Block
+import org.apache.kafka.common.serialization.Deserializer
 
 class BlockDeserializer : Deserializer<Block> {
 
