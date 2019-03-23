@@ -1,6 +1,5 @@
 package kafka.uniqueAccounts.stream.processor
 
-import kafka.uniqueAccounts.stream.messages.AddressFeature
 import kafka.uniqueAccounts.stream.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
@@ -15,7 +14,7 @@ class UniqueAccountsProcessor : Processor<String, Messages.Block> {
     private val ZERO = "0"
 
     private var context: ProcessorContext? = null
-    private var blockNumberUniqueAccounts: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
+    private var blockNumberUniqueAccounts: KeyValueStore<Int, String>? = null
     private var synchronizationStore: KeyValueStore<String, String>? = null
 
     override fun process(blockNumber: String, block: Messages.Block) {
@@ -32,19 +31,13 @@ class UniqueAccountsProcessor : Processor<String, Messages.Block> {
 
         extractUniqueAccounts(block)
 
-        val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
-        addressFeatureBuilder.putAddressFeature(blockNumber, getTotalCount())
-
-        context!!.forward(blockNumber, addressFeatureBuilder.build())
+        context!!.forward(blockNumber, getTotalCount())
         context!!.commit()
-
-        println("TOTAL COUNT: " + getTotalCount())
-        println("BLOCK NUMBER: " + blockNumber)
     }
 
     override fun init(context: ProcessorContext) {
         this.context = context
-        this.blockNumberUniqueAccounts = context.getStateStore("BlockNumberUniqueAccounts") as KeyValueStore<Int, AddressFeature.AddressFeatureMap>
+        this.blockNumberUniqueAccounts = context.getStateStore("BlockNumberUniqueAccounts") as KeyValueStore<Int, String>
         this.synchronizationStore = context.getStateStore("SynchronizationStore") as KeyValueStore<String, String>
     }
 
