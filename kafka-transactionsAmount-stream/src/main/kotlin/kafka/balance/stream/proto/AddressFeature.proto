@@ -1,7 +1,0 @@
-syntax="proto3";
-
-option java_outer_classname = "AddressFeature";
-
-message AddressFeatureMap{
-    map<string, string> address_feature = 1;
-}
