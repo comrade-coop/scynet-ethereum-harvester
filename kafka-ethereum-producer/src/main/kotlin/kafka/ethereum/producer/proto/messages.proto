@@ -9,6 +9,11 @@ message Block {
     repeated Transaction transactions = 4;
     repeated Trace traces = 5; 
     string author = 6;
+    string size = 7;
+    string difficulty = 8;
+    string totalDifficulty = 9;
+    string gasUsed = 10;
+    string gasLimit = 11;
 }
 
 message Transaction {
