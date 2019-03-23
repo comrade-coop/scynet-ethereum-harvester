@@ -37,9 +37,6 @@ class UniqueAccountsProcessor : Processor<String, Messages.Block> {
 
         context!!.forward(blockNumber, addressFeatureBuilder.build())
         context!!.commit()
-
-        println("TOTAL COUNT: " + getTotalCount())
-        println("BLOCK NUMBER: " + blockNumber)
     }
 
     override fun init(context: ProcessorContext) {
