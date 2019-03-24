@@ -1,6 +1,6 @@
 package kafka.lastSeen.stream.config
 
-import kafka.lastSeen.stream.serialization.AddressFeatureSerdes
+import harvester.common.serialization.AddressFeatureSerdes
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.state.KeyValueStore
