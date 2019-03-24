@@ -1,13 +1,11 @@
 package kafka.balance.stream
 
+import harvester.common.serialization.BlockDeserializer
 import kafka.balance.stream.config.StreamConfig
-import kafka.balance.stream.messages.Messages
-import kafka.balance.stream.serialization.BlockDeserializer
 import kafka.balance.stream.processor.AddressBalanceProcessorSupplier
-import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.kafka.streams.*
-import org.apache.kafka.streams.kstream.Consumed
+import org.apache.kafka.streams.KafkaStreams
+import org.apache.kafka.streams.Topology
 
 fun main(args: Array<String>) {
     BalanceStream().start()
@@ -18,7 +16,7 @@ class BalanceStream(){
         val balanceStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
         balanceStream.cleanUp()
         balanceStream.start()
-        Runtime.getRuntime().addShutdownHook(Thread(balanceStream::close));
+        Runtime.getRuntime().addShutdownHook(Thread(balanceStream::close))
     }
 
     fun getTopology(): Topology{

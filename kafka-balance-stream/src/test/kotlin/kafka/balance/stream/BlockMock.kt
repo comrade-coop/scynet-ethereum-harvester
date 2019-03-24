@@ -1,6 +1,6 @@
 package kafka.balance.stream
 
-import kafka.balance.stream.messages.Messages
+import harvester.common.messages.Messages
 
 fun getMockedBlock(numberOfBlocks: Int, numberOfTransactionsPerBlock: Int, numberOfTracesPerTransaction: Int): List<Messages.Block> {
     val blocks = ArrayList<Messages.Block>()

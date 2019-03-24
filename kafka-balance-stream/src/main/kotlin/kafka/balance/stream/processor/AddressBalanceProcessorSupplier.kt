@@ -1,6 +1,6 @@
 package kafka.balance.stream.processor
 
-import kafka.balance.stream.messages.Messages
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorSupplier
 

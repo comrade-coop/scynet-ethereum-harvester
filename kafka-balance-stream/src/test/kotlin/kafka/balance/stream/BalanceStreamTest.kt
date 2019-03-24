@@ -1,9 +1,11 @@
 package kafka.balance.stream
 
-import kafka.balance.stream.messages.Messages
+import harvester.common.messages.AddressFeature
+import harvester.common.messages.Messages
+import harvester.common.serialization.AddressFeatureMapDeserializer
+import harvester.common.serialization.AddressFeatureSerdes
+import harvester.common.serialization.BlockSerializer
 import org.apache.kafka.streams.TopologyTestDriver
-import kafka.balance.stream.messages.AddressFeature
-import kafka.balance.stream.serialization.*
 import org.apache.kafka.common.serialization.*
 import kotlin.test.Test
 import java.util.*
@@ -45,7 +47,7 @@ class BalanceStreamTest {
         for(block: Messages.Block in blocks){
                 testDriver?.pipeInput(factory.create("ethereum_blocks", "0",  block))
         }
-        var outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressFeatureMapDeserializer())
+        val outputRecord = testDriver?.readOutput("balance", StringDeserializer(), AddressFeatureMapDeserializer())
         val correctOutputMap = HashMap<String, String>()
         correctOutputMap.put("transaction_sender", "-4")
         correctOutputMap.put("trace_sender", "-21")
