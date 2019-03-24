@@ -1,7 +1,7 @@
 package kafka.volumeOut.stream.config
 
-import kafka.volumeOut.stream.messages.AddressFeature
-import kafka.volumeOut.stream.serialization.AddressFeatureSerdes
+import harvester.common.messages.AddressFeature
+import harvester.common.serialization.AddressFeatureSerdes
 import org.apache.kafka.common.config.TopicConfig
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig

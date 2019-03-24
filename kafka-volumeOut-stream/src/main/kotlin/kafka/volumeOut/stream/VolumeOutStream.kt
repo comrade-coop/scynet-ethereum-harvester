@@ -1,7 +1,7 @@
 package kafka.volumeOut.stream
 
+import harvester.common.serialization.BlockDeserializer
 import kafka.volumeOut.stream.config.StreamConfig
-import kafka.volumeOut.stream.serialization.BlockDeserializer
 import kafka.volumeOut.stream.processor.VolumeOutProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
@@ -15,7 +15,7 @@ class VolumeOutStream(){
         val volumeOutStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
         volumeOutStream.cleanUp()
         volumeOutStream.start()
-        Runtime.getRuntime().addShutdownHook(Thread(volumeOutStream::close));
+        Runtime.getRuntime().addShutdownHook(Thread(volumeOutStream::close))
     }
 
     fun getTopology(): Topology{
