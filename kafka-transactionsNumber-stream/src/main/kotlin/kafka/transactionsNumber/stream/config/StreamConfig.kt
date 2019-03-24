@@ -1,7 +1,7 @@
 package kafka.transactionsNumber.stream.config
 
-import kafka.transactionsNumber.stream.messages.AddressFeature
-import kafka.transactionsNumber.stream.serialization.AddressFeatureSerdes
+import harvester.common.messages.AddressFeature
+import harvester.common.serialization.AddressFeatureSerdes
 import org.apache.kafka.common.config.TopicConfig
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
