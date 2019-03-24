@@ -1,11 +1,11 @@
 package harvester.common.serialization
 
-import harvester.common.messages.Messages.Block
+import harvester.common.messages.Messages
 import org.apache.kafka.common.serialization.Serializer
 
-class BlockSerializer : Serializer<Block> {
+class BlockSerializer : Serializer<Messages.Block> {
 
-    override fun serialize(topic: String?, data: Block): ByteArray {
+    override fun serialize(topic: String?, data: Messages.Block): ByteArray {
         return data.toByteArray()
     }
 

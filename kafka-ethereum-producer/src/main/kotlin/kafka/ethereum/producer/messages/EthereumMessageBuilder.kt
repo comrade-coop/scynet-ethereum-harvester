@@ -1,5 +1,6 @@
 package kafka.ethereum.producer.messages
 
+import harvester.common.messages.Messages
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.response.EthBlock
 import org.web3j.protocol.core.methods.response.Log

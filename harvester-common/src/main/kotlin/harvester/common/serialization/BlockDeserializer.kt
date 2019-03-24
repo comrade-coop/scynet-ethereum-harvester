@@ -1,12 +1,12 @@
 package harvester.common.serialization
 
-import harvester.common.messages.Messages.Block
+import harvester.common.messages.Messages
 import org.apache.kafka.common.serialization.Deserializer
 
-class BlockDeserializer : Deserializer<Block> {
+class BlockDeserializer : Deserializer<Messages.Block> {
 
-    override fun deserialize(topic: String?, data: ByteArray?): Block {
-        return Block.parseFrom(data)
+    override fun deserialize(topic: String?, data: ByteArray?): Messages.Block {
+        return Messages.Block.parseFrom(data)
     }
 
     override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {

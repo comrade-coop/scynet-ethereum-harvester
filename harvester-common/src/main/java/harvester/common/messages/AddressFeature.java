@@ -126,7 +126,7 @@ public final class AddressFeature {
               "Invalid map field number: " + number);
       }
     }
-    protected FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return AddressFeature.internal_static_AddressFeatureMap_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
@@ -357,7 +357,7 @@ public final class AddressFeature {
 
     @Override
     protected Builder newBuilderForType(
-        BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -395,7 +395,7 @@ public final class AddressFeature {
                 "Invalid map field number: " + number);
         }
       }
-      protected FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return AddressFeature.internal_static_AddressFeatureMap_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -408,7 +408,7 @@ public final class AddressFeature {
       }
 
       private Builder(
-          BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
