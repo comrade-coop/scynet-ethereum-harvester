@@ -1,7 +1,7 @@
 package kafka.volumeIn.stream
 
+import harvester.common.serialization.BlockDeserializer
 import kafka.volumeIn.stream.config.StreamConfig
-import kafka.volumeIn.stream.serialization.BlockDeserializer
 import kafka.volumeIn.stream.processor.VolumeInProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
