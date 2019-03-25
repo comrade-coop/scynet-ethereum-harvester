@@ -22,14 +22,6 @@ class StreamConfig {
             }
         }
 
-        fun getBlockNumberUniqueAccountsStoreSupplier(): StoreBuilder<KeyValueStore<Int, String>> {
-            return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("BlockNumberUniqueAccounts"),
-                    Serdes.Integer(),
-                    Serdes.String()
-            )
-        }
-
         fun getSynchronizationStoreSupplier(): StoreBuilder<KeyValueStore<String, String>>{
             return Stores.keyValueStoreBuilder(
                     Stores.persistentKeyValueStore("SynchronizationStore"),

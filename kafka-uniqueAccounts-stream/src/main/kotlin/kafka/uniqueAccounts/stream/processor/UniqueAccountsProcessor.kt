@@ -1,6 +1,6 @@
 package kafka.uniqueAccounts.stream.processor
 
-import kafka.uniqueAccounts.stream.messages.Messages
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
@@ -14,7 +14,6 @@ class UniqueAccountsProcessor : Processor<String, Messages.Block> {
     private val ZERO = "0"
 
     private var context: ProcessorContext? = null
-    private var blockNumberUniqueAccounts: KeyValueStore<Int, String>? = null
     private var synchronizationStore: KeyValueStore<String, String>? = null
 
     override fun process(blockNumber: String, block: Messages.Block) {
@@ -37,7 +36,6 @@ class UniqueAccountsProcessor : Processor<String, Messages.Block> {
 
     override fun init(context: ProcessorContext) {
         this.context = context
-        this.blockNumberUniqueAccounts = context.getStateStore("BlockNumberUniqueAccounts") as KeyValueStore<Int, String>
         this.synchronizationStore = context.getStateStore("SynchronizationStore") as KeyValueStore<String, String>
     }
 
@@ -67,6 +65,7 @@ class UniqueAccountsProcessor : Processor<String, Messages.Block> {
                 "suicide" -> updateSynchronizationStore(trace.suicide.refundAddress)
                 "create" -> updateSynchronizationStore(trace.create.from)
             }
+            updateSynchronizationStore(trace.result.address)
         }
     }
 

@@ -1,7 +1,7 @@
 package kafka.uniqueAccounts.stream.processor
 
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.ProcessorSupplier
-import kafka.uniqueAccounts.stream.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 
 class UniqueAccountsProcessorSupplier : ProcessorSupplier<String, Messages.Block> {
