@@ -1,7 +1,7 @@
 package kafka.volumeIn.stream.processor
 
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.ProcessorSupplier
-import kafka.volumeIn.stream.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 
 class VolumeInProcessorSupplier: ProcessorSupplier<String, Messages.Block> {

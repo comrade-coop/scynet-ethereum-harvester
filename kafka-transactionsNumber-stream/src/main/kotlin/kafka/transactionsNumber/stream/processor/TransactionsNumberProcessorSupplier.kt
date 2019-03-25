@@ -1,7 +1,7 @@
 package kafka.transactionsNumber.stream.processor
 
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.ProcessorSupplier
-import kafka.transactionsNumber.stream.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 
 class TransactionsNumberProcessorSupplier: ProcessorSupplier<String, Messages.Block> {

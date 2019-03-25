@@ -1,7 +1,7 @@
 package kafka.volumeIn.stream.processor
 
-import kafka.volumeIn.stream.messages.AddressFeature
-import kafka.volumeIn.stream.messages.Messages
+import harvester.common.messages.AddressFeature
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore

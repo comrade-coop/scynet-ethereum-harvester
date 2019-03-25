@@ -1,5 +1,6 @@
 package kafka.ethereum.producer.messages
 
+import harvester.common.messages.Messages
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.response.EthBlock
 import org.web3j.protocol.core.methods.response.Log
@@ -22,6 +23,11 @@ class EthereumMessageBuilder(
             .setTimestamp(ethBlock.timestamp?.toString().orEmpty())
             .addAllTransactions(transactions)
             .addAllTraces(blockTraces)
+            .setSize(ethBlock.size?.toString().orEmpty())
+            .setDifficulty(ethBlock.difficulty?.toString().orEmpty())
+            .setTotalDifficulty(ethBlock.totalDifficulty?.toString().orEmpty())
+            .setGasUsed(ethBlock.gasUsed?.toString().orEmpty())
+            .setGasLimit(ethBlock.gasLimit?.toString().orEmpty())
             .build()
     }
 

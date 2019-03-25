@@ -1,7 +1,7 @@
 package kafka.ethereum.producer.producer
 
+import harvester.common.messages.Messages
 import kafka.ethereum.producer.messages.EthereumMessageBuilder
-import kafka.ethereum.producer.messages.Messages.Block
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.web3j.protocol.core.DefaultBlockParameter
@@ -10,7 +10,7 @@ import java.math.BigInteger
 import org.web3j.protocol.parity.methods.response.Trace as ParityTrace
 
 class EthereumProducer(
-    private val producer: KafkaProducer<String, Block>,
+    private val producer: KafkaProducer<String, Messages.Block>,
     private val parityService: Parity,
     private val ethereumMessageBuilder: EthereumMessageBuilder
 ) {

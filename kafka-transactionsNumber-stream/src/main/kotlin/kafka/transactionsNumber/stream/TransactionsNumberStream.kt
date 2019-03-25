@@ -1,7 +1,7 @@
 package kafka.transactionsNumber.stream
 
+import harvester.common.serialization.BlockDeserializer
 import kafka.transactionsNumber.stream.config.StreamConfig
-import kafka.transactionsNumber.stream.serialization.BlockDeserializer
 import kafka.transactionsNumber.stream.processor.TransactionsNumberProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
@@ -15,7 +15,7 @@ class TransactionsNumberStream(){
         val transactionsNumberStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
         transactionsNumberStream.cleanUp()
         transactionsNumberStream.start()
-        Runtime.getRuntime().addShutdownHook(Thread(transactionsNumberStream::close));
+        Runtime.getRuntime().addShutdownHook(Thread(transactionsNumberStream::close))
     }
 
     private fun getTopology(): Topology{

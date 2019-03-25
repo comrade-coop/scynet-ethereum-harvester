@@ -1,7 +1,8 @@
 package kafka.transactionsNumber.stream.processor
 
+import harvester.common.messages.AddressFeature
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.Processor
-import kafka.transactionsNumber.stream.messages.*
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
