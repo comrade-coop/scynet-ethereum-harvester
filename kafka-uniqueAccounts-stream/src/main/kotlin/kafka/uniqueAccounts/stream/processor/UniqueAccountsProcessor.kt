@@ -48,7 +48,6 @@ class UniqueAccountsProcessor : Processor<String, Messages.Block> {
 
     private fun extractUniqueAccounts(block: Messages.Block) {
         synchronizationStore!!.putIfAbsent(TOTAL_COUNT, ZERO)
-        updateSynchronizationStore(block.author)
         extractUniqueAccountsFromTraces(block)
     }
 
