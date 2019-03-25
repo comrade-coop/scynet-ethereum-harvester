@@ -131,6 +131,10 @@ class EthereumMessageBuilder(
     }
 
     private fun buildLog(ethLog: Log): Messages.Log {
+        if(ethLog.topics.get(0).equals("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"))
+        {
+            println(ethLog)
+        }
         return Messages.Log.newBuilder()
             .addAllTopics(ethLog.topics)
             .build()

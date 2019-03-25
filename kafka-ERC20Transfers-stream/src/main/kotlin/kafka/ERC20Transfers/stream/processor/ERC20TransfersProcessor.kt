@@ -1,21 +1,21 @@
-package kafka.transferLogsNumber.stream.processor
+package kafka.ERC20Transfers.stream.processor
 
-import kafka.transferLogsNumber.stream.messages.AddressFeature
-import kafka.transferLogsNumber.stream.messages.Messages
+import harvester.common.messages.AddressFeature
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
 
-class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
+class ERC20TransfersProcessor() : Processor<String, Messages.Block> {
 
     private val ONE: Int = 1
     private val NEGATIVE_ONE: Int = -1
     private val TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 
     private var context: ProcessorContext? = null
-    private var addressTransferLogsNumberStore: KeyValueStore<String, String>? = null
-    private var blockNumberAddressTransferLogsNumberStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
+    private var addressERC20TransfersStore: KeyValueStore<String, String>? = null
+    private var blockNumberAddressERC20TransfersStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
     private var synchronizationStore: KeyValueStore<String, String>? = null
     private var endOfTick: BigInteger? = null
     private var firstBlockNumber: Int? = null
@@ -35,8 +35,8 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
     override fun init(context: ProcessorContext) {
         this.context = context
 
-        this.addressTransferLogsNumberStore = context.getStateStore("AddressTransferLogsNumber") as KeyValueStore<String, String>
-        this.blockNumberAddressTransferLogsNumberStore = context.getStateStore("BlockNumberAddressTransferLogsNumber") as KeyValueStore<Int, AddressFeature.AddressFeatureMap>
+        this.addressERC20TransfersStore = context.getStateStore("AddressERC20Transfers") as KeyValueStore<String, String>
+        this.blockNumberAddressERC20TransfersStore = context.getStateStore("BlockNumberAddressERC20Transfers") as KeyValueStore<Int, AddressFeature.AddressFeatureMap>
         this.synchronizationStore = context.getStateStore("SynchronizationStore") as KeyValueStore<String, String>
 
         val firstBlockNumberString = synchronizationStore!!.get("firstBlockNumber")
@@ -64,10 +64,10 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
         addAddressFeatureBuilderWithTimestampForBlock(block)
 
         if (notInTick(block.timestamp.toBigInteger())) {
-            commitTransferLogsNumber()
+            commitERC20Transfers()
             slideTickForward(block.timestamp.toBigInteger())
         }
-        extractAddressTransferLogsNumberFromTransactions(block)
+        extractAddressERC20TransfersFromTransactions(block)
         setLastProcessedBlock(blockNumber.toString())
     }
 
@@ -97,7 +97,7 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
     private fun addAddressFeatureBuilderWithTimestampForBlock(block: Messages.Block) {
         currentBlockNumber = block.number.toInt()
         val builder = AddressFeature.AddressFeatureMap.newBuilder().putAddressFeature("timestamp", block.timestamp)
-        blockNumberAddressTransferLogsNumberStore!!.put(currentBlockNumber, builder.build())
+        blockNumberAddressERC20TransfersStore!!.put(currentBlockNumber, builder.build())
     }
 
     private fun notInTick(timestamp: BigInteger): Boolean {
@@ -106,21 +106,21 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
         return false
     }
 
-    private fun commitTransferLogsNumber() {
-        val addressTransferLogsNumberMap = buildAddressTransferLogsNumberMap()
-        context!!.forward(endOfTick.toString(), addressTransferLogsNumberMap)
+    private fun commitERC20Transfers() {
+        val addressERC20TransfersNumberMap = buildAddressERC20TransfersNumberMap()
+        context!!.forward(endOfTick.toString(), addressERC20TransfersNumberMap)
         context!!.commit()
     }
 
     private fun slideTickForward(timestamp: BigInteger) {
         while (notInTick(timestamp)) {
-            val firstBlockAddressTransferLogsNumber = blockNumberAddressTransferLogsNumberStore!!.get(firstBlockNumber)
-            removeBlockEntriesFromAddressTransferLogsNumberStore(firstBlockAddressTransferLogsNumber)
-            blockNumberAddressTransferLogsNumberStore!!.delete(firstBlockNumber)
+            val firstBlockAddressERC20TransfersNumber = blockNumberAddressERC20TransfersStore!!.get(firstBlockNumber)
+            removeBlockEntriesFromAddressERC20TransfersStore(firstBlockAddressERC20TransfersNumber)
+            blockNumberAddressERC20TransfersStore!!.delete(firstBlockNumber)
 
             setFirstBlockNumber(firstBlockNumber!! + ONE)
 
-            val firstBlockTimestamp = blockNumberAddressTransferLogsNumberStore!!
+            val firstBlockTimestamp = blockNumberAddressERC20TransfersStore!!
                     .get(firstBlockNumber)
                     .getAddressFeatureOrDefault("timestamp", NEGATIVE_ONE.toString())
                     .toBigInteger()
@@ -132,58 +132,58 @@ class TransferLogsNumberProcessor() : Processor<String, Messages.Block> {
         synchronizationStore!!.put("lastProcessedBlockNumber", blockNumber)
     }
 
-    private fun buildAddressTransferLogsNumberMap(): AddressFeature.AddressFeatureMap {
+    private fun buildAddressERC20TransfersNumberMap(): AddressFeature.AddressFeatureMap {
         val builder = AddressFeature.AddressFeatureMap.newBuilder()
-        addressTransferLogsNumberStore!!.all().forEach { addressTransferLogsNumber ->
-            builder.putAddressFeature(addressTransferLogsNumber.key, addressTransferLogsNumber.value)
+        addressERC20TransfersStore!!.all().forEach { addressERC20Transfers ->
+            builder.putAddressFeature(addressERC20Transfers.key, addressERC20Transfers.value)
         }
         return builder.build()
     }
 
-    private fun extractAddressTransferLogsNumberFromTransactions(block: Messages.Block) {
+    private fun extractAddressERC20TransfersFromTransactions(block: Messages.Block) {
         block.transactionsList.forEach { transaction ->
             transaction.receipt.logsList.forEach { log ->
-                if (isTransferLog(log)) {
+                if (isERC20Transfer(log)) {
                     addToStores(transaction.to)
                 }
             }
         }
     }
 
-    private fun isTransferLog(log: Messages.Log): Boolean {
+    private fun isERC20Transfer(log: Messages.Log): Boolean {
         return TRANSFER_TOPIC.equals(log.topicsList[0])
     }
 
     private fun addToStores(address: String) {
-        addToAddressTransferLogsNumberStore(address)
-        addToBlockNumberTransferLogsNumberStore(address)
+        addToAddressERC20TransfersStore(address)
+        addToBlockNumberERC20TransfersStore(address)
     }
 
-    private fun addToAddressTransferLogsNumberStore(address: String) {
-        val previousTransferLogsNumber = addressTransferLogsNumberStore!!.get(address)
-        if (previousTransferLogsNumber.isNullOrEmpty()) {
-            addressTransferLogsNumberStore!!.put(address, ONE.toString())
+    private fun addToAddressERC20TransfersStore(address: String) {
+        val previousERC20TransfersNumber = addressERC20TransfersStore!!.get(address)
+        if (previousERC20TransfersNumber.isNullOrEmpty()) {
+            addressERC20TransfersStore!!.put(address, ONE.toString())
         } else {
-            addressTransferLogsNumberStore!!.put(address, TransferLogsNumberCalculator.increaseByOne(previousTransferLogsNumber))
+            addressERC20TransfersStore!!.put(address, ERC20TransfersCalculator.increaseByOne(previousERC20TransfersNumber))
         }
     }
 
-    private fun addToBlockNumberTransferLogsNumberStore(address: String) {
-        val builder = blockNumberAddressTransferLogsNumberStore!!.get(currentBlockNumber).toBuilder()
-        val previousTransferLogsNumber = builder.getAddressFeatureOrDefault(address, NEGATIVE_ONE.toString())
-        if (previousTransferLogsNumber == NEGATIVE_ONE.toString()) {
+    private fun addToBlockNumberERC20TransfersStore(address: String) {
+        val builder = blockNumberAddressERC20TransfersStore!!.get(currentBlockNumber).toBuilder()
+        val previousERCTransfersNumber = builder.getAddressFeatureOrDefault(address, NEGATIVE_ONE.toString())
+        if (previousERCTransfersNumber == NEGATIVE_ONE.toString()) {
             builder.putAddressFeature(address, ONE.toString())
         } else {
-            builder.putAddressFeature(address, TransferLogsNumberCalculator.increaseByOne(previousTransferLogsNumber))
+            builder.putAddressFeature(address, ERC20TransfersCalculator.increaseByOne(previousERCTransfersNumber))
         }
-        blockNumberAddressTransferLogsNumberStore!!.put(currentBlockNumber, builder.build())
+        blockNumberAddressERC20TransfersStore!!.put(currentBlockNumber, builder.build())
     }
 
-    private fun removeBlockEntriesFromAddressTransferLogsNumberStore(firstBlockAddressTransferLogsNumber: AddressFeature.AddressFeatureMap) {
-        firstBlockAddressTransferLogsNumber.addressFeatureMap.forEach { address, transferLogsNumber ->
+    private fun removeBlockEntriesFromAddressERC20TransfersStore(firstBlockAddressERC20Transfers: AddressFeature.AddressFeatureMap) {
+        firstBlockAddressERC20Transfers.addressFeatureMap.forEach { address, ERC20TransfersNumber ->
             if (address == "timestamp") return@forEach
-            val previousTransferLogsNumber = addressTransferLogsNumberStore!!.get(address)
-            addressTransferLogsNumberStore!!.put(address, TransferLogsNumberCalculator.subtract(previousTransferLogsNumber, transferLogsNumber))
+            val previousERC20TranfersNumber = addressERC20TransfersStore!!.get(address)
+            addressERC20TransfersStore!!.put(address, ERC20TransfersCalculator.subtract(previousERC20TranfersNumber, ERC20TransfersNumber))
         }
     }
 }
