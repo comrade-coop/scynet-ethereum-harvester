@@ -1,6 +1,7 @@
 package harvester.common.processor
 
-import harvester.common.messages.*
+import harvester.common.messages.AddressFeature
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
@@ -140,8 +141,6 @@ abstract class BlockFeatureTickProcessor() : Processor<String, Messages.Block> {
     }
 
     abstract fun extract(block: Messages.Block)
-
-    abstract fun addToStores(address: String)
 
     private fun removeBlockEntriesFromAddressFeatureStore(firstBlockAddressFeature: AddressFeature.AddressFeatureMap) {
         firstBlockAddressFeature.addressFeatureMap.forEach { address, feature ->
