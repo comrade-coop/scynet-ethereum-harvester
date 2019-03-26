@@ -10,7 +10,7 @@ class TransactionsProcessor(): BlockFeatureTickProcessor() {
         extractAddressTransactionsNumberFromTraces(block)
     }
 
-    override fun addToStores(address: String) {
+    private fun addToStores(address: String) {
         addToAddressTransactionNumberStore(address)
         addToBlockNumberTransactionsNumberStore(address)
     }
