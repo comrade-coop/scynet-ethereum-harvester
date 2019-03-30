@@ -1,6 +1,6 @@
 package kafka.volumeOut.stream
 
-import harvester.common.config.BlockFeatureStreamConfig
+import harvester.common.config.AddressFeatureStreamConfig
 import harvester.common.serialization.BlockDeserializer
 import kafka.volumeOut.stream.processor.VolumeOutProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
 class VolumeOutStream() {
     fun start() {
         val volumeOutStream =
-                KafkaStreams(getTopology(), BlockFeatureStreamConfig.getStreamProperties("127.0.0.1:29092", "volumeOut"))
+                KafkaStreams(getTopology(), AddressFeatureStreamConfig.getStreamProperties("127.0.0.1:29092", "volumeOut"))
         volumeOutStream.cleanUp()
         volumeOutStream.start()
         Runtime.getRuntime().addShutdownHook(Thread(volumeOutStream::close))
@@ -24,9 +24,9 @@ class VolumeOutStream() {
         topology.addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
 
                 .addProcessor("Processor", VolumeOutProcessorSupplier(), "Ethereum-producer")
-                .addStateStore(BlockFeatureStreamConfig.getAddressFeatureStoreSupplier(), "Processor")
-                .addStateStore(BlockFeatureStreamConfig.getBlockNumberAddressFeatureStoreSupplier(), "Processor")
-                .addStateStore(BlockFeatureStreamConfig.getSynchronizationStoreSupplier(), "Processor")
+                .addStateStore(AddressFeatureStreamConfig.getAddressFeatureStoreSupplier(), "Processor")
+                .addStateStore(AddressFeatureStreamConfig.getBlockNumberAddressFeatureStoreSupplier(), "Processor")
+                .addStateStore(AddressFeatureStreamConfig.getSynchronizationStoreSupplier(), "Processor")
                 .addSink("VolumeOut-stream", "volumeOut", "Processor")
         return topology
     }
