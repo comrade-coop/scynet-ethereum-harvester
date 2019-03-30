@@ -1,10 +1,10 @@
 package kafka.volumeIn.stream.processor
 
 import harvester.common.messages.Messages
-import harvester.common.processor.BlockFeatureTickProcessor
+import harvester.common.processor.AddressFeatureTickProcessor
 import harvester.common.processor.FeatureCalculator
 
-class VolumeInProcessor() : BlockFeatureTickProcessor() {
+class VolumeInProcessor() : AddressFeatureTickProcessor() {
 
 
     override fun extract(block: Messages.Block) {
