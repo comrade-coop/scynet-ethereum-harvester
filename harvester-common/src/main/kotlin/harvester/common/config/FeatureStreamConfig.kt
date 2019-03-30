@@ -10,7 +10,7 @@ import org.apache.kafka.streams.state.StoreBuilder
 import org.apache.kafka.streams.state.Stores
 import java.util.*
 
-class BlockFeatureStreamConfig {
+class FeatureStreamConfig {
     companion object {
         fun getStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String, APPLICATION_ID_CONFIG: String): Properties {
             return Properties().apply {
@@ -23,17 +23,17 @@ class BlockFeatureStreamConfig {
             }
         }
 
-        fun getAddressFeatureStoreSupplier(): StoreBuilder<KeyValueStore<String, String>> {
+        fun getFeatureStoreSupplier(): StoreBuilder<KeyValueStore<String, String>> {
             return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("AddressFeature"),
+                    Stores.persistentKeyValueStore("Feature"),
                     Serdes.String(),
                     Serdes.String()
             )
         }
 
-        fun getBlockNumberAddressFeatureStoreSupplier(): StoreBuilder<KeyValueStore<Int, AddressFeature.AddressFeatureMap>> {
+        fun getBlockNumberFeatureStoreSupplier(): StoreBuilder<KeyValueStore<Int, AddressFeature.AddressFeatureMap>> {
             return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("BlockNumberAddressFeature"),
+                    Stores.persistentKeyValueStore("BlockNumberFeature"),
                     Serdes.Integer(),
                     AddressFeatureSerdes()
             )

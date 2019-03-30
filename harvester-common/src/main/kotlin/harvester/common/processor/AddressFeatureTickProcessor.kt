@@ -1,55 +1,55 @@
 package harvester.common.processor
 
-import harvester.common.messages.*
+import harvester.common.messages.AddressFeature
+import harvester.common.messages.Messages
 import org.apache.kafka.streams.state.KeyValueStore
+import java.math.BigInteger
 
-abstract class AddressFeatureTickProcessor: TickFeatureProcessor() {
+abstract class AddressFeatureTickProcessor() : TickFeatureProcessor() {
+
     protected var addressFeatureStore: KeyValueStore<String, String>? = null
     protected var blockNumberAddressFeatureStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
 
-    override fun extract(block: Messages.Block) {
-        addAddressFeatureBuilderBlock(block)
-        extractBlock(block)
+    override fun initStores() {
+        this.addressFeatureStore = context!!.getStateStore("AddressFeature") as KeyValueStore<String, String>
+        this.blockNumberAddressFeatureStore = context!!.getStateStore("BlockNumberAddressFeature") as KeyValueStore<Int, AddressFeature.AddressFeatureMap>
     }
 
-    override fun removeBlockEntriesFromFeaturesStores(firstBlockNumber: Int) {
-        val firstBlockAddressFeature = blockNumberAddressFeatureStore!!.get(firstBlockNumber)
-        removeBlockEntriesFromFeatureStore(firstBlockAddressFeature)
-        blockNumberAddressFeatureStore!!.delete(firstBlockNumber)
-
-    }
-
-    override fun initStores(){
-        addressFeatureStore = context!!.getStateStore("AddressFeatureStore") as KeyValueStore<String, String>
-        blockNumberAddressFeatureStore = context!!.getStateStore("BlockNumberAddressFeatureStore") as KeyValueStore<Int, AddressFeature.AddressFeatureMap>
-    }
-
-    private fun removeBlockEntriesFromFeatureStore(firstBlockAddressFeature: AddressFeature.AddressFeatureMap){
-        firstBlockAddressFeature.addressFeatureMap.forEach { address, feature ->
-            val previousFeature = addressFeatureStore!!.get(address)
-            addressFeatureStore!!.put(address, subtract( previousFeature, feature ))
-        }
-    }
-
-    private fun subtract(previousFeature: String?, feature: String?): String? {
-        return (previousFeature!!.toBigDecimal() - feature!!.toBigDecimal()).toString()
-
-    }
-
-    private fun addAddressFeatureBuilderBlock(block: Messages.Block){
+    override fun addFeatureBuilderWithTimestampForBlock(block: Messages.Block) {
         currentBlockNumber = block.number.toInt()
-        val builder = AddressFeature.AddressFeatureMap.newBuilder()
+        val builder = AddressFeature.AddressFeatureMap.newBuilder().putAddressFeature("timestamp", block.timestamp)
         blockNumberAddressFeatureStore!!.put(currentBlockNumber, builder.build())
     }
 
+    override fun slideTickForward(timestamp: BigInteger) {
+        while (notInTick(timestamp)) {
+            val firstBlockAddressFeature = blockNumberAddressFeatureStore!!.get(firstBlockNumber)
+            removeBlockEntriesFromFeatureStore(firstBlockAddressFeature)
+            blockNumberAddressFeatureStore!!.delete(firstBlockNumber)
 
-    override fun buildFeatureMap(): AddressFeature.AddressFeatureMap{
+            setFirstBlockNumber(firstBlockNumber!! + ONE)
+
+            val firstBlockTimestamp = blockNumberAddressFeatureStore!!
+                    .get(firstBlockNumber)
+                    .getAddressFeatureOrDefault("timestamp", NEGATIVE_ONE.toString())
+                    .toBigInteger()
+            setEndOfTick(firstBlockTimestamp)
+        }
+    }
+
+    override fun buildFeatureMap(): AddressFeature.AddressFeatureMap {
         val builder = AddressFeature.AddressFeatureMap.newBuilder()
-        addressFeatureStore!!.all().forEach { addressTransactionsNumber ->
-            builder.putAddressFeature(addressTransactionsNumber.key, addressTransactionsNumber.value)
+        addressFeatureStore!!.all().forEach { addressFeature ->
+            builder.putAddressFeature(addressFeature.key, addressFeature.value)
         }
         return builder.build()
     }
 
-    protected abstract fun extractBlock(block: Messages.Block)
+    private fun removeBlockEntriesFromFeatureStore(firstBlockAddressFeature: AddressFeature.AddressFeatureMap) {
+        firstBlockAddressFeature.addressFeatureMap.forEach { address, feature ->
+            if (address == "timestamp") return@forEach
+            val previousFeature = addressFeatureStore!!.get(address)
+            addressFeatureStore!!.put(address, FeatureCalculator.subtract(previousFeature, feature))
+        }
+    }
 }

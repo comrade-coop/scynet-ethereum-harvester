@@ -1,6 +1,7 @@
 package harvester.common.processor
 
 import harvester.common.messages.AddressFeature
+import harvester.common.messages.Messages
 import harvester.common.messages.Messages.Block
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
@@ -16,7 +17,7 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
     private var synchronizationStore: KeyValueStore<String, String>? = null
 
     private var endOfTick: BigInteger? = null
-    private var firstBlockNumber: Int? = null
+    protected var firstBlockNumber: Int? = null
     private var lastProcessedBlockNumber: Int? = null
 
     protected var currentBlockNumber: Int? = null
@@ -49,11 +50,9 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
     override fun close() {
     }
 
-
     private fun process(block: Block) {
         val blockNumber = block.number.toInt()
-        addTimestampToSynchronizationStore(block)
-        if (processed(blockNumber)) {
+        if (isProcessed(blockNumber)) {
             return
         }
         println(blockNumber)
@@ -61,6 +60,7 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
             setEndOfTick(block.timestamp.toBigInteger())
             setFirstBlockNumber(blockNumber)
         }
+        addFeatureBuilderWithTimestampForBlock(block)
 
         if (notInTick(block.timestamp.toBigInteger())) {
             commitFeature()
@@ -70,11 +70,7 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
         setLastProcessedBlock(blockNumber.toString())
     }
 
-    private fun addTimestampToSynchronizationStore(block: Block) {
-        synchronizationStore!!.put(block.number.toString(), block.timestamp)
-    }
-
-    private fun processed(blockNumber: Int): Boolean {
+    private fun isProcessed(blockNumber: Int): Boolean {
         if (blockNumber <= lastProcessedBlockNumber!!) {
             return true
         }
@@ -87,18 +83,17 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
         return false
     }
 
-    private fun setEndOfTick(timestamp: BigInteger) {
+    protected fun setEndOfTick(timestamp: BigInteger) {
         endOfTick = timestamp + BigInteger.valueOf(3600)
         synchronizationStore!!.put("endOfTick", endOfTick.toString())
     }
 
-    private fun setFirstBlockNumber(blockNumber: Int) {
+    protected fun setFirstBlockNumber(blockNumber: Int) {
         firstBlockNumber = blockNumber
         synchronizationStore!!.put("firstBlockNumber", firstBlockNumber.toString())
     }
 
-
-    private fun notInTick(timestamp: BigInteger): Boolean {
+    protected fun notInTick(timestamp: BigInteger): Boolean {
         if (timestamp > endOfTick)
             return true
         return false
@@ -110,24 +105,11 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
         context!!.commit()
     }
 
-
     private fun setLastProcessedBlock(blockNumber: String) {
         synchronizationStore!!.put("lastProcessedBlockNumber", blockNumber)
     }
 
-    private fun slideTickForward(timestamp: BigInteger) {
-        while (notInTick(timestamp)) {
-
-            removeBlockEntriesFromFeaturesStores(firstBlockNumber!!)
-            synchronizationStore!!.delete(firstBlockNumber!!.toString())
-
-            setFirstBlockNumber(firstBlockNumber!! + ONE)
-
-            val firstBlockTimestamp = synchronizationStore!!
-                    .get(firstBlockNumber.toString()).toBigInteger()
-            setEndOfTick(firstBlockTimestamp)
-        }
-    }
+    protected abstract fun slideTickForward(timestamp: BigInteger)
 
     protected abstract fun buildFeatureMap(): AddressFeature.AddressFeatureMap
 
@@ -135,7 +117,7 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
 
     protected abstract fun initStores()
 
-    protected abstract fun removeBlockEntriesFromFeaturesStores(firstBlockNumber: Int)
+    protected abstract fun addFeatureBuilderWithTimestampForBlock(block: Messages.Block)
 }
 
 
