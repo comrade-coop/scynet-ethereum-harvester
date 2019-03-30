@@ -1,10 +1,10 @@
 package kafka.transactionsNumber.stream.processor
 
 import harvester.common.messages.Messages
-import harvester.common.processor.BlockFeatureTickProcessor
+import harvester.common.processor.AddressFeatureTickProcessor
 import harvester.common.processor.FeatureCalculator
 
-class TransactionsProcessor(): BlockFeatureTickProcessor() {
+class TransactionsProcessor(): AddressFeatureTickProcessor() {
 
     override fun extract(block: Messages.Block) {
         extractAddressTransactionsNumberFromTraces(block)
