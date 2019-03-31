@@ -22,7 +22,6 @@ class UniqueAccountsStream(){
     private fun getTopology(): Topology{
         val topology = Topology()
         topology.addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
-
                 .addProcessor("Processor", UniqueAccountsProcessorSupplier(), "Ethereum-producer")
                 .addStateStore(StreamConfig.getSynchronizationStoreSupplier(), "Processor")
                 .addSink("UniqueAccounts-stream", "uniqueAccounts", "Processor")
