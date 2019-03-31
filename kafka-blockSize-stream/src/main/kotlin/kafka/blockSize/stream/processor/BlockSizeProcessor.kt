@@ -18,12 +18,7 @@ class BlockSizeProcessor : Processor<String, Messages.Block> {
     }
 
     private fun process(block: Messages.Block) {
-        val blockNumber = block.number
-        val blockSize = block.size
-
-        println("Block number: $blockNumber with block size: $blockSize")
-
-        context!!.forward(blockNumber, blockSize)
+        context!!.forward(block.number, block.size)
         context!!.commit()
     }
 
