@@ -38,6 +38,24 @@ abstract class BlockFeatureTickProcessor(protected val PROPERTY: String) : TickF
         }
     }
 
+    override fun buildFeatureMap(): AddressFeature.AddressFeatureMap {
+        val builder = AddressFeature.AddressFeatureMap.newBuilder()
+        val featureValue = featureStore!!.get(PROPERTY)
+        return builder.putAddressFeature(PROPERTY, featureValue).build()
+    }
+
+    protected fun addToBlockNumberFeatureStore(value: String) {
+        val builder = blockNumberFeatureStore!!.get(currentBlockNumber).toBuilder()
+        builder.putAddressFeature(PROPERTY, value)
+        blockNumberFeatureStore!!.put(currentBlockNumber, builder.build())
+    }
+
+    protected fun addToFeatureStore(value: String) {
+        val oldValue = featureStore!!.get(PROPERTY)
+        println(oldValue)
+        featureStore!!.put(PROPERTY, FeatureCalculator.sum(oldValue, value))
+    }
+
     private fun removeBlockEntryFromFeatureStores(firstBlockNumber: Int) {
         val blockFeatureValue = blockNumberFeatureStore!!.get(firstBlockNumber).getAddressFeatureOrThrow(PROPERTY)
         blockNumberFeatureStore!!.delete(firstBlockNumber)
@@ -46,13 +64,7 @@ abstract class BlockFeatureTickProcessor(protected val PROPERTY: String) : TickF
 
     private fun recalculateFeatureValue(deletedFeatureValue: String){
         val oldValue = featureStore!!.get(PROPERTY)
-        featureStore!!.put(PROPERTY, FeatureCalculator.subtract(oldValue, deletedFeatureValue!!))
-    }
-
-    override fun buildFeatureMap(): AddressFeature.AddressFeatureMap {
-        val builder = AddressFeature.AddressFeatureMap.newBuilder()
-        val featureValue = featureStore!!.get(PROPERTY)
-        return builder.putAddressFeature(PROPERTY, featureValue).build()
+        featureStore!!.put(PROPERTY, FeatureCalculator.subtract(oldValue, deletedFeatureValue))
     }
 
 }
