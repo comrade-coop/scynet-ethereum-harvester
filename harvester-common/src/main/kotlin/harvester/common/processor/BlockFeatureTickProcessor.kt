@@ -34,11 +34,7 @@ abstract class BlockFeatureTickProcessor(private val FEATURE: String): TickFeatu
 
     private fun removeBlockEntryFromFeatureStore(featureValue: String?) {
         val oldValue = featureStore!!.get(FEATURE)
-        featureStore!!.put(FEATURE, subtract(oldValue, featureValue!!))
-    }
-
-    private fun subtract(oldValue:String, value: String): String{
-        return (oldValue.toBigDecimal() - value.toBigDecimal()).toString()
+        featureStore!!.put(FEATURE, FeatureCalculator.subtract(oldValue, featureValue!!))
     }
 
 }
