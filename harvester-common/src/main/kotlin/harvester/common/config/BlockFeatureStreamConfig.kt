@@ -10,7 +10,7 @@ import org.apache.kafka.streams.state.StoreBuilder
 import org.apache.kafka.streams.state.Stores
 import java.util.*
 
-class FeatureStreamConfig {
+class BlockFeatureStreamConfig {
     companion object {
         fun getStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String, APPLICATION_ID_CONFIG: String): Properties {
             return Properties().apply {
