@@ -4,7 +4,7 @@ import harvester.common.messages.Messages
 import harvester.common.processor.BlockFeatureTickProcessor
 import harvester.common.processor.FeatureCalculator
 
-class BlockSizeTickProcessor : BlockFeatureTickProcessor("blockSizeTick") {
+class BlockSizeTickProcessor : BlockFeatureTickProcessor("blockSize") {
 
     override fun extract(block: Messages.Block) {
         val blockSize = block.size
