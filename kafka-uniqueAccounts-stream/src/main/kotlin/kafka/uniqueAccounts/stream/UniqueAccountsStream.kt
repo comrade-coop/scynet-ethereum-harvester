@@ -1,18 +1,19 @@
 package kafka.uniqueAccounts.stream
 
+import harvester.common.config.StreamConfig
 import harvester.common.serialization.BlockDeserializer
-import kafka.uniqueAccounts.stream.config.StreamConfig
 import kafka.uniqueAccounts.stream.processor.UniqueAccountsProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
 
-fun main(args: Array<String>) {
+fun main() {
     UniqueAccountsStream().start()
 }
 
 class UniqueAccountsStream(){
     fun start(){
-        val uniqueAccountsStream = KafkaStreams(getTopology(), StreamConfig.getStreamProperties())
+        val uniqueAccountsStream =
+                KafkaStreams(getTopology(), StreamConfig.getStreamProperties("127.0.0.1:29092", "uniqueAccounts"))
         uniqueAccountsStream.cleanUp()
         uniqueAccountsStream.start()
         Runtime.getRuntime().addShutdownHook(Thread(uniqueAccountsStream::close))
