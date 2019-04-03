@@ -5,7 +5,8 @@ import harvester.common.messages.Messages
 import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
 
-abstract class BlockFeatureTickProcessor(protected val PROPERTY: String) : TickFeatureProcessor() {
+abstract class BlockFeatureTickProcessor(protected val FEATURE: String,
+                                         protected val FEATURE_CALCULATION_STRATEGY: FeatureCalculationStrategy) : TickFeatureProcessor() {
 
     protected var featureStore: KeyValueStore<String, String>? = null
     protected var blockNumberFeatureStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
@@ -18,7 +19,7 @@ abstract class BlockFeatureTickProcessor(protected val PROPERTY: String) : TickF
     }
 
     override fun addFeatureBuilderWithTimestampForBlock(block: Messages.Block) {
-        featureStore!!.putIfAbsent(PROPERTY, ZERO)
+        featureStore!!.putIfAbsent(FEATURE, ZERO)
         currentBlockNumber = block.number.toInt()
         val builder = AddressFeature.AddressFeatureMap.newBuilder().putAddressFeature("timestamp", block.timestamp)
         blockNumberFeatureStore!!.put(currentBlockNumber, builder.build())
@@ -26,7 +27,9 @@ abstract class BlockFeatureTickProcessor(protected val PROPERTY: String) : TickF
 
     override fun slideTickForward(timestamp: BigInteger) {
         while (notInTick(timestamp)) {
-            removeBlockEntryFromFeatureStores(firstBlockNumber!!)
+            val blockFeatureValue = blockNumberFeatureStore!!.get(firstBlockNumber).getAddressFeatureOrThrow(FEATURE)
+            removeBlockEntryFromStore(firstBlockNumber!!)
+            updateFeatureStore(blockFeatureValue, true)
 
             setFirstBlockNumber(firstBlockNumber!! + ONE)
 
@@ -40,31 +43,55 @@ abstract class BlockFeatureTickProcessor(protected val PROPERTY: String) : TickF
 
     override fun buildFeatureMap(): AddressFeature.AddressFeatureMap {
         val builder = AddressFeature.AddressFeatureMap.newBuilder()
-        val featureValue = featureStore!!.get(PROPERTY)
-        return builder.putAddressFeature(PROPERTY, featureValue).build()
+        val featureValue = featureStore!!.get(FEATURE)
+        return builder.putAddressFeature(FEATURE, featureValue).build()
     }
 
-    protected fun addToBlockNumberFeatureStore(value: String) {
+    protected fun updateStores(value: String) {
         val builder = blockNumberFeatureStore!!.get(currentBlockNumber).toBuilder()
-        builder.putAddressFeature(PROPERTY, value)
+        builder.putAddressFeature(FEATURE, value)
         blockNumberFeatureStore!!.put(currentBlockNumber, builder.build())
+        updateFeatureStore(value, false)
     }
 
-    protected fun addToFeatureStore(value: String) {
-        val oldValue = featureStore!!.get(PROPERTY)
-        println(oldValue)
-        featureStore!!.put(PROPERTY, FeatureCalculator.sum(oldValue, value))
+    private fun updateFeatureStore(value: String, isValueRemoved: Boolean) {
+        var updatedFeatureValue = ZERO
+        if (FeatureCalculationStrategy.AMOUNT.equals(FEATURE_CALCULATION_STRATEGY)) {
+            updatedFeatureValue = amount(value, isValueRemoved)
+        } else if (FeatureCalculationStrategy.AVERAGE.equals(FEATURE_CALCULATION_STRATEGY)) {
+            updatedFeatureValue = average()
+        }
+        println("Feature value: " + updatedFeatureValue)
+        featureStore!!.put(FEATURE, updatedFeatureValue)
     }
 
-    private fun removeBlockEntryFromFeatureStores(firstBlockNumber: Int) {
-        val blockFeatureValue = blockNumberFeatureStore!!.get(firstBlockNumber).getAddressFeatureOrThrow(PROPERTY)
+    private fun amount(value: String, isValueRemoved: Boolean): String {
+        if (isValueRemoved) {
+            return amountWithRemovedValue(value)
+        }
+        return amountWithAddedValue(value)
+    }
+
+    private fun amountWithRemovedValue(removedValue: String): String {
+        val oldValue = featureStore!!.get(FEATURE)
+        return FeatureCalculator.subtract(oldValue, removedValue)
+    }
+
+    private fun amountWithAddedValue(addedValue: String): String {
+        val oldValue = featureStore!!.get(FEATURE)
+        return FeatureCalculator.sum(oldValue, addedValue)
+    }
+
+    private fun average(): String {
+        var updatedFeatureValue = BigInteger.ZERO
+        blockNumberFeatureStore!!.all().forEach { keyValue ->
+            updatedFeatureValue += keyValue.value.getAddressFeatureOrDefault(FEATURE, ZERO).toBigInteger()
+        }
+        return updatedFeatureValue.toString()
+    }
+
+    private fun removeBlockEntryFromStore(firstBlockNumber: Int) {
         blockNumberFeatureStore!!.delete(firstBlockNumber)
-        recalculateFeatureValue(blockFeatureValue)
-    }
-
-    private fun recalculateFeatureValue(deletedFeatureValue: String){
-        val oldValue = featureStore!!.get(PROPERTY)
-        featureStore!!.put(PROPERTY, FeatureCalculator.subtract(oldValue, deletedFeatureValue))
     }
 
 }
