@@ -5,7 +5,7 @@ import harvester.common.messages.Messages
 import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
 
-abstract class AddressFeatureTickProcessor() : TickFeatureProcessor() {
+abstract class AddressFeatureTickProcessor : TickFeatureProcessor() {
 
     protected var addressFeatureStore: KeyValueStore<String, String>? = null
     protected var blockNumberAddressFeatureStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
