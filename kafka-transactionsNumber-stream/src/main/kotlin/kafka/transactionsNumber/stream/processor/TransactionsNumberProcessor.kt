@@ -4,7 +4,7 @@ import harvester.common.messages.Messages
 import harvester.common.processor.AddressFeatureTickProcessor
 import harvester.common.processor.FeatureCalculator
 
-class TransactionsProcessor(): AddressFeatureTickProcessor() {
+class TransactionsNumberProcessor: AddressFeatureTickProcessor() {
 
     override fun extract(block: Messages.Block) {
         extractAddressTransactionsNumberFromTraces(block)
