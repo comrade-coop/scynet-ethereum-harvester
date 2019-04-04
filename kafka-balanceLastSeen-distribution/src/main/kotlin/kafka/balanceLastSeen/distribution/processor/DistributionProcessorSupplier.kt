@@ -1,6 +1,6 @@
 package kafka.balanceLastSeen.distribution.processor
 
-import kafka.balanceLastSeen.distribution.messages.StreamJoin
+import harvester.common.messages.StreamJoin
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorSupplier
 

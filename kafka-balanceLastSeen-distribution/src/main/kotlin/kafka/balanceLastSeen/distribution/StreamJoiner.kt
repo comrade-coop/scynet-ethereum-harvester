@@ -1,8 +1,8 @@
 package kafka.balanceLastSeen.distribution
 
+import harvester.common.messages.AddressFeature
+import harvester.common.serialization.AddressFeatureSerdes
 import kafka.balanceLastSeen.distribution.config.StreamConfig
-import kafka.balanceLastSeen.distribution.messages.AddressFeature
-import kafka.balanceLastSeen.distribution.serialization.AddressFeatureSerdes
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder

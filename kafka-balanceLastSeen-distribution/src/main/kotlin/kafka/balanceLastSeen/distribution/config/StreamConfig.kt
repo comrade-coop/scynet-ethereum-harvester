@@ -1,21 +1,18 @@
 package kafka.balanceLastSeen.distribution.config
 
-import com.google.gson.internal.Streams
-import kafka.balanceLastSeen.distribution.messages.MatrixBlob
-import kafka.balanceLastSeen.distribution.messages.StringList
-import kafka.balanceLastSeen.distribution.serialization.BlobSerdes
-import kafka.balanceLastSeen.distribution.serialization.JoinSerdes
-import kafka.balanceLastSeen.distribution.serialization.StringListSerdes
+import harvester.common.messages.MatrixBlob
+import harvester.common.messages.StringList
+import harvester.common.serialization.BlobSerdes
+import harvester.common.serialization.JoinSerdes
+import harvester.common.serialization.StringListSerdes
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.config.TopicConfig
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
-import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier
 import org.apache.kafka.streams.state.KeyValueStore
 import org.apache.kafka.streams.state.StoreBuilder
 import org.apache.kafka.streams.state.Stores
 import java.util.Properties
-import java.util.stream.StreamSupport
 
 class StreamConfig{
     companion object {

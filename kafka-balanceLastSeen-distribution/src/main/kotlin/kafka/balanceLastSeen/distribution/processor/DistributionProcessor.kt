@@ -1,8 +1,8 @@
 package kafka.balanceLastSeen.distribution.processor
 
-import kafka.balanceLastSeen.distribution.messages.MatrixBlob
-import kafka.balanceLastSeen.distribution.messages.StreamJoin
-import kafka.balanceLastSeen.distribution.messages.StringList
+import harvester.common.messages.MatrixBlob
+import harvester.common.messages.StreamJoin
+import harvester.common.messages.StringList
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore

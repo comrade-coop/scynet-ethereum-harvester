@@ -1,7 +1,7 @@
 package kafka.balanceLastSeen.distribution
 
-import kafka.balanceLastSeen.distribution.messages.AddressFeature
-import kafka.balanceLastSeen.distribution.messages.StreamJoin
+import harvester.common.messages.AddressFeature
+import harvester.common.messages.StreamJoin
 import org.apache.kafka.streams.kstream.ValueJoiner
 
 class ValueJoinerStreamStream: ValueJoiner<AddressFeature.AddressFeatureMap,AddressFeature.AddressFeatureMap, StreamJoin.Join> {
@@ -11,6 +11,5 @@ class ValueJoinerStreamStream: ValueJoiner<AddressFeature.AddressFeatureMap,Addr
         builder.putAllFeatureMap1(value1!!.addressFeatureMap)
         builder.putAllFeatureMap2(value2!!.addressFeatureMap)
         return builder.build()
-
     }
 }
