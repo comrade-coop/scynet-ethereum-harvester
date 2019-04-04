@@ -2,7 +2,6 @@ package kafka.transactionsNumber.stream.processor
 
 import harvester.common.messages.Messages
 import harvester.common.processor.AddressFeatureTickProcessor
-import harvester.common.processor.FeatureCalculator
 
 class TransactionsNumberProcessor: AddressFeatureTickProcessor() {
 
@@ -11,8 +10,8 @@ class TransactionsNumberProcessor: AddressFeatureTickProcessor() {
     }
 
     private fun addToStores(address: String) {
-        addToAddressTransactionNumberStore(address)
-        addToBlockNumberTransactionsNumberStore(address)
+        addToAddressFeatureStore(address)
+        addToBlockNumberAddressFeatureStore(address)
     }
 
     private fun extractAddressTransactionsNumberFromTraces(block: Messages.Block) {
@@ -40,26 +39,6 @@ class TransactionsNumberProcessor: AddressFeatureTickProcessor() {
     private fun getTraces(block: Messages.Block): List<Messages.Trace>{
         return block.transactionsList
                 .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
-    }
-
-    private fun addToAddressTransactionNumberStore(address: String) {
-        val previousTransactionsNumber = addressFeatureStore!!.get(address)
-        if (previousTransactionsNumber.isNullOrEmpty()) {
-            addressFeatureStore!!.put(address, ONE.toString())
-        } else {
-            addressFeatureStore!!.put(address, FeatureCalculator.increaseByOne(previousTransactionsNumber))
-        }
-    }
-
-    private fun addToBlockNumberTransactionsNumberStore(address: String) {
-        val builder = blockNumberAddressFeatureStore!!.get(currentBlockNumber).toBuilder()
-        val previousTransactionsNumber = builder.getAddressFeatureOrDefault(address, NEGATIVE_ONE.toString())
-        if (previousTransactionsNumber == NEGATIVE_ONE.toString()) {
-            builder.putAddressFeature(address, ONE.toString())
-        } else {
-            builder.putAddressFeature(address, FeatureCalculator.increaseByOne(previousTransactionsNumber))
-        }
-        blockNumberAddressFeatureStore!!.put(currentBlockNumber, builder.build())
     }
 
 }
