@@ -7,9 +7,9 @@ group 'ai.scynet.harvester'
 version '1.0-SNAPSHOT'
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'Kafka ERC20Transfers Stream',
+        attributes 'Implementation-Title': 'Kafka ERC20 Transfers Stream',
                 'Implementation-Version': version,
-                'Main-Class': 'kafka.ERC20Transfers.stream.ERC20TransfersStreamKt'
+                'Main-Class': 'kafka.transferLogsNumber.stream.ERC20TransfersStreamKt'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
