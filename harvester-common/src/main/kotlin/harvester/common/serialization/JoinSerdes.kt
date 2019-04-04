@@ -1,6 +1,6 @@
 package harvester.common.serialization
 
-import kafka.balanceLastSeen.distribution.messages.StreamJoin
+import harvester.common.messages.StreamJoin
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serializer

@@ -1,6 +1,6 @@
 package harvester.common.serialization
 
-import kafka.balanceLastSeen.distribution.messages.StreamJoin
+import harvester.common.messages.StreamJoin
 import org.apache.kafka.common.serialization.Deserializer
 
 class JoinDeserializer: Deserializer<StreamJoin.Join> {

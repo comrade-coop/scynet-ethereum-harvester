@@ -1,6 +1,6 @@
 package harvester.common.serialization
 
-import kafka.balanceLastSeen.distribution.messages.StringList
+import harvester.common.messages.StringList
 import org.apache.kafka.common.serialization.Deserializer
 
 class StringListDeserializer: Deserializer<StringList.List> {
