@@ -45,6 +45,26 @@ abstract class AddressFeatureTickProcessor : TickFeatureProcessor() {
         return builder.build()
     }
 
+    protected fun addToAddressFeatureStore(address: String) {
+        val previousFeatureNumber = addressFeatureStore!!.get(address)
+        if (previousFeatureNumber.isNullOrEmpty()) {
+            addressFeatureStore!!.put(address, ONE.toString())
+        } else {
+            addressFeatureStore!!.put(address, FeatureCalculator.increaseByOne(previousFeatureNumber))
+        }
+    }
+
+    protected fun addToBlockNumberAddressFeatureStore(address: String) {
+        val builder = blockNumberAddressFeatureStore!!.get(currentBlockNumber).toBuilder()
+        val previousFeatureNumber = builder.getAddressFeatureOrDefault(address, NEGATIVE_ONE.toString())
+        if (previousFeatureNumber == NEGATIVE_ONE.toString()) {
+            builder.putAddressFeature(address, ONE.toString())
+        } else {
+            builder.putAddressFeature(address, FeatureCalculator.increaseByOne(previousFeatureNumber))
+        }
+        blockNumberAddressFeatureStore!!.put(currentBlockNumber, builder.build())
+    }
+
     private fun removeBlockEntriesFromFeatureStore(firstBlockAddressFeature: AddressFeature.AddressFeatureMap) {
         firstBlockAddressFeature.addressFeatureMap.forEach { address, feature ->
             if (address == "timestamp") return@forEach
@@ -52,4 +72,5 @@ abstract class AddressFeatureTickProcessor : TickFeatureProcessor() {
             addressFeatureStore!!.put(address, FeatureCalculator.subtract(previousFeature, feature))
         }
     }
+
 }
