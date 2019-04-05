@@ -1,6 +1,7 @@
 package harvester.common.processor
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 class FeatureCalculator {
     companion object {
@@ -8,7 +9,7 @@ class FeatureCalculator {
         private val WEI_IN_ETH = "1000000000000000000"
 
         fun weiToEth(wei: String): String {
-            return (BigDecimal(wei) / BigDecimal(WEI_IN_ETH)).setScale(2).toString()
+            return (BigDecimal(wei) / BigDecimal(WEI_IN_ETH)).setScale(4, RoundingMode.HALF_UP).toString()
         }
 
         fun sum(firstNum: String, secondNum: String): String {
