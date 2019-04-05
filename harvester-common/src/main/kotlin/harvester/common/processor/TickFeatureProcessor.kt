@@ -70,6 +70,14 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
         setLastProcessedBlock(blockNumber.toString())
     }
 
+    private fun getTickTimeSeconds(): BigInteger {
+        val tickTimeSeconds = System.getenv("TICK_TIME_SECONDS")
+        if (tickTimeSeconds != null) {
+            return tickTimeSeconds.toBigInteger()
+        }
+        return BigInteger.valueOf(3600)
+    }
+
     private fun isProcessed(blockNumber: Int): Boolean {
         if (blockNumber <= lastProcessedBlockNumber!!) {
             return true
@@ -84,7 +92,7 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
     }
 
     protected fun setEndOfTick(timestamp: BigInteger) {
-        endOfTick = timestamp + BigInteger.valueOf(3600)
+        endOfTick = timestamp + getTickTimeSeconds()
         synchronizationStore!!.put("endOfTick", endOfTick.toString())
     }
 
