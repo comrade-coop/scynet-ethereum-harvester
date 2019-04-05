@@ -13,7 +13,7 @@ class FeatureCalculator {
         }
 
         fun sum(firstNum: String, secondNum: String): String {
-            val result = BigDecimal(firstNum).add(BigDecimal(secondNum))
+            val result = BigDecimal(firstNum) + (BigDecimal(secondNum))
             // uncomment when starting from block 0
 //          if(result < BigInteger.ZERO){
 //            result = BigInteger.ZERO
@@ -22,11 +22,11 @@ class FeatureCalculator {
         }
 
         fun increaseByOne(number: String): String {
-            return BigDecimal(number).add(BigDecimal.ONE).toString()
+            return (BigDecimal(number) + (BigDecimal.ONE)).toString()
         }
 
         fun subtract(firstNum: String, secondNum: String): String {
-            return BigDecimal(firstNum).subtract(BigDecimal(secondNum)).toString()
+            return (BigDecimal(firstNum) - (BigDecimal(secondNum))).toString()
         }
 
         fun multiply(firstNum: String, secondNum: String): String {
