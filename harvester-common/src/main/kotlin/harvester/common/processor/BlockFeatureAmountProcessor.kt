@@ -4,7 +4,7 @@ import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
-import java.math.BigInteger
+import java.math.BigDecimal
 
 abstract class BlockFeatureAmountProcessor(private val FEATURE: String) : Processor<String, Messages.Block> {
 
@@ -39,7 +39,7 @@ abstract class BlockFeatureAmountProcessor(private val FEATURE: String) : Proces
             synchronizationStore!!.put(FEATURE, updatedAmount)
             return updatedAmount
         }
-        synchronizationStore!!.put(FEATURE, BigInteger(featureValue).toString())
+        synchronizationStore!!.put(FEATURE, BigDecimal(featureValue).toString())
         return featureValue
     }
 
