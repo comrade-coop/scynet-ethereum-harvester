@@ -4,7 +4,7 @@ import harvester.common.messages.Messages
 import harvester.common.processor.BlockFeatureTickProcessor
 import harvester.common.processor.FeatureCalculationStrategy
 
-class GasLimitTickProcessor : BlockFeatureTickProcessor("gasLimit", FeatureCalculationStrategy.AVERAGE) {
+class GasLimitTickProcessor : BlockFeatureTickProcessor("gasLimit", FeatureCalculationStrategy.AVERAGE, null) {
 
     override fun extract(block: Messages.Block) {
         val gasLimit = block.gasLimit

@@ -5,7 +5,7 @@ import harvester.common.processor.BlockFeatureTickProcessor
 import harvester.common.processor.FeatureCalculationStrategy
 import java.math.BigInteger
 
-class TransactionCountProcessor : BlockFeatureTickProcessor("transactionCount", FeatureCalculationStrategy.AMOUNT) {
+class TransactionCountProcessor : BlockFeatureTickProcessor("transactionCount", FeatureCalculationStrategy.AMOUNT, null) {
 
     override fun extract(block: Messages.Block) {
         val transactionCount = extractTransactionCountFromTraces(block)

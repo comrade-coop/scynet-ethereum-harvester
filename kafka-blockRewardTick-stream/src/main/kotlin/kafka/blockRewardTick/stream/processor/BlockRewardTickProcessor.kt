@@ -4,7 +4,7 @@ import harvester.common.messages.Messages
 import harvester.common.processor.BlockFeatureTickProcessor
 import harvester.common.processor.FeatureCalculationStrategy
 
-class BlockRewardTickProcessor : BlockFeatureTickProcessor("blockReward", FeatureCalculationStrategy.AVERAGE) {
+class BlockRewardTickProcessor : BlockFeatureTickProcessor("blockReward", FeatureCalculationStrategy.AVERAGE, null) {
 
     private val ZERO = "0"
 
