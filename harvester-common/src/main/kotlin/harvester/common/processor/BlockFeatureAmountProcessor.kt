@@ -26,7 +26,7 @@ abstract class BlockFeatureAmountProcessor(private val FEATURE: String) : Proces
         val blockNumber = block.number
         val updatedAmount = updateAmount(getFeatureValue(block))
 
-        println("Processing block with number: $blockNumber with updated amount: $updatedAmount")
+        println("Processing block with number: $blockNumber with updated $FEATURE amount: $updatedAmount")
 
         context!!.forward(blockNumber, updatedAmount)
         context!!.commit()
