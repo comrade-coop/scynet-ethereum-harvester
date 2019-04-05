@@ -10,16 +10,15 @@ import java.math.BigInteger
 
 abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Processor<String, Block> {
 
+    private var synchronizationStore: KeyValueStore<String, String>? = null
+    private var lastProcessedBlockNumber: Int? = null
+    private var endOfTick: BigInteger? = null
+
     protected val ONE: Int = 1
     protected val NEGATIVE_ONE: Int = -1
 
     protected var context: ProcessorContext? = null
-    private var synchronizationStore: KeyValueStore<String, String>? = null
-
-    private var endOfTick: BigInteger? = null
     protected var firstBlockNumber: Int? = null
-    private var lastProcessedBlockNumber: Int? = null
-
     protected var currentBlockNumber: Int? = null
 
     override fun process(blockNumber: String, block: Block) {

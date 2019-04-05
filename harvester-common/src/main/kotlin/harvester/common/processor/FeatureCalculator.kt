@@ -12,6 +12,10 @@ class FeatureCalculator {
             return (BigDecimal(wei) / BigDecimal(WEI_IN_ETH)).setScale(4, RoundingMode.HALF_UP).toString()
         }
 
+        fun divide(firstNum: String, secondNum: String, scale: Int): String {
+            return (BigDecimal(firstNum) / BigDecimal(secondNum).setScale(scale, RoundingMode.HALF_UP)).toString()
+        }
+
         fun sum(firstNum: String, secondNum: String): String {
             val result = BigDecimal(firstNum) + (BigDecimal(secondNum))
             // uncomment when starting from block 0

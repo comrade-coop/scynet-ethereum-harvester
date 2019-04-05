@@ -9,10 +9,10 @@ abstract class BlockFeatureTickProcessor(protected val FEATURE: String,
                                          protected val FEATURE_CALCULATION_STRATEGY: FeatureCalculationStrategy,
                                          TICK_TIME_SECONDS: String?) : TickFeatureProcessor(TICK_TIME_SECONDS) {
 
+    private val ZERO = "0"
+
     protected var featureStore: KeyValueStore<String, String>? = null
     protected var blockNumberFeatureStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null
-
-    private val ZERO = "0"
 
     override fun initStores() {
         featureStore = context!!.getStateStore("Feature") as KeyValueStore<String, String>
@@ -30,6 +30,7 @@ abstract class BlockFeatureTickProcessor(protected val FEATURE: String,
         while (notInTick(timestamp)) {
             val blockFeatureValue = blockNumberFeatureStore!!.get(firstBlockNumber).getAddressFeatureOrThrow(FEATURE)
             removeBlockEntryFromStore(firstBlockNumber!!)
+            updatePreviousTickFeatureValue()
             updateFeatureStore(blockFeatureValue, true)
 
             setFirstBlockNumber(firstBlockNumber!! + ONE)
@@ -41,6 +42,8 @@ abstract class BlockFeatureTickProcessor(protected val FEATURE: String,
             setEndOfTick(firstBlockTimestamp)
         }
     }
+
+    open fun updatePreviousTickFeatureValue() {}
 
     override fun buildFeatureMap(): AddressFeature.AddressFeatureMap {
         val builder = AddressFeature.AddressFeatureMap.newBuilder()
