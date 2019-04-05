@@ -20,7 +20,11 @@ abstract class BlockFeatureProcessor : Processor<String, Messages.Block> {
     protected abstract fun getFeatureValue(block: Messages.Block): String
 
     private fun process(block: Messages.Block) {
-        context!!.forward(block.number, getFeatureValue(block))
+        val blockNumber = block.number
+        val featureValue = getFeatureValue(block)
+        println("Processing block with number: $blockNumber with feature value: $featureValue")
+
+        context!!.forward(block.number, featureValue)
         context!!.commit()
     }
 

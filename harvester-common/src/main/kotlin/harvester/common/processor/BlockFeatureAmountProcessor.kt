@@ -23,9 +23,12 @@ abstract class BlockFeatureAmountProcessor(private val FEATURE: String) : Proces
     protected abstract fun getFeatureValue(block: Messages.Block): String
 
     private fun process(block: Messages.Block) {
+        val blockNumber = block.number
         val updatedAmount = updateAmount(getFeatureValue(block))
 
-        context!!.forward(block.number, updatedAmount)
+        println("Processing block with number: $blockNumber with updated amount: $updatedAmount")
+
+        context!!.forward(blockNumber, updatedAmount)
         context!!.commit()
     }
 
