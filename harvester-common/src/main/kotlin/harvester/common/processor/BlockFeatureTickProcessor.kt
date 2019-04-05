@@ -6,7 +6,8 @@ import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
 
 abstract class BlockFeatureTickProcessor(protected val FEATURE: String,
-                                         protected val FEATURE_CALCULATION_STRATEGY: FeatureCalculationStrategy) : TickFeatureProcessor() {
+                                         protected val FEATURE_CALCULATION_STRATEGY: FeatureCalculationStrategy,
+                                         TICK_TIME_SECONDS: String?) : TickFeatureProcessor(TICK_TIME_SECONDS) {
 
     protected var featureStore: KeyValueStore<String, String>? = null
     protected var blockNumberFeatureStore: KeyValueStore<Int, AddressFeature.AddressFeatureMap>? = null

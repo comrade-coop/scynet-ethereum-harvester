@@ -8,7 +8,7 @@ import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
 
-abstract class TickFeatureProcessor : Processor<String, Block> {
+abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Processor<String, Block> {
 
     protected val ONE: Int = 1
     protected val NEGATIVE_ONE: Int = -1
@@ -71,6 +71,9 @@ abstract class TickFeatureProcessor : Processor<String, Block> {
     }
 
     private fun getTickTimeSeconds(): BigInteger {
+        if (TICK_TIME_SECONDS != null) {
+            return TICK_TIME_SECONDS.toBigInteger()
+        }
         val tickTimeSeconds = System.getenv("TICK_TIME_SECONDS")
         if (tickTimeSeconds != null) {
             return tickTimeSeconds.toBigInteger()
