@@ -1,0 +1,5 @@
+package kafka.feature.streams
+
+enum class FeatureProcessorType {
+    BLOCK_FEATURE, BLOCK_FEATURE_AMOUNT, BLOCK_FEATURE_TICK, ADDRESS_FEATURE_TICK, FEATURE_GROWTH_RATE_TICK
+}
