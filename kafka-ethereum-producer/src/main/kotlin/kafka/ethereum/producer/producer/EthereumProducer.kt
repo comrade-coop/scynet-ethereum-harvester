@@ -16,7 +16,7 @@ class EthereumProducer(
 ) {
 
     fun start() {
-        val firstBlockNumber = BigInteger.valueOf(100000L)
+        val firstBlockNumber = BigInteger.valueOf(1L)
         try {
             subscribeToBlockFlowable(firstBlockNumber)
         } catch (e: Exception) {
@@ -34,6 +34,9 @@ class EthereumProducer(
                 try {
                     val block = ethereumMessageBuilder.buildBlock(ethBlock)
                     println(block.number)
+                    if(block.number.toInt() == 2){
+                        println()
+                    }
                     val blockTimestamp = if (block.timestamp != null) block.timestamp.toLong() else null
                     val acknowledged =
                         producer.send(ProducerRecord("ethereum_blocks", null, blockTimestamp, block.number, block))

@@ -10,24 +10,23 @@ class LastSeenProcessor() : Processor<String, Messages.Block> {
 
     private var context: ProcessorContext? = null
     private var addressLastSeenStore: KeyValueStore<String, String>? = null
+    private val currentAddresses: HashSet<String> = HashSet()
+    private var lastProcessedBlock: Int? = null
 
     override fun process(blockNumber: String, block: Messages.Block) {
-        try {
-            process(block)
-        } catch (e: Exception) {
-            // TODO use logger for this
-            println("Exception occurred: $e while processing block: $blockNumber")
+
+        if(lastProcessedBlock != null && lastProcessedBlock != blockNumber.toInt() - 1){
+            println()
         }
-    }
 
-    private fun process(block: Messages.Block) {
-        val blockNumber = block.number
-        populateAddressLastSeenStore(block)
+        currentAddresses.clear()
+        extract(block)
 
-        val addressFeatureMap = buildAddressFeatureMap(block.timestamp)
-
+        val addressFeatureMap  = buildAddressFeatureMap(block.timestamp)
+        println(blockNumber)
         context!!.forward(blockNumber, addressFeatureMap)
         context!!.commit()
+        lastProcessedBlock = blockNumber.toInt()
     }
 
     override fun init(context: ProcessorContext) {
@@ -39,31 +38,49 @@ class LastSeenProcessor() : Processor<String, Messages.Block> {
     override fun close() {
     }
 
-    fun buildAddressFeatureMap(blockTimestamp: String): AddressFeature.AddressFeatureMap {
+    fun buildAddressFeatureMap(blockTimestamp: String): AddressFeature.AddressFeatureMap{
         val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
-        addressLastSeenStore!!.all().forEach { entry ->
-            addressFeatureBuilder.putAddressFeature(entry.key, (blockTimestamp.toBigInteger() - entry.value.toBigInteger()).toString())
+        currentAddresses.forEach{ address ->
+            addressFeatureBuilder.putAddressFeature(address, blockTimestamp)
         }
         return addressFeatureBuilder.build()
     }
 
-    private fun populateAddressLastSeenStore(block: Messages.Block) {
+    private fun extract(block: Messages.Block){
         val traces = getTraces(block)
 
-        traces.forEach { trace ->
-            when (trace.type) {
-                "reward" -> addressLastSeenStore!!.put(trace.reward.author, block.timestamp)
+        traces.forEach{
+            trace ->
+            when(trace.type){
+
+                "reward" -> {
+                    addressLastSeenStore!!.put(trace.reward.author, block.timestamp)
+                    currentAddresses.add(trace.reward.author)
+                }
                 "call" -> {
                     addressLastSeenStore!!.put(trace.call.from, block.timestamp)
                     addressLastSeenStore!!.put(trace.call.to, block.timestamp)
+                    currentAddresses.add(trace.call.from)
+                    currentAddresses.add(trace.call.to)
                 }
-                "suicide" -> addressLastSeenStore!!.put(trace.suicide.refundAddress, block.timestamp)
-                "create" -> addressLastSeenStore!!.put(trace.create.from, block.timestamp)
+                "suicide" -> {
+                    addressLastSeenStore!!.put(trace.suicide.refundAddress, block.timestamp)
+                    addressLastSeenStore!!.put(trace.suicide.address, block.timestamp)
+                    currentAddresses.add(trace.suicide.refundAddress)
+                    currentAddresses.add(trace.suicide.address)
+
+                }
+                "create" ->{
+                    addressLastSeenStore!!.put(trace.create.from, block.timestamp)
+                    addressLastSeenStore!!.put(trace.result.address, block.timestamp)
+                    currentAddresses.add(trace.create.from)
+                    currentAddresses.add(trace.result.address)
+                }
             }
         }
     }
 
-    private fun getTraces(block: Messages.Block): List<Messages.Trace> {
+    private fun getTraces(block: Messages.Block): List<Messages.Trace>{
         return block.transactionsList
                 .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
     }

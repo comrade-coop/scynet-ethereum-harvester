@@ -56,13 +56,6 @@ class StreamConfig{
                     StringListSerdes()
             )
         }
-
-        fun getSortedAddressesByBlockStoreSupplier(): StoreBuilder<KeyValueStore<String, StringList.List>>{
-            return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("SortedAddressesByBlock"),
-                    Serdes.String(),
-                    StringListSerdes()
-            )
-        }
+        
     }
 }

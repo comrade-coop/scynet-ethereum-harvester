@@ -4,7 +4,7 @@ import harvester.common.messages.AddressFeature
 import harvester.common.messages.StreamJoin
 import org.apache.kafka.streams.kstream.ValueJoiner
 
-class ValueJoinerStreamStream: ValueJoiner<AddressFeature.AddressFeatureMap,AddressFeature.AddressFeatureMap, StreamJoin.Join> {
+class StreamValueJoiner: ValueJoiner<AddressFeature.AddressFeatureMap,AddressFeature.AddressFeatureMap, StreamJoin.Join> {
     override fun apply(value1: AddressFeature.AddressFeatureMap?, value2: AddressFeature.AddressFeatureMap?): StreamJoin.Join {
         val builder = StreamJoin.Join.newBuilder()
         builder.setNumberOfStreams(2)

@@ -11,8 +11,8 @@ import kotlin.math.roundToInt
 
 class DistributionProcessor: Processor<String, StreamJoin.Join> {
     private var lastProcessedBlock: Int? = null
+    private val processed: HashSet<Int> = HashSet()
 
-    private var addressPositionMap: HashMap<String, StringList.List> = HashMap()
     private var context: ProcessorContext? = null
     private var matrixStore: KeyValueStore<String, MatrixBlob.Blob>? = null
     private var addressPositionStore: KeyValueStore<String, StringList.List>? = null
@@ -30,6 +30,14 @@ class DistributionProcessor: Processor<String, StreamJoin.Join> {
 
     override fun process(blockNumber: String?, features: StreamJoin.Join?) {
 
+        if (processed.contains(blockNumber!!.toInt())){
+            return
+        }
+
+        if(lastProcessedBlock != null && (lastProcessedBlock!! > blockNumber!!.toInt() || lastProcessedBlock != blockNumber.toInt() - 1 )){
+                return
+        }
+
 
         var matrixInStore = matrixStore!!.get("matrix")
         if(matrixInStore == null){
@@ -41,12 +49,18 @@ class DistributionProcessor: Processor<String, StreamJoin.Join> {
         currentTimestamp = null
         currentBlock = blockNumber!!.toInt()
         val balances = features!!.featureMap1Map
+        if(balances.isEmpty()){
+            println()
+        }
         val lastSeen = features.featureMap2Map
         balances.forEach{ addressBalance ->
             val address = addressBalance.key
             val balance = addressBalance.value
             val timestamp = lastSeen.get(address)
             if(currentTimestamp.isNullOrEmpty()) currentTimestamp = timestamp!!
+            if(currentTimestamp.isNullOrEmpty()){
+                println()
+            }
             val previousPosition = addressPositionStore!!.get(addressBalance.key)
             if( previousPosition != null){
                 removeFromMatrix(calculateBlobDataPosition(previousPosition))
@@ -62,6 +76,7 @@ class DistributionProcessor: Processor<String, StreamJoin.Join> {
         context!!.forward(blockNumber, distribution)
         context!!.commit()
         lastProcessedBlock = currentBlock!!
+        processed.add(currentBlock!!)
         println(blockNumber)
     }
 
@@ -103,7 +118,6 @@ class DistributionProcessor: Processor<String, StreamJoin.Join> {
             if(isInCurrentBlock(addressPosition.value)) return@forEach
             removeFromMatrix(calculateBlobDataPosition(addressPosition.value))
             if (isOutdated(addressPosition.value)) {
-                removeFromMatrix(calculateBlobDataPosition(addressPosition.value))
                 addressPositionStore!!.delete(addressPosition.key)
                 return@forEach
             }
@@ -125,6 +139,9 @@ class DistributionProcessor: Processor<String, StreamJoin.Join> {
     private fun calculateBlobDataPosition(position: StringList.List): Int{
         val balance = position.getItem(0)
         val timestamp = position.getItem(1)
+        if(balance.isNullOrEmpty() || timestamp.isNullOrEmpty() || currentTimestamp.isNullOrEmpty()){
+            println()
+        }
         val weiBalance = weiToTenthOfEth(balance)
         val balanceGroup = Math.min(scaleDown(weiBalance.toDouble()), maxBalance - 1)
         val lastSeenGroup = Math.min(scaleDown((currentTimestamp!!.toBigInteger() - timestamp.toBigInteger()).toDouble()), maxLastSeen)

@@ -6,44 +6,46 @@ import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 
-class AddressBalanceProcessor : Processor<String, Messages.Block> {
+class AddressBalanceProcessor: Processor<String, Messages.Block> {
 
     private var context: ProcessorContext? = null
-    private var AddressBalanceStore: KeyValueStore<String, String>? = null
+    private var addressBalanceStore: KeyValueStore<String, String>? = null
+    private val currentAddresses: MutableSet<String> = HashSet()
+    private var lastProcessedBlock: Int? = null
+
 
     override fun process(blockNumber: String, block: Messages.Block) {
-        try {
-            process(block)
-        } catch (e: Exception) {
-            // TODO use logger for this
-            println("Exception occurred: $e while processing block: $blockNumber")
-        }
-    }
 
-    private fun process(block: Messages.Block) {
-        val blockNumber = block.number
+        if(lastProcessedBlock != null && lastProcessedBlock != blockNumber.toInt() - 1){
+            println()
+        }
+
+        currentAddresses.clear()
         extract(block)
 
         val addressFeatureBuilder = AddressFeature.AddressFeatureMap.newBuilder()
-        AddressBalanceStore!!.all().forEach { entry ->
-            addressFeatureBuilder.putAddressFeature(entry.key, entry.value)
+        currentAddresses.forEach { address->
+            val balance = addressBalanceStore!!.get(address)
+            addressFeatureBuilder.putAddressFeature(address, balance)
         }
 
         context!!.forward(blockNumber, addressFeatureBuilder.build())
         context!!.commit()
+
+        println(blockNumber)
     }
 
     override fun init(context: ProcessorContext) {
         this.context = context
 
-        this.AddressBalanceStore = context.getStateStore("AddressBalance") as KeyValueStore<String, String>
+        this.addressBalanceStore = context.getStateStore("AddressBalance") as KeyValueStore<String, String>
     }
 
     override fun close() {
     }
 
 
-    private fun extract(block: Messages.Block) {
+    private fun extract(block: Messages.Block){
         accountForGas(block)
         addressBalanceFromTraces(block)
     }
@@ -58,28 +60,44 @@ class AddressBalanceProcessor : Processor<String, Messages.Block> {
         addToAddressBalanceStore(block.author, rewardForBlockAuthor)
     }
 
-    private fun addressBalanceFromTraces(block: Messages.Block) {
+    private fun addressBalanceFromTraces(block: Messages.Block){
         val traces = block.transactionsList
                 .fold(block.tracesList) { traces, transaction -> traces.union(transaction.tracesList).toList() }
         traces.forEach { trace ->
             when (trace.type) {
-                "reward" -> addToAddressBalanceStore(trace.reward.author, trace.reward.value)
+                "reward" ->{
+                    addToAddressBalanceStore(trace.reward.author, trace.reward.value)
+                    currentAddresses.add(trace.reward.author)
+                }
                 "call" -> {
                     addToAddressBalanceStore(trace.call.from, "-" + trace.call.value)
                     addToAddressBalanceStore(trace.call.to, trace.call.value)
+                    currentAddresses.add(trace.call.from)
+                    currentAddresses.add(trace.call.to)
                 }
-                "suicide" -> addToAddressBalanceStore(trace.suicide.refundAddress, trace.suicide.balance)
-                "create" -> addToAddressBalanceStore(trace.create.from, trace.create.value)
+                "suicide" -> {
+                    addToAddressBalanceStore(trace.suicide.refundAddress, trace.suicide.balance)
+                    addToAddressBalanceStore(trace.suicide.address, "-" + trace.suicide.balance)
+                    currentAddresses.add(trace.suicide.refundAddress)
+                    currentAddresses.add(trace.suicide.address)
+
+                }
+                "create" -> {
+                    addToAddressBalanceStore(trace.create.from,"-" + trace.create.value)
+                    addToAddressBalanceStore(trace.result.address, trace.create.value)
+                    currentAddresses.add(trace.create.from)
+                    currentAddresses.add(trace.result.address)
+                }
             }
         }
     }
 
-    private fun addToAddressBalanceStore(address: String, amount: String) {
-        val previousBalance = AddressBalanceStore!!.get(address)
-        if (previousBalance.isNullOrEmpty()) {
-            AddressBalanceStore!!.put(address, amount)
+    private fun addToAddressBalanceStore(address: String, amount: String){
+        val previousBalance = addressBalanceStore!!.get(address)
+        if(previousBalance.isNullOrEmpty()){
+            addressBalanceStore!!.put(address, amount)
         } else {
-            AddressBalanceStore!!.put(address, BalanceCalculator.sum(amount, previousBalance))
+            addressBalanceStore!!.put(address, BalanceCalculator.sum(amount, previousBalance))
         }
     }
 }

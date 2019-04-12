@@ -1,6 +1,7 @@
 package kafka.lastSeen.stream.config
 
 import harvester.common.serialization.AddressFeatureSerdes
+import org.apache.kafka.common.config.TopicConfig
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.state.KeyValueStore
@@ -16,7 +17,8 @@ class StreamConfig {
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "lastSeen")
                 setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
                 setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
-				setProperty("log.retention.hours", Int.MAX_VALUE.toString())
+                setProperty("cleanup.policy", TopicConfig.CLEANUP_POLICY_COMPACT) // currently set up manually
+                setProperty("delete.retention.ms", "0")// currently set up manually
             }
         }
 
@@ -25,7 +27,7 @@ class StreamConfig {
                     Stores.persistentKeyValueStore("LastSeen"),
                     Serdes.String(),
                     Serdes.String()
-            ).withLoggingDisabled() //enable in production
+            )
         }
     }
 }

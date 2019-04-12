@@ -8,7 +8,7 @@ import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
 
-class StreamJoiner {
+class JoinerStream {
     fun start(){
         val builder = StreamsBuilder()
 
@@ -16,7 +16,7 @@ class StreamJoiner {
         val balanceStream = builder.table<String, AddressFeature.AddressFeatureMap>("balance", Consumed.with(Serdes.String(), AddressFeatureSerdes()))
 
         val joined = balanceStream
-                .join(lastSeenStream, ValueJoinerStreamStream())
+                .join(lastSeenStream, StreamValueJoiner())
                 .toStream().to("BalanceLastSeen")
 
         val balanceLastSeen = KafkaStreams(builder.build(), StreamConfig.getJoinStreamProperties())
