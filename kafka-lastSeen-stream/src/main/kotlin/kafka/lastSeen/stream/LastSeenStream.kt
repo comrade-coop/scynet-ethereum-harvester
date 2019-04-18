@@ -1,6 +1,7 @@
 package kafka.lastSeen.stream
 
 import harvester.common.serialization.BlockDeserializer
+import harvester.common.topics.Topics
 import kafka.lastSeen.stream.config.StreamConfig
 import kafka.lastSeen.stream.processor.LastSeenProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -23,7 +24,7 @@ class LastSeenStream {
                 .addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
                 .addProcessor("Processor", LastSeenProcessorSupplier(), "Ethereum-producer")
                 .addStateStore(StreamConfig.getLastSeenStoreSupplier(), "Processor")
-                .addSink("LastSeen-stream", "lastSeen", "Processor")
+                .addSink("LastSeen-stream", Topics.LAST_SEEN.spell(), "Processor")
         return topology
     }
 }

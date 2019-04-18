@@ -1,4 +1,4 @@
-package kafka.balanceLastSeen.distribution
+package harvester.common.distribution.stream.joiner
 
 import harvester.common.messages.AddressFeature
 import harvester.common.messages.StreamJoin

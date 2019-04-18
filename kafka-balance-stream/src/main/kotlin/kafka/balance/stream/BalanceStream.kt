@@ -1,6 +1,7 @@
 package kafka.balance.stream
 
 import harvester.common.serialization.BlockDeserializer
+import harvester.common.topics.Topics
 import kafka.balance.stream.config.StreamConfig
 import kafka.balance.stream.processor.AddressBalanceProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -24,7 +25,7 @@ class BalanceStream(){
         topology.addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
                .addProcessor("Processor", AddressBalanceProcessorSupplier(), "Ethereum-producer")
                .addStateStore(StreamConfig.getAddressBalanceStoreSupplier(), "Processor")
-               .addSink("Balance-stream", "balance", "Processor")
+               .addSink("Balance-stream", Topics.BALANCE.spell(), "Processor")
 
         return topology
     }

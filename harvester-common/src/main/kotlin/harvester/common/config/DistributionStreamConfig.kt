@@ -15,8 +15,9 @@ import org.apache.kafka.streams.state.Stores
 import java.util.*
 
 class DistributionStreamConfig() {
+
     companion object {
-        fun getStreamProperties(APPLICATION_ID_CONFIG: String, BOOTSTRAP_SERVERS_CONFIG: String): Properties {
+        fun getStreamProperties(APPLICATION_ID_CONFIG: String = "distribution", BOOTSTRAP_SERVERS_CONFIG: String = "127.0.0.1:9092"): Properties {
             return Properties().apply {
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, APPLICATION_ID_CONFIG)
                 setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG)
@@ -28,7 +29,7 @@ class DistributionStreamConfig() {
             }
         }
 
-        fun getJoinStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String): Properties {
+        fun getJoinStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String = "127.0.0.1:9092"): Properties {
             return Properties().apply {
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "join")
                 setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG)

@@ -54,4 +54,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+#Distributions
+distributions
+
 !/gradle/wrapper/gradle-wrapper.jar
