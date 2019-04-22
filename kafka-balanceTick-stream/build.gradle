@@ -1,24 +1,22 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.20'
     id "com.google.protobuf" version "0.8.7"
-    id "application"
+    id 'application'
 }
-
+mainClassName = 'kafka.balanceTick.stream.BalanceTickStreamKt'
 group 'ai.scynet.harvester'
-mainClassName = 'kafka.volumeOut.stream.VolumeOutStreamKt'
 version '1.0-SNAPSHOT'
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'Kafka Ethereum Producer',
+        attributes 'Implementation-Title': 'Kafka BalanceTick Stream',
                 'Implementation-Version': version,
-                'Main-Class': 'kafka.volumeOut.stream.VolumeOutStreamKt'
+                'Main-Class': 'kafka.balanceTick.stream.BalanceTickStream.kt'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
     with jar
 }
-
 
 repositories {
     mavenCentral()
@@ -49,3 +47,4 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+

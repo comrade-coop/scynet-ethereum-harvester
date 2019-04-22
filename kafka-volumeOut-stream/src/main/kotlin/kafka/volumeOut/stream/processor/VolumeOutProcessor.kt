@@ -7,7 +7,7 @@ import harvester.common.processor.FeatureCalculator
 class VolumeOutProcessor : AddressFeatureTickProcessor(null) {
 
     override fun extract(block: Messages.Block) {
-        accountForGas(block)
+        //accountForGas(block)
         extractAddressVolumeOutFromTraces(block)
     }
 
@@ -55,5 +55,4 @@ class VolumeOutProcessor : AddressFeatureTickProcessor(null) {
         }
         blockNumberAddressFeatureStore!!.put(currentBlockNumber, builder.build())
     }
-
 }

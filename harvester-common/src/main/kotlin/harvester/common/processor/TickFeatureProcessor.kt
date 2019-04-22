@@ -7,29 +7,47 @@ import org.apache.kafka.streams.processor.Processor
 import org.apache.kafka.streams.processor.ProcessorContext
 import org.apache.kafka.streams.state.KeyValueStore
 import java.math.BigInteger
+import kotlin.system.measureTimeMillis
 
 abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Processor<String, Block> {
-
+    protected val ONE: Int = 1
+    protected val NEGATIVE_ONE: Int = -1
+    private val batchSize = 500
     private var synchronizationStore: KeyValueStore<String, String>? = null
     private var lastProcessedBlockNumber: Int? = null
     private var endOfTick: BigInteger? = null
-
-    protected val ONE: Int = 1
-    protected val NEGATIVE_ONE: Int = -1
-
+    private var totalTime: Long = 0L
+    private var totalRealTme: Long = 0
+    private var processedBlocks: Int = 0
+    private var batchNumber: Int = 1
+    private var batchTime: Long = 0
+    private var startOfBatchRealTime: Long = System.currentTimeMillis()
     protected var context: ProcessorContext? = null
     protected var firstBlockNumber: Int? = null
     protected var currentBlockNumber: Int? = null
 
     override fun process(blockNumber: String, block: Block) {
-        try {
+        val time = measureTimeMillis {
             process(block)
-        } catch (e: Exception) {
-            // TODO use logger for this
-            println("Exception occurred: $e while processing block: $blockNumber")
+        }
+        println("Time -> $time for block #$blockNumber" )
+        totalTime += time
+        batchTime += time
+        processedBlocks++
+        if(processedBlocks % batchSize == 0){
+            println("Batch #${batchNumber} processed in  ${batchTime}. Average processing time is ${totalTime/batchNumber}. Real batch time is ${getRealBatchTime()}. Average real time batch -> ${totalRealTme / batchNumber}")
+            batchTime = 0
+            batchNumber++
+
         }
     }
 
+    private fun getRealBatchTime(): Long {
+        val realBatchTime =  System.currentTimeMillis() - startOfBatchRealTime
+        startOfBatchRealTime = System.currentTimeMillis()
+        totalRealTme += realBatchTime
+        return realBatchTime
+    }
     override fun init(context: ProcessorContext) {
         this.context = context
 
@@ -51,22 +69,19 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
 
     private fun process(block: Block) {
         val blockNumber = block.number.toInt()
+        val timestamp = block.timestamp
+
         if (isProcessed(blockNumber)) {
             return
         }
-        println(blockNumber)
-        if (notSetEndOfTick()) {
-            setEndOfTick(block.timestamp.toBigInteger())
+        setEndOfTick(timestamp)
+        addFeatureBuilderWithTimestampForBlock(block)
+        if(firstBlockNumber == NEGATIVE_ONE){
             setFirstBlockNumber(blockNumber)
         }
-        addFeatureBuilderWithTimestampForBlock(block)
-
-        if (notInTick(block.timestamp.toBigInteger())) {
-            commitFeature()
-            slideTickForward(block.timestamp.toBigInteger())
-        }
+        slideTickForward()
         extract(block)
-        setLastProcessedBlock(blockNumber.toString())
+        commitFeature(block.number)
     }
 
     private fun getTickTimeSeconds(): BigInteger {
@@ -93,9 +108,9 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
         return false
     }
 
-    protected fun setEndOfTick(timestamp: BigInteger) {
-        endOfTick = timestamp + getTickTimeSeconds()
-        synchronizationStore!!.put("endOfTick", endOfTick.toString())
+    protected fun setEndOfTick(timestamp: String) {
+        endOfTick = timestamp.toBigInteger()
+        synchronizationStore!!.put("endOfTick", timestamp)
     }
 
     protected fun setFirstBlockNumber(blockNumber: Int) {
@@ -104,14 +119,14 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
     }
 
     protected fun notInTick(timestamp: BigInteger): Boolean {
-        if (timestamp > endOfTick)
+        if (timestamp < endOfTick!! - getTickTimeSeconds())
             return true
         return false
     }
 
-    private fun commitFeature() {
+    private fun commitFeature(blockNumber: String) {
         val featureMap = buildFeatureMap()
-        context!!.forward(endOfTick.toString(), featureMap)
+        context!!.forward(blockNumber, featureMap)
         context!!.commit()
     }
 
@@ -119,7 +134,7 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
         synchronizationStore!!.put("lastProcessedBlockNumber", blockNumber)
     }
 
-    protected abstract fun slideTickForward(timestamp: BigInteger)
+    protected abstract fun slideTickForward()
 
     protected abstract fun buildFeatureMap(): AddressFeature.AddressFeatureMap
 

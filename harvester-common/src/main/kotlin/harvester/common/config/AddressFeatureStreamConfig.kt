@@ -2,6 +2,7 @@ package harvester.common.config
 
 import harvester.common.messages.AddressFeature
 import harvester.common.serialization.AddressFeatureSerdes
+import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.TopicConfig
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
@@ -12,7 +13,7 @@ import java.util.*
 
 class AddressFeatureStreamConfig {
     companion object {
-        fun getStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String, APPLICATION_ID_CONFIG: String): Properties {
+        fun getStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String = "127.0.0.1:9092", APPLICATION_ID_CONFIG: String): Properties {
             return Properties().apply {
                 setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG)
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, APPLICATION_ID_CONFIG)
@@ -20,12 +21,13 @@ class AddressFeatureStreamConfig {
                 setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, AddressFeatureSerdes().javaClass.name)
                 setProperty("cleanup.policy", TopicConfig.CLEANUP_POLICY_COMPACT) // currently set up manually for Sink
                 setProperty(TopicConfig.DELETE_RETENTION_MS_CONFIG, "0") // currently set up manually
+                setProperty(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, "10000000")
             }
         }
 
-        fun getAddressFeatureStoreSupplier(): StoreBuilder<KeyValueStore<String, String>> {
+        fun getAddressFeatureStoreSupplier(name: String = "AddressFeature"): StoreBuilder<KeyValueStore<String, String>> {
             return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("AddressFeature"),
+                    Stores.persistentKeyValueStore(name),
                     Serdes.String(),
                     Serdes.String()
             )

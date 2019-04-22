@@ -26,23 +26,22 @@ abstract class BlockFeatureTickProcessor(protected val FEATURE: String,
         blockNumberFeatureStore!!.put(currentBlockNumber, builder.build())
     }
 
-    override fun slideTickForward(timestamp: BigInteger) {
-        while (notInTick(timestamp)) {
+    override fun slideTickForward() {
+        while (notInTick(getFirstBlockTimestamp())) {
             val blockFeatureValue = blockNumberFeatureStore!!.get(firstBlockNumber).getAddressFeatureOrThrow(FEATURE)
             removeBlockEntryFromStore(firstBlockNumber!!)
             updatePreviousTickFeatureValue()
             updateFeatureStore(blockFeatureValue, true)
-
             setFirstBlockNumber(firstBlockNumber!! + ONE)
-
-            val firstBlockTimestamp = blockNumberFeatureStore!!
-                    .get(firstBlockNumber)
-                    .getAddressFeatureOrDefault("timestamp", NEGATIVE_ONE.toString())
-                    .toBigInteger()
-            setEndOfTick(firstBlockTimestamp)
         }
     }
 
+    private fun getFirstBlockTimestamp(): BigInteger{
+        return blockNumberFeatureStore!!
+                .get(firstBlockNumber)
+                .getAddressFeatureOrDefault("timestamp", NEGATIVE_ONE.toString())
+                .toBigInteger()
+    }
     open fun updatePreviousTickFeatureValue() {}
 
     override fun buildFeatureMap(): AddressFeature.AddressFeatureMap {
@@ -88,9 +87,11 @@ abstract class BlockFeatureTickProcessor(protected val FEATURE: String,
 
     private fun average(): String {
         var updatedFeatureValue = BigInteger.ZERO
-        blockNumberFeatureStore!!.all().forEach { keyValue ->
+        val bfs = blockNumberFeatureStore!!.all()
+        bfs.forEach { keyValue ->
             updatedFeatureValue += keyValue.value.getAddressFeatureOrDefault(FEATURE, ZERO).toBigInteger()
         }
+        bfs.close()
         return updatedFeatureValue.toString()
     }
 

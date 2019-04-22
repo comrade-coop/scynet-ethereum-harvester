@@ -1,8 +1,9 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.20'
     id "com.google.protobuf" version "0.8.7"
+    id 'application'
 }
-
+mainClassName = 'kafka.transactionsNumber.stream.TransactionsNumberStreamKt'
 group 'ai.scynet.harvester'
 version '1.0-SNAPSHOT'
 task fatJar(type: Jar) {

@@ -10,10 +10,6 @@ import harvester.common.distribution.scaler.IScaler
 
 abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, scaler1: IScaler): Processor<String, StreamJoin.Join> {
 
-    private val max0: Int = max0
-    private val max1: Int = max1
-    private val scaler0: IScaler = scaler0
-    private val scaler1: IScaler = scaler1
     private var lastProcessedBlock: Int? = null
     private val processed: HashSet<Int> = HashSet()
     private val processedAddresses: HashSet<String> = HashSet()
@@ -21,6 +17,10 @@ abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, sca
     private var matrixStore: KeyValueStore<String, MatrixBlob.Blob>? = null
     private val matrix: MutableList<Float> = mutableListOf<Float>()
 
+    protected val max0: Int = max0
+    protected val max1: Int = max1
+    protected val scaler0: IScaler = scaler0
+    protected val scaler1: IScaler = scaler1
     protected var addressPositionStore: KeyValueStore<String, StringList.List>? = null
     protected var currentBlock: Int? = null
     protected var currentTimestamp: Long? = null
@@ -30,7 +30,6 @@ abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, sca
     override fun process(blockNumber: String?, features: StreamJoin.Join?) {
         currentBlock = blockNumber!!.toInt()
         currentTimestamp = System.currentTimeMillis() / 1000L
-
         if(processed(currentBlock!!)){
             return
         }
@@ -173,8 +172,8 @@ abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, sca
         val feature0 = position.getItem(0)
         val feature1 = position.getItem(1)
 
-        val group0 = Math.min(scaler0.scaleDown(feature0), max0 - 1)
-        val group1 = Math.min(scaler1.scaleDown((currentTimestamp!!.toBigInteger() - feature1.toBigInteger()).toString()), max1 - 1)
+        val group0 =  getGroup0(feature0)
+        val group1 = getGroup1(feature1)
         if(group1 == 0) return group0
         return (group0 * max1) + group1 - 1
     }
@@ -186,4 +185,12 @@ abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, sca
     }
 
     protected abstract fun updatePositionsAfterDistributingCurrentAddresses()
+
+    open fun getGroup0(feature0: String): Int{
+        return Math.min(scaler0.scaleDown(feature0), max0 - 1)
+    }
+
+    open fun getGroup1(feature1: String): Int{
+        return Math.min(scaler1.scaleDown(feature1), max1 - 1)
+    }
 }

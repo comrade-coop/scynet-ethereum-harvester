@@ -38,7 +38,7 @@ class AddressBalanceProcessor: Processor<String, Messages.Block> {
     override fun init(context: ProcessorContext) {
         this.context = context
 
-        this.addressBalanceStore = context.getStateStore("AddressBalance") as KeyValueStore<String, String>
+        this.addressBalanceStore = context.getStateStore("AddressFeature") as KeyValueStore<String, String>
     }
 
     override fun close() {
@@ -46,7 +46,7 @@ class AddressBalanceProcessor: Processor<String, Messages.Block> {
 
 
     private fun extract(block: Messages.Block){
-        accountForGas(block)
+        //accountForGas(block)
         addressBalanceFromTraces(block)
     }
 
