@@ -7,5 +7,8 @@ enum class Topics: ITopic {
     },
     LAST_SEEN{
         override fun spell() = "LastSeen"
+    },
+    VOLUME_OUT{
+        override fun spell() = "VolumeOut"
     };
 }
