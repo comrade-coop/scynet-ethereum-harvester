@@ -5,11 +5,10 @@ import java.math.BigInteger
 class BalanceCalculator {
     companion object {
         fun sum(balance: String, previousBalance: String): String {
-            val result = BigInteger(balance).add(BigInteger(previousBalance))
-            // uncomment when starting from block 0
-//          if(result < BigInteger.ZERO){
-//            result = BigInteger.ZERO
-//          }
+            var result = BigInteger(balance).add(BigInteger(previousBalance))
+          if(result < BigInteger.ZERO){
+            result = BigInteger.ZERO
+          }
             return result.toString()
         }
 

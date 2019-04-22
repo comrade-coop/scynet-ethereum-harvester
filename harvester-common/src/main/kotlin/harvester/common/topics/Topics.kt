@@ -5,6 +5,10 @@ enum class Topics: ITopic {
         override fun spell() = "Balance"
 
     },
+    BALANCE_TICK{
+        override fun spell() = "BalanceTick"
+
+    },
     LAST_SEEN{
         override fun spell() = "LastSeen"
     },

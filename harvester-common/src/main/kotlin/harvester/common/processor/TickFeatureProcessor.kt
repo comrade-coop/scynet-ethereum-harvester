@@ -64,7 +64,7 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
         }
         slideTickForward()
         extract(block)
-        commitFeature()
+        commitFeature(block.number)
         println(blockNumber)
 
     }
@@ -109,9 +109,9 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
         return false
     }
 
-    private fun commitFeature() {
+    private fun commitFeature(blockNumber: String) {
         val featureMap = buildFeatureMap()
-        context!!.forward(endOfTick.toString(), featureMap)
+        context!!.forward(blockNumber, featureMap)
         context!!.commit()
     }
 
