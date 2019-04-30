@@ -6,7 +6,7 @@ import kafka.gasLimit.stream.processor.GasLimitProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
 
-fun main() {
+fun main(args: Array<String>) {
     GasLimitStream().start()
 }
 

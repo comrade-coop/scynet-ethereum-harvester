@@ -1,0 +1,87 @@
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.20'
+    id 'com.google.protobuf' version '0.8.7'
+}
+
+group 'ai.scynet.harvester'
+version '1.0-SNAPSHOT'
+
+mainClassName = 'harvester.entrypoint.MainKt'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'com.google.protobuf:protobuf-gradle-plugin:0.8.7'
+    implementation 'com.google.protobuf:protobuf-java:3.7.0'
+    implementation 'io.grpc:grpc-protobuf:1.20.0'
+    implementation 'io.grpc:grpc-stub:1.20.0'
+    runtimeOnly 'io.grpc:grpc-netty-shaded:1.20.0'
+
+    implementation project(':kafka-balanceLastSeen-distribution')
+    implementation project(':kafka-balance-stream')
+    implementation project(':kafka-balanceTick-stream')
+    implementation project(':kafka-blockchainGrowth-stream')
+    implementation project(':kafka-blockRewardTick-stream')
+    implementation project(':kafka-blockSize-stream')
+    implementation project(':kafka-blockSizeTick-stream')
+    implementation project(':kafka-difficulty-stream')
+    implementation project(':kafka-difficultyTick-stream')
+    implementation project(':kafka-ERC20Transfers-stream')
+    implementation project(':kafka-ethereum-producer')
+    implementation project(':kafka-ETHSupply-stream')
+    implementation project(':kafka-feature-streams')
+    implementation project(':kafka-gasLimit-stream')
+    implementation project(':kafka-gasLimitTick-stream')
+    implementation project(':kafka-gasPrice-stream')
+    implementation project(':kafka-gasPriceTick-stream')
+    implementation project(':kafka-gasUsed-stream')
+    implementation project(':kafka-gasUsedTick-stream')
+    implementation project(':kafka-lastSeen-stream')
+    implementation project(':kafka-transactionCount-stream')
+    implementation project(':kafka-transactionsNumber-stream')
+    implementation project(':kafka-uniqueAccounts-stream')
+    implementation project(':kafka-volumeIn-stream')
+    implementation project(':kafka-volumeOut-stream')
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir '../protocols/'
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.7.0'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.20.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc { }
+            }
+        }
+    }
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}

@@ -24,7 +24,6 @@ class EthereumProducer(
 
     fun start() = runBlocking {
         var firstBlockNumber = getLastProducedBlock() + BigInteger.ONE
-        //var firstBlockNumber = BigInteger.valueOf(1000000L)
         val numberOfBlocks = 500
         try {
             while(true){

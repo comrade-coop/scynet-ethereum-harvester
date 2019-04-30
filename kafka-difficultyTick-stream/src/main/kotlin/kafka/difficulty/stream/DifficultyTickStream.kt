@@ -1,12 +1,12 @@
-package kafka.difficulty.stream
+package kafka.difficultyTick.stream
 
 import harvester.common.config.BlockFeatureStreamConfig
 import harvester.common.serialization.BlockDeserializer
-import kafka.difficulty.stream.processor.DifficultyTickProcessorSupplier
+import kafka.difficultyTick.stream.processor.DifficultyTickProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
 
-fun main() {
+fun main(args: Array<String>) {
     DifficultyTickStream().start()
 }
 

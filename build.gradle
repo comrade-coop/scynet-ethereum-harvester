@@ -1,0 +1,3 @@
+task run {
+    dependsOn ':harvester-entrypoint:run'
+}
