@@ -6,7 +6,7 @@ import kafka.volumeOut.stream.processor.VolumeOutProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
 
-fun main() {
+fun main(args: Array<String>) {
     VolumeOutStream().start()
 }
 

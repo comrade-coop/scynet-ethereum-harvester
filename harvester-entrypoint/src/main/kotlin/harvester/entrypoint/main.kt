@@ -1,0 +1,28 @@
+package harvester.entrypoint
+
+fun main(args: Array<String>) {
+    kafka.balance.stream.main(args)
+    kafka.balanceLastSeen.distribution.main(args)
+    kafka.blockchainGrowth.stream.main(args)
+    kafka.blockRewardTick.stream.main(args)
+    kafka.blockSize.stream.main(args)
+    kafka.blockSizeTick.stream.main(args)
+    kafka.difficulty.stream.main(args)
+    kafka.difficultyTick.stream.main(args)
+    kafka.ERC20Transfers.stream.main(args)
+    kafka.ethereum.producer.main(args)
+    kafka.ETHSupply.stream.main(args)
+    kafka.feature.streams.main(args)
+    kafka.gasLimit.stream.main(args)
+    kafka.gasLimitTick.stream.main(args)
+    kafka.gasPrice.stream.main(args)
+    kafka.gasPriceTick.stream.main(args)
+    kafka.gasUsed.stream.main(args)
+    kafka.gasUsedTick.stream.main(args)
+    kafka.lastSeen.stream.main(args)
+    kafka.transactionCount.stream.main(args)
+    kafka.transactionsNumber.stream.main(args)
+    kafka.uniqueAccounts.stream.main(args)
+    kafka.volumeIn.stream.main(args)
+    kafka.volumeOut.stream.main(args)
+}

@@ -1,0 +1,111 @@
+syntax="proto3";
+
+option java_package = "harvester.common.messages";
+option java_outer_classname = "Messages";
+
+message Block {
+    string hash = 1;
+    string number = 2;
+    string timestamp = 3;
+    repeated Transaction transactions = 4;
+    repeated Trace traces = 5;
+    string author = 6;
+    string size = 7;
+    string difficulty = 8;
+    string totalDifficulty = 9;
+    string gasUsed = 10;
+    string gasLimit = 11;
+}
+
+message Transaction {
+    Receipt receipt = 1;
+    uint64 chainId = 2;
+    repeated Trace traces = 3;
+    string from = 4;
+    string gas = 5;
+    string gas_price = 6;
+    string hash = 7;
+    string input = 8;
+    string nonce = 9;
+    string public_key = 10;
+    string to = 11;
+    string index = 12;
+    string index_raw = 13;
+    string value = 14;
+    SRV srv = 15;
+    string creates = 16;
+}
+
+message SRV {
+    string s = 1;
+    string r = 2;
+    uint64 v = 3;
+}
+
+message Receipt {
+    string gas_used = 1;
+    string status = 2;
+    repeated Log logs = 3;
+}
+
+message Log {
+    repeated string topics = 1;
+}
+
+message Trace {
+    string subtraces_count = 1;
+    repeated string trace_address = 2;
+    string transaction_hash = 3;
+    string transaction_position = 4;
+    string type = 5;
+    Action action = 6;
+    Call call = 7;
+    Create create = 8;
+    Reward reward = 9;
+    Suicide suicide = 10;
+    Result result = 11;
+    string error = 12;
+
+    enum Action{
+        CALL = 0;
+        CREATE = 1;
+        REWARD = 2;
+        SUICIDE = 3;
+    }
+
+}
+
+message Reward {
+    string author = 1;
+    string value = 2;
+    string type = 3;
+}
+
+message Call {
+    string type = 1;
+    string from = 2;
+    string gas = 3;
+    string input = 4;
+    string to = 5;
+    string value = 6;
+}
+
+message Create {
+    string from = 1;
+    string gas = 2;
+    string init = 3;
+    string value = 4;
+}
+
+message Suicide {
+    string address = 1;
+    string balance = 2;
+    string refund_address = 3;
+}
+
+message Result {
+    string address = 1;
+    string code = 2;
+    string gas_used = 3;
+    string output = 4;
+}

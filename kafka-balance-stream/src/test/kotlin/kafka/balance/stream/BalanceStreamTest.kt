@@ -41,7 +41,7 @@ class BalanceStreamTest {
         testDriver?.close()
     }
 
-    @Test
+    /* @Test */
     fun testAggregationWithMockedBlcok() {
         val blocks = getMockedBlock(1, 2, 3)
         for(block: Messages.Block in blocks){
@@ -59,7 +59,7 @@ class BalanceStreamTest {
         Assert.assertNull(testDriver?.readOutput("balance", StringDeserializer(), AddressFeatureMapDeserializer()))
     }
 
-    @Test
+    /* @Test */
     fun testAggregationWitTwoBlocks(){
         val blocks = getMockedBlock(2,1,1)
         for(block: Messages.Block in blocks){

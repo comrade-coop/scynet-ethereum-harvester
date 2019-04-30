@@ -6,7 +6,7 @@ import kafka.blockSizeTick.stream.processor.BlockSizeTickProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
 
-fun main() {
+fun main(args: Array<String>) {
     BlockSizeTickStream().start()
 }
 

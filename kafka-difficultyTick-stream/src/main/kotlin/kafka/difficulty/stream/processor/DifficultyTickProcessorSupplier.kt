@@ -1,4 +1,4 @@
-package kafka.difficulty.stream.processor
+package kafka.difficultyTick.stream.processor
 
 import harvester.common.messages.Messages
 import org.apache.kafka.streams.processor.ProcessorSupplier

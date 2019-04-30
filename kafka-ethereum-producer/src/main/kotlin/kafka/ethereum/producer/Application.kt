@@ -5,7 +5,7 @@ import kafka.ethereum.producer.parity.ParityWebSocketsService
 import kafka.ethereum.producer.producer.EthereumProducer
 import kafka.ethereum.producer.producer.CustomKafkaProducer
 
-fun main() {
+fun main(args: Array<String>) {
     val producer = CustomKafkaProducer().create("127.0.0.1:9092")
     val parityService = ParityWebSocketsService().startParity()
     val ethereumMessageBuilder = EthereumMessageBuilder(parityService)
