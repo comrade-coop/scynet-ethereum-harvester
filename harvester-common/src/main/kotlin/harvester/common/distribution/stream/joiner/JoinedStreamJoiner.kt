@@ -4,14 +4,14 @@ import harvester.common.config.DistributionStreamConfig
 import harvester.common.messages.AddressFeature
 import harvester.common.messages.StreamJoin
 import harvester.common.serialization.AddressFeatureSerdes
+import harvester.common.serialization.JoinSerdes
 import harvester.common.topics.ITopic
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
-import org.apache.kafka.streams.kstream.ValueJoiner
 
-class StreamJoiner{
+class JoinedStreamJoiner {
     private var APPLICATION_ID_CONFIG: String? = null
     private var topic0: String? = null
     private var topic1: String? = null
@@ -32,11 +32,11 @@ class StreamJoiner{
     fun start(){
         val builder = StreamsBuilder()
 
-        val stream0 = builder.table<String, AddressFeature.AddressFeatureMap>(topic0, Consumed.with(Serdes.String(), AddressFeatureSerdes()))
-        val stream1 = builder.table<String, AddressFeature.AddressFeatureMap>(topic1, Consumed.with(Serdes.String(), AddressFeatureSerdes()))
+        val stream0 = builder.table<String, StreamJoin.Join>(topic0, Consumed.with(Serdes.String(), JoinSerdes()))
+        val stream1 = builder.table<String, StreamJoin.Join>(topic1, Consumed.with(Serdes.String(), JoinSerdes()))
 
         val joined = stream0
-                .join(stream1, StreamValueJoiner())
+                .join(stream1, JoinedStreamValueJoiner())
                 .toStream().to(outputTopic)
 
         val stream01 = KafkaStreams(builder.build(), DistributionStreamConfig.getJoinStreamProperties(APPLICATION_ID_CONFIG = APPLICATION_ID_CONFIG!! ))

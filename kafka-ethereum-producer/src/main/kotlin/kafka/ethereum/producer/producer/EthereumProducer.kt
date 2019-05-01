@@ -13,6 +13,7 @@ class EthereumProducer(
     private val producer: KafkaProducer<String, Messages.Block>,
     private val parityService: Parity,
     private val ethereumMessageBuilder: EthereumMessageBuilder
+
 ) {
 
     fun start() {
@@ -33,14 +34,12 @@ class EthereumProducer(
                 val ethBlock = it.block
                 try {
                     val block = ethereumMessageBuilder.buildBlock(ethBlock)
-                    println(block.number)
-                    if(block.number.toInt() == 2){
-                        println()
-                    }
                     val blockTimestamp = if (block.timestamp != null) block.timestamp.toLong() else null
                     val acknowledged =
                         producer.send(ProducerRecord("ethereum_blocks", null, blockTimestamp, block.number, block))
                     acknowledged.get()
+                    println(block.number)
+
                 } catch (e: Exception) {
                     System.err.println(e.toString() + ":" + e.cause)
                 }
