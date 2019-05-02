@@ -1,28 +1,51 @@
 package harvester.entrypoint
 
+import io.grpc.ServerBuilder
+import io.grpc.ManagedChannelBuilder
+import Scynet.Shared.Agent
+import Scynet.Shared.Shape
+import kafka.balanceLastSeen.distribution.processor.BalanceLastSeenDistributionProcessor
+
 fun main(args: Array<String>) {
-    kafka.balance.stream.main(args)
-    kafka.balanceLastSeen.distribution.main(args)
-    kafka.blockchainGrowth.stream.main(args)
-    kafka.blockRewardTick.stream.main(args)
-    kafka.blockSize.stream.main(args)
-    kafka.blockSizeTick.stream.main(args)
-    kafka.difficulty.stream.main(args)
-    kafka.difficultyTick.stream.main(args)
-    kafka.ERC20Transfers.stream.main(args)
-    kafka.ethereum.producer.main(args)
-    kafka.ETHSupply.stream.main(args)
-    kafka.feature.streams.main(args)
-    kafka.gasLimit.stream.main(args)
-    kafka.gasLimitTick.stream.main(args)
-    kafka.gasPrice.stream.main(args)
-    kafka.gasPriceTick.stream.main(args)
-    kafka.gasUsed.stream.main(args)
-    kafka.gasUsedTick.stream.main(args)
-    kafka.lastSeen.stream.main(args)
-    kafka.transactionCount.stream.main(args)
-    kafka.transactionsNumber.stream.main(args)
-    kafka.uniqueAccounts.stream.main(args)
-    kafka.volumeIn.stream.main(args)
-    kafka.volumeOut.stream.main(args)
+    val port = 9980
+    val hatcheryChannel = ManagedChannelBuilder.forAddress("127.0.0.1", 9998).usePlaintext().build()
+    val balanceLastSeenDistributionUUID = "769d5eb3-0ada-4ae5-8e1b-4fa6600ddae0"
+    val componentService = ComponentService(hatcheryChannel, "127.0.0.1:$port", listOf(
+        Agent.newBuilder()
+            .setUuid(balanceLastSeenDistributionUUID)
+            .addOutputs(Shape.newBuilder().addAllDimension(listOf(
+                BalanceLastSeenDistributionProcessor.maxBalace, BalanceLastSeenDistributionProcessor.maxLastSeen
+            )))
+            .build()
+    ))
+    val server = ServerBuilder.forPort(port)
+        .addService(componentService)
+        .build()
+    server.start()
+    componentService.register()
+
+    kafka.balance.stream.main(arrayOf())
+    kafka.balanceLastSeen.distribution.main(arrayOf(balanceLastSeenDistributionUUID))
+    kafka.blockchainGrowth.stream.main(arrayOf())
+    kafka.blockRewardTick.stream.main(arrayOf())
+    kafka.blockSize.stream.main(arrayOf())
+    kafka.blockSizeTick.stream.main(arrayOf())
+    kafka.difficulty.stream.main(arrayOf())
+    kafka.difficultyTick.stream.main(arrayOf())
+    kafka.ERC20Transfers.stream.main(arrayOf())
+    kafka.ethereum.producer.main(arrayOf())
+    kafka.ETHSupply.stream.main(arrayOf())
+    kafka.feature.streams.main(arrayOf())
+    kafka.gasLimit.stream.main(arrayOf())
+    kafka.gasLimitTick.stream.main(arrayOf())
+    kafka.gasPrice.stream.main(arrayOf())
+    kafka.gasPriceTick.stream.main(arrayOf())
+    kafka.gasUsed.stream.main(arrayOf())
+    kafka.gasUsedTick.stream.main(arrayOf())
+    kafka.lastSeen.stream.main(arrayOf())
+    kafka.transactionCount.stream.main(arrayOf())
+    kafka.transactionsNumber.stream.main(arrayOf())
+    kafka.uniqueAccounts.stream.main(arrayOf())
+    kafka.volumeIn.stream.main(arrayOf())
+    kafka.volumeOut.stream.main(arrayOf())
 }

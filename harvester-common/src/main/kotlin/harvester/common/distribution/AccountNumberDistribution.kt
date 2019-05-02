@@ -10,9 +10,10 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
 import java.io.FileOutputStream
 
-class AccountNumberDistribution(topic0: ITopic, topic1: ITopic, private val processor: DistributionProcessor){
+class AccountNumberDistribution(topic0: ITopic, topic1: ITopic, private val processor: DistributionProcessor, resultTopic: ITopic) {
 
     private val joinedTopic: String = topic0.spell() + topic1.spell()
+    private val resultTopic: String = resultTopic.spell()
     private val file: FileOutputStream = FileOutputStream("distributions", true)
     private val streamJoiner: StreamJoiner = StreamJoiner(topic0, topic1)
 
@@ -36,7 +37,7 @@ class AccountNumberDistribution(topic0: ITopic, topic1: ITopic, private val proc
                 .addProcessor("Processor", DistributionProcessorSupplier(processor), "Feature-Joiner")
                 .addStateStore(DistributionStreamConfig.getMatrixStoreSupplier(), "Processor")
                 .addStateStore(DistributionStreamConfig.getAddressPositionStoreSupplier(), "Processor")
-                .addSink("AccountNumberDistribution-" + joinedTopic, "distribution-" + joinedTopic, "Processor")
+                .addSink("AccountNumberDistribution-" + joinedTopic, resultTopic, "Processor")
         return topology
     }
 

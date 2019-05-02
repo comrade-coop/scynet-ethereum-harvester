@@ -10,8 +10,8 @@ class BalanceLastSeenDistributionProcessor(balanceScaler: IScaler, lastSeenScale
     private val blocksInMonth: Int = 25920
 
     companion object {
-        private val maxBalace: Int = (Math.log10(10000000.0) / Math.log10(1.2)).roundToInt()
-        private val maxLastSeen: Int = (Math.log10(20736000.0) / Math.log10(1.2)).roundToInt()
+        public val maxBalace: Int = (Math.log10(10000000.0) / Math.log10(1.2)).roundToInt()
+        public val maxLastSeen: Int = (Math.log10(20736000.0) / Math.log10(1.2)).roundToInt()
     }
 
     override fun updatePositionsAfterDistributingCurrentAddresses() {
