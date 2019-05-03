@@ -57,5 +57,6 @@ fabric.properties
 
 # Distributions
 distributions
+lastProducedBlock.txt
 
 !gradle-wrapper.jar
