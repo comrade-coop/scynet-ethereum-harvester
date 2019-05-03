@@ -1,31 +1,10 @@
 package kafka.lastSeen.stream
 
-import harvester.common.serialization.BlockDeserializer
+import harvester.common.feature.FeatureStream
 import harvester.common.topics.Topics
-import kafka.lastSeen.stream.config.StreamConfig
-import kafka.lastSeen.stream.processor.LastSeenProcessorSupplier
-import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.kafka.streams.*
+import kafka.lastSeen.stream.processor.LastSeenProcessor
 
 fun main(args: Array<String>) {
-    LastSeenStream().start()
+    val lastSeenStream = FeatureStream(Topics.LAST_SEEN, LastSeenProcessor())
+    lastSeenStream.start()
 }
-
-class LastSeenStream {
-    fun start(){
-        val lastSeenStream = KafkaStreams(getTopology(), StreamConfig.getLasSeenStreamProperties())
-        lastSeenStream.cleanUp()
-        lastSeenStream.start()
-        Runtime.getRuntime().addShutdownHook(Thread(lastSeenStream::close))
-    }
-
-    fun getTopology():Topology{
-        val topology = Topology()
-                .addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
-                .addProcessor("Processor", LastSeenProcessorSupplier(), "Ethereum-producer")
-                .addStateStore(StreamConfig.getLastSeenStoreSupplier(), "Processor")
-                .addSink("LastSeen-stream", Topics.LAST_SEEN.spell(), "Processor")
-        return topology
-    }
-}
-

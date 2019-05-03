@@ -46,7 +46,7 @@ class AddressBalanceProcessor: Processor<String, Messages.Block> {
 
 
     private fun extract(block: Messages.Block){
-        accountForGas(block)
+        //accountForGas(block)
         addressBalanceFromTraces(block)
     }
 

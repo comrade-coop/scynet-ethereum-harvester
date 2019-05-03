@@ -17,7 +17,7 @@ class EthereumProducer(
 ) {
 
     fun start() {
-        val firstBlockNumber = BigInteger.valueOf(5000000L)
+        val firstBlockNumber = BigInteger.valueOf(1L)
         try {
             subscribeToBlockFlowable(firstBlockNumber)
         } catch (e: Exception) {
