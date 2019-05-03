@@ -37,4 +37,8 @@ class BalanceLastSeenDistributionProcessor(balanceScaler: IScaler, lastSeenScale
         if(position.getItem(2).toInt() < currentBlock!!.minus(blocksInMonth)) return true
         return false
     }
+
+    override fun getGroup1(feature1:String): Int{
+        return Math.min(scaler1.scaleDown((currentTimestamp!!.toBigInteger() - feature1.toBigInteger()).toString()), max1 - 1)
+    }
 }

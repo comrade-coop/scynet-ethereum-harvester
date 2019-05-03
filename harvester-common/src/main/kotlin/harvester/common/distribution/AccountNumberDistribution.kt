@@ -15,15 +15,15 @@ class AccountNumberDistribution(topic0: ITopic, topic1: ITopic, private val proc
     private val joinedTopic: String = topic0.spell() + topic1.spell()
     private val resultTopic: String = resultTopic.spell()
     private val file: FileOutputStream = FileOutputStream("distributions", true)
-    private val streamJoiner: StreamJoiner = StreamJoiner(topic0, topic1)
+    private val streamJoiner: StreamJoiner = StreamJoiner(topic0, topic1, "join")
 
     fun start(){
         streamJoiner.start()
-        val balanceLastSeenDistribution = KafkaStreams(getTopology(), DistributionStreamConfig.getStreamProperties())
-        balanceLastSeenDistribution.cleanUp()
-        balanceLastSeenDistribution.start()
+        val accountNumberDistribution = KafkaStreams(getTopology(), DistributionStreamConfig.getStreamProperties())
+        accountNumberDistribution.cleanUp()
+        accountNumberDistribution.start()
 
-        Runtime.getRuntime().addShutdownHook(Thread(balanceLastSeenDistribution::close))
+        Runtime.getRuntime().addShutdownHook(Thread(accountNumberDistribution::close))
         Runtime.getRuntime().addShutdownHook(Thread() {
             fun run(){
                 file.close()

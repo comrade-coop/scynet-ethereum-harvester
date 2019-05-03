@@ -51,22 +51,22 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
 
     private fun process(block: Block) {
         val blockNumber = block.number.toInt()
+        val timestamp = block.timestamp
+
         if (isProcessed(blockNumber)) {
             return
         }
-        println(blockNumber)
-        if (notSetEndOfTick()) {
-            setEndOfTick(block.timestamp.toBigInteger())
+
+        setEndOfTick(timestamp)
+        addFeatureBuilderWithTimestampForBlock(block)
+        if(firstBlockNumber == NEGATIVE_ONE){
             setFirstBlockNumber(blockNumber)
         }
-        addFeatureBuilderWithTimestampForBlock(block)
-
-        if (notInTick(block.timestamp.toBigInteger())) {
-            commitFeature()
-            slideTickForward(block.timestamp.toBigInteger())
-        }
+        slideTickForward()
         extract(block)
-        setLastProcessedBlock(blockNumber.toString())
+        commitFeature(block.number)
+        println(blockNumber)
+
     }
 
     private fun getTickTimeSeconds(): BigInteger {
@@ -93,9 +93,9 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
         return false
     }
 
-    protected fun setEndOfTick(timestamp: BigInteger) {
-        endOfTick = timestamp + getTickTimeSeconds()
-        synchronizationStore!!.put("endOfTick", endOfTick.toString())
+    protected fun setEndOfTick(timestamp: String) {
+        endOfTick = timestamp.toBigInteger()
+        synchronizationStore!!.put("endOfTick", timestamp)
     }
 
     protected fun setFirstBlockNumber(blockNumber: Int) {
@@ -104,14 +104,14 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
     }
 
     protected fun notInTick(timestamp: BigInteger): Boolean {
-        if (timestamp > endOfTick)
+        if (timestamp < endOfTick!! - getTickTimeSeconds())
             return true
         return false
     }
 
-    private fun commitFeature() {
+    private fun commitFeature(blockNumber: String) {
         val featureMap = buildFeatureMap()
-        context!!.forward(endOfTick.toString(), featureMap)
+        context!!.forward(blockNumber, featureMap)
         context!!.commit()
     }
 
@@ -119,7 +119,7 @@ abstract class TickFeatureProcessor(private val TICK_TIME_SECONDS: String?) : Pr
         synchronizationStore!!.put("lastProcessedBlockNumber", blockNumber)
     }
 
-    protected abstract fun slideTickForward(timestamp: BigInteger)
+    protected abstract fun slideTickForward()
 
     protected abstract fun buildFeatureMap(): AddressFeature.AddressFeatureMap
 

@@ -3,7 +3,7 @@ package kafka.transactionsNumber.stream.processor
 import harvester.common.messages.Messages
 import harvester.common.processor.AddressFeatureTickProcessor
 
-class TransactionsNumberProcessor: AddressFeatureTickProcessor(null) {
+class TransactionsNumberProcessor: AddressFeatureTickProcessor("3600") {
 
     override fun extract(block: Messages.Block) {
         extractAddressTransactionsNumberFromTraces(block)

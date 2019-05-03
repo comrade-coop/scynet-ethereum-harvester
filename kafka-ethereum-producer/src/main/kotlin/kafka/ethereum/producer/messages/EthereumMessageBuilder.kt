@@ -4,18 +4,29 @@ import harvester.common.messages.Messages
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.response.EthBlock
 import org.web3j.protocol.core.methods.response.Log
-import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.protocol.parity.methods.response.Trace
 import java.math.BigInteger
 import org.web3j.protocol.parity.Parity
+import java.util.function.Predicate
 
 class EthereumMessageBuilder(
     private val parityService: Parity
 ) {
+    private var transactionTraces: ArrayList<Messages.Trace> = ArrayList()
+    private var blockTraces: ArrayList<Messages.Trace> = ArrayList()
+    private var logs: ArrayList<Log> = ArrayList()
 
     fun buildBlock(ethBlock: EthBlock.Block): Messages.Block {
-        val blockTraces = getBlockTraces(ethBlock.number)
+
+        transactionTraces.clear()
+        blockTraces.clear()
+        logs.clear()
+
+        loadTraces(ethBlock.number)
+        loadLogs(ethBlock.number)
+
         val transactions = getTransactions(ethBlock.transactions)
+
         return Messages.Block.newBuilder()
             .setAuthor(ethBlock.author)
             .setHash(ethBlock.hash)
@@ -31,10 +42,21 @@ class EthereumMessageBuilder(
             .build()
     }
 
-    private fun buildTrace(blockTrace: Trace): Messages.Trace {
+    private fun loadLogs(blockNumber: BigInteger?){
+        val logs = parityService.ethGetFilterLogs(blockNumber!!).send().logs
+        if (logs != null){
+            logs.map { l ->
+                val log = l as Log
+                this.logs.add(log)
+            }
+        }
+    }
+
+    private fun buildTrace(trace: Trace): Messages.Trace {
+        val beforeTraceBuild = System.currentTimeMillis()
         Messages.getDescriptor()
         val traceBuilder = Messages.Trace.newBuilder()
-        val traceAction = blockTrace.action
+        val traceAction = trace.action
         when (traceAction) {
             is Trace.CreateAction -> {
                 traceBuilder.setCreate(buildCreateAction(traceAction))
@@ -53,17 +75,17 @@ class EthereumMessageBuilder(
                 traceBuilder.setAction(Messages.Trace.Action.SUICIDE)
             }
         }
-        val result = buildResult(blockTrace)
-        val traceAddresses = blockTrace.traceAddress.map { ta -> ta.toString() }
+        val result = buildResult(trace)
+        val traceAddresses = trace.traceAddress.map { ta -> ta.toString() }
         traceBuilder
             .setResult(result)
-            .setSubtracesCount(blockTrace.subtraces?.toString().orEmpty())
-            .setType(blockTrace.type.orEmpty())
+            .setSubtracesCount(trace.subtraces?.toString().orEmpty())
+            .setType(trace.type.orEmpty())
             .addAllTraceAddress(traceAddresses)
-            .setError(blockTrace.error.orEmpty())
-            .setTransactionPosition(blockTrace.transactionPosition?.toString().orEmpty())
-        val trace = traceBuilder.build()
-        return trace
+            .setError(trace.error.orEmpty())
+            .setTransactionPosition(trace.transactionPosition?.toString().orEmpty())
+            .setTransactionHash(trace.transactionHash.orEmpty())
+       return traceBuilder.build()
     }
 
     private fun buildResult(blockTrace: Trace): Messages.Result {
@@ -111,23 +133,16 @@ class EthereumMessageBuilder(
             .build()
     }
 
-    private fun getReceipt(transactionHash: String?): Messages.Receipt {
-        val receipt = parityService.ethGetTransactionReceipt(transactionHash).send().transactionReceipt.get()
-        return buildReceipt(receipt)
-    }
-
-    private fun buildReceipt(receipt: TransactionReceipt): Messages.Receipt {
+    private fun buildReceipt(transactionHash: String?): Messages.Receipt {
+        val logs = this.logs.filter {  l -> l.transactionHash == transactionHash }
         return Messages.Receipt.newBuilder()
-            .setGasUsed(receipt.gasUsed?.toString().orEmpty())
-            .setStatus(receipt.status.orEmpty())
-            .addAllLogs(buildLogs(receipt.logs))
+            .addAllLogs(buildLogs(logs))
             .build()
     }
 
     private fun buildLogs(ethLogs: List<Log>): List<Messages.Log> {
         return ethLogs
             .map { ethLog: Log -> buildLog(ethLog) }
-            .toList()
     }
 
     private fun buildLog(ethLog: Log): Messages.Log {
@@ -136,11 +151,15 @@ class EthereumMessageBuilder(
             .build()
     }
 
-    private fun getBlockTraces(blockNumber: BigInteger?): List<Messages.Trace> {
-        return parityService.traceBlock(DefaultBlockParameter.valueOf(blockNumber)).send().traces
-            .filter { trace: Trace -> trace.transactionHash == null }
-            .map { trace: Trace -> buildTrace(trace) }
-            .toList()
+    private fun loadTraces(blockNumber: BigInteger?) {
+        parityService.traceBlock(DefaultBlockParameter.valueOf(blockNumber!!)).send().traces
+            .map { trace: Trace ->
+                if (trace.transactionHash == null) {
+                    blockTraces.add(buildTrace(trace))
+                } else {
+                    transactionTraces.add(buildTrace(trace))
+                }
+            }
     }
 
     private fun getTransactions(transactions: List<EthBlock.TransactionResult<Any>>): List<Messages.Transaction> {
@@ -152,9 +171,10 @@ class EthereumMessageBuilder(
     }
 
     private fun buildTransaction(transaction: EthBlock.TransactionObject): Messages.Transaction {
-        val traces = getTraces(transaction.hash)
-        val receipt = getReceipt(transaction.hash)
-        return Messages.Transaction.newBuilder()
+        val traces = transactionTraces.filter { trace -> trace.transactionHash == transaction.hash }
+        //transactionTraces.removeIf(Predicate { trace -> trace.transactionHash == transaction.hash })
+        val receipt = buildReceipt(transaction.hash)
+        val transactionM = Messages.Transaction.newBuilder()
             .setChainId(transaction.chainId ?: 0L)
             .setCreates(transaction.creates.orEmpty())
             .setFrom(transaction.from.orEmpty())
@@ -172,6 +192,7 @@ class EthereumMessageBuilder(
             .addAllTraces(traces)
             .setReceipt(receipt)
             .build()
+        return transactionM
     }
 
     private fun buildSRV(transaction: EthBlock.TransactionObject): Messages.SRV {
@@ -181,11 +202,4 @@ class EthereumMessageBuilder(
             .setV(transaction.v)
             .build()
     }
-
-    private fun getTraces(transactionHash: String?): List<Messages.Trace> {
-        return parityService.traceTransaction(transactionHash).send()
-            .traces.map { trace: Trace -> buildTrace(trace) }
-            .toList()
-    }
-
 }

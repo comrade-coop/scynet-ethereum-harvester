@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
 class DifficultyTickStream(){
     fun start(){
         val difficultyTickStream =
-                KafkaStreams(getTopology(), BlockFeatureStreamConfig.getStreamProperties("127.0.0.1:29092", "difficultyTick"))
+                KafkaStreams(getTopology(), BlockFeatureStreamConfig.getStreamProperties("127.0.0.1:9092", "difficultyTick"))
         difficultyTickStream.cleanUp()
         difficultyTickStream.start()
         Runtime.getRuntime().addShutdownHook(Thread(difficultyTickStream::close))
