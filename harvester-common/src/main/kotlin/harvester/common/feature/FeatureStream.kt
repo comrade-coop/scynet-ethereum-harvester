@@ -23,7 +23,7 @@ class FeatureStream(private val topic: ITopic, private val processor: Processor<
         val topology = Topology()
                 .addSource("Ethereum-producer", StringDeserializer(), BlockDeserializer(), "ethereum_blocks")
                 .addProcessor("Processor", BlockProcessorSupplier(processor), "Ethereum-producer")
-                .addStateStore(AddressFeatureStreamConfig.getAddressFeatureStoreSupplier("Address" + topic.spell()), "Processor")
+                .addStateStore(AddressFeatureStreamConfig.getAddressFeatureStoreSupplier(), "Processor")
                 .addStateStore(AddressFeatureStreamConfig.getBlockNumberAddressFeatureStoreSupplier(), "Processor")
                 .addStateStore(AddressFeatureStreamConfig.getSynchronizationStoreSupplier(), "Processor")
                 .addSink(topic.spell() + "-stream", topic.spell(), "Processor")
