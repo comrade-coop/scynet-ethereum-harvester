@@ -23,9 +23,9 @@ class AddressFeatureStreamConfig {
             }
         }
 
-        fun getAddressFeatureStoreSupplier(): StoreBuilder<KeyValueStore<String, String>> {
+        fun getAddressFeatureStoreSupplier(name: String = "AddressFeature"): StoreBuilder<KeyValueStore<String, String>> {
             return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("AddressFeature"),
+                    Stores.persistentKeyValueStore(name),
                     Serdes.String(),
                     Serdes.String()
             )
