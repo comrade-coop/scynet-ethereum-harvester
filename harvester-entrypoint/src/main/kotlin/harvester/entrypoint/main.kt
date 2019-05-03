@@ -25,6 +25,7 @@ fun main(args: Array<String>) {
     componentService.register()
 
     kafka.balance.stream.main(arrayOf())
+    kafka.balanceTick.stream.main(arrayOf())
     kafka.balanceLastSeen.distribution.main(arrayOf(balanceLastSeenDistributionUUID))
     kafka.blockchainGrowth.stream.main(arrayOf())
     kafka.blockRewardTick.stream.main(arrayOf())
