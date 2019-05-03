@@ -6,6 +6,8 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.parity.Parity
+import java.io.File
+import java.io.FileOutputStream
 import java.math.BigInteger
 import org.web3j.protocol.parity.methods.response.Trace as ParityTrace
 
@@ -13,17 +15,27 @@ class EthereumProducer(
     private val producer: KafkaProducer<String, Messages.Block>,
     private val parityService: Parity,
     private val ethereumMessageBuilder: EthereumMessageBuilder
-
 ) {
+    private val file: File = File("lastProducedBlock.txt")
 
     fun start() {
-        val firstBlockNumber = BigInteger.valueOf(1L)
+        val firstBlockNumber = getLastProducedBlock() + BigInteger.ONE
         try {
             subscribeToBlockFlowable(firstBlockNumber)
         } catch (e: Exception) {
             println(e)
         } finally {
             producer.flush()
+        }
+
+    }
+
+    private fun getLastProducedBlock(): BigInteger{
+        val lastProducedBlock = file.readText()
+        if (lastProducedBlock.isNullOrEmpty()){
+            return BigInteger.ZERO
+        } else{
+            return lastProducedBlock.toBigInteger()
         }
     }
 
@@ -38,6 +50,7 @@ class EthereumProducer(
                     val acknowledged =
                         producer.send(ProducerRecord("ethereum_blocks", null, blockTimestamp, block.number, block))
                     acknowledged.get()
+                    file.writeText(block.number)
                     println(block.number)
 
                 } catch (e: Exception) {
