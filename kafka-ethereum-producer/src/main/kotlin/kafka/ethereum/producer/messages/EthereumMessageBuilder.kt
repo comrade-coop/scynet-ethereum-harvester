@@ -1,46 +1,62 @@
 package kafka.ethereum.producer.messages
 
 import harvester.common.messages.Messages
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.response.EthBlock
 import org.web3j.protocol.core.methods.response.Log
 import org.web3j.protocol.parity.methods.response.Trace
 import java.math.BigInteger
 import org.web3j.protocol.parity.Parity
-import java.util.function.Predicate
 
 class EthereumMessageBuilder(
     private val parityService: Parity
 ) {
     private var transactionTraces: ArrayList<Messages.Trace> = ArrayList()
     private var blockTraces: ArrayList<Messages.Trace> = ArrayList()
+    private var transactions: ArrayList<Messages.Transaction> = ArrayList()
     private var logs: ArrayList<Log> = ArrayList()
 
     fun buildBlock(ethBlock: EthBlock.Block): Messages.Block {
-
+        transactions.clear()
         transactionTraces.clear()
         blockTraces.clear()
         logs.clear()
 
-        loadTraces(ethBlock.number)
-        loadLogs(ethBlock.number)
+        val block = Messages.Block.newBuilder()
+        runBlocking {
 
-        val transactions = getTransactions(ethBlock.transactions)
+            val tracesJob = launch {  loadTraces(ethBlock.number)}
+            val logsJob  = launch {  loadLogs(ethBlock.number)}
 
-        return Messages.Block.newBuilder()
-            .setAuthor(ethBlock.author)
-            .setHash(ethBlock.hash)
-            .setNumber(ethBlock.number.toString())
-            .setTimestamp(ethBlock.timestamp?.toString().orEmpty())
-            .addAllTransactions(transactions)
-            .addAllTraces(blockTraces)
-            .setSize(ethBlock.size?.toString().orEmpty())
-            .setDifficulty(ethBlock.difficulty?.toString().orEmpty())
-            .setTotalDifficulty(ethBlock.totalDifficulty?.toString().orEmpty())
-            .setGasUsed(ethBlock.gasUsed?.toString().orEmpty())
-            .setGasLimit(ethBlock.gasLimit?.toString().orEmpty())
-            .build()
+
+                block
+                    .setAuthor(ethBlock.author)
+                    .setHash(ethBlock.hash)
+                    .setNumber(ethBlock.number.toString())
+                    .setTimestamp(ethBlock.timestamp?.toString().orEmpty())
+                    .setSize(ethBlock.size?.toString().orEmpty())
+                    .setDifficulty(ethBlock.difficulty?.toString().orEmpty())
+                    .setTotalDifficulty(ethBlock.totalDifficulty?.toString().orEmpty())
+                    .setGasUsed(ethBlock.gasUsed?.toString().orEmpty())
+                    .setGasLimit(ethBlock.gasLimit?.toString().orEmpty())
+            tracesJob.join()
+            logsJob.join()
+            val transactionsJob = launch {  loadTransactions(ethBlock.transactions)}
+            transactionsJob.join()
+            block
+                .addAllTraces(blockTraces)
+                .addAllTransactions(transactions)
+            tracesJob.cancel()
+            logsJob.cancel()
+            transactionsJob.cancel()
+            }
+        return block.build()
     }
+
+
 
     private fun loadLogs(blockNumber: BigInteger?){
         val logs = parityService.ethGetFilterLogs(blockNumber!!).send().logs
@@ -152,7 +168,7 @@ class EthereumMessageBuilder(
     }
 
     private fun loadTraces(blockNumber: BigInteger?) {
-        parityService.traceBlock(DefaultBlockParameter.valueOf(blockNumber!!)).send().traces
+         parityService.traceBlock(DefaultBlockParameter.valueOf(blockNumber!!)).send().traces
             .map { trace: Trace ->
                 if (trace.transactionHash == null) {
                     blockTraces.add(buildTrace(trace))
@@ -162,11 +178,11 @@ class EthereumMessageBuilder(
             }
     }
 
-    private fun getTransactions(transactions: List<EthBlock.TransactionResult<Any>>): List<Messages.Transaction> {
-        return transactions
-            .map { t ->
+    private fun loadTransactions(transactions: List<EthBlock.TransactionResult<Any>>) {
+         transactions
+            .forEach { t ->
                 val ethTransaction: EthBlock.TransactionObject = t as EthBlock.TransactionObject
-                buildTransaction(ethTransaction)
+                this.transactions.add(buildTransaction(ethTransaction))
             }
     }
 
