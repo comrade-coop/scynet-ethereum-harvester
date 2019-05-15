@@ -23,13 +23,13 @@ class EthereumProducer(
     private val file: File = File("lastProducedBlock.txt")
 
     fun start() = runBlocking {
-        var firstBlockNumber = getLastProducedBlock() + BigInteger.ONE
-//        var firstBlockNumber = BigInteger.valueOf(0)
+        //var firstBlockNumber = getLastProducedBlock() + BigInteger.ONE
+        var firstBlockNumber = BigInteger.valueOf(3000000L)
         val numberOfBlocks = 500
         try {
             while(true){
                 val time = measureTimeMillis {
-                    val one = async {  loadBlocks(firstBlockNumber, numberOfBlocks)}
+                    val one = async { loadBlocks(firstBlockNumber, numberOfBlocks)}
                     val two = async { produceBlocks(firstBlockNumber, numberOfBlocks) }
                     one.await()
                     two.await()
@@ -70,16 +70,13 @@ class EthereumProducer(
             if( block == null){
                 delay(50L)
             } else{
-                block
                 val readyBlock = block.await()
-
-                val blockTimestamp = if (readyBlock.timestamp != null) readyBlock.timestamp.toLong() else null
                 val acknowledged =
                     producer.send(ProducerRecord("ethereum_blocks", null, readyBlock.number, readyBlock))
                 acknowledged.get()
                 blocks.remove(blockNumber)
                 file.writeText(readyBlock.number)
-                println("Block #${readyBlock.number} successfully sent!")
+                println("Block #${readyBlock.number} with size ${readyBlock.serializedSize} successfully sent!")
                 i++
             }
         }
@@ -104,7 +101,3 @@ class EthereumProducer(
         }
     }
 }
-
-
-
-

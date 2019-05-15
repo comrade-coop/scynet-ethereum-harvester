@@ -1,75 +1,79 @@
 package kafka.ethereum.producer.messages
 
 import harvester.common.messages.Messages
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.methods.response.EthBlock
 import org.web3j.protocol.core.methods.response.Log
 import org.web3j.protocol.parity.methods.response.Trace
 import java.math.BigInteger
 import org.web3j.protocol.parity.Parity
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 class EthereumMessageBuilder(
     private val parityService: Parity
 ) {
-    private var transactionTraces: ArrayList<Messages.Trace> = ArrayList()
-    private var blockTraces: ArrayList<Messages.Trace> = ArrayList()
-    private var transactions: ArrayList<Messages.Transaction> = ArrayList()
-    private var logs: ArrayList<Log> = ArrayList()
+    private var transactionTraces: ConcurrentMap<BigInteger, ArrayList<Messages.Trace>> = ConcurrentHashMap()
+    private var blockTraces: ConcurrentMap<BigInteger, ArrayList<Messages.Trace>> = ConcurrentHashMap()
+    private var transactions: ConcurrentMap<BigInteger, ArrayList<Messages.Transaction>> = ConcurrentHashMap()
+    private var logs: ConcurrentMap<BigInteger,ArrayList<Log>> = ConcurrentHashMap()
 
-    fun buildBlock(ethBlock: EthBlock.Block): Messages.Block {
-        transactions.clear()
-        transactionTraces.clear()
-        blockTraces.clear()
-        logs.clear()
+     suspend fun buildBlock(ethBlock: EthBlock.Block): Messages.Block  {
+         val block = Messages.Block.newBuilder()
+         coroutineScope{
+             val tracesJob = launch { loadTraces(ethBlock.number)}
+             val logsJob  = launch { loadLogs(ethBlock.number)}
 
-        val block = Messages.Block.newBuilder()
-        runBlocking {
+             block
+                 .setAuthor(ethBlock.author)
+                 .setHash(ethBlock.hash)
+                 .setNumber(ethBlock.number.toString())
+                 .setTimestamp(ethBlock.timestamp?.toString().orEmpty())
+                 .setSize(ethBlock.size?.toString().orEmpty())
+                 .setDifficulty(ethBlock.difficulty?.toString().orEmpty())
+                 .setTotalDifficulty(ethBlock.totalDifficulty?.toString().orEmpty())
+                 .setGasUsed(ethBlock.gasUsed?.toString().orEmpty())
+                 .setGasLimit(ethBlock.gasLimit?.toString().orEmpty())
+             tracesJob.join()
+             logsJob.join()
+             val transactionsJob = async {
+                 loadTransactions(ethBlock.transactions, ethBlock.number)
+                 return@async transactions.get(ethBlock.number)
+             }
+             block
+                 .addAllTraces(blockTraces.get(ethBlock.number))
+                 .addAllTransactions(transactionsJob.await())
+         }
 
-            val tracesJob = launch {  loadTraces(ethBlock.number)}
-            val logsJob  = launch {  loadLogs(ethBlock.number)}
 
-
-                block
-                    .setAuthor(ethBlock.author)
-                    .setHash(ethBlock.hash)
-                    .setNumber(ethBlock.number.toString())
-                    .setTimestamp(ethBlock.timestamp?.toString().orEmpty())
-                    .setSize(ethBlock.size?.toString().orEmpty())
-                    .setDifficulty(ethBlock.difficulty?.toString().orEmpty())
-                    .setTotalDifficulty(ethBlock.totalDifficulty?.toString().orEmpty())
-                    .setGasUsed(ethBlock.gasUsed?.toString().orEmpty())
-                    .setGasLimit(ethBlock.gasLimit?.toString().orEmpty())
-            tracesJob.join()
-            logsJob.join()
-            val transactionsJob = launch {  loadTransactions(ethBlock.transactions)}
-            transactionsJob.join()
-            block
-                .addAllTraces(blockTraces)
-                .addAllTransactions(transactions)
-            tracesJob.cancel()
-            logsJob.cancel()
-            transactionsJob.cancel()
-            }
+        if(ethBlock.transactions.count() != block.transactionsCount){
+            //TODO throw exception; also check for other parameters
+            println("Transactions from parity and produced do not match!")
+        }
+        removeFromMaps(ethBlock.number)
         return block.build()
     }
 
+    private fun removeFromMaps(blockNumber: BigInteger){
+        transactions.remove(blockNumber)
+        transactionTraces.remove(blockNumber)
+        blockTraces.remove(blockNumber)
+        logs.remove(blockNumber)
+    }
 
-
-    private fun loadLogs(blockNumber: BigInteger?){
-        val logs = parityService.ethGetFilterLogs(blockNumber!!).send().logs
+    private fun loadLogs(blockNumber: BigInteger){
+        this.logs.putIfAbsent(blockNumber, ArrayList())
+        val logs = parityService.ethGetFilterLogs(blockNumber).send().logs
         if (logs != null){
             logs.map { l ->
                 val log = l as Log
-                this.logs.add(log)
+                this.logs[blockNumber]?.add(log)
             }
         }
     }
 
     private fun buildTrace(trace: Trace): Messages.Trace {
-        val beforeTraceBuild = System.currentTimeMillis()
         Messages.getDescriptor()
         val traceBuilder = Messages.Trace.newBuilder()
         val traceAction = trace.action
@@ -149,10 +153,10 @@ class EthereumMessageBuilder(
             .build()
     }
 
-    private fun buildReceipt(transactionHash: String?): Messages.Receipt {
-        val logs = this.logs.filter {  l -> l.transactionHash == transactionHash }
+    private fun buildReceipt(transactionHash: String?, blockNumber: BigInteger): Messages.Receipt {
+        val logs = this.logs[blockNumber]?.filter {  l -> l.transactionHash == transactionHash }
         return Messages.Receipt.newBuilder()
-            .addAllLogs(buildLogs(logs))
+            .addAllLogs(buildLogs(logs!!))
             .build()
     }
 
@@ -168,28 +172,31 @@ class EthereumMessageBuilder(
     }
 
     private fun loadTraces(blockNumber: BigInteger?) {
+        blockTraces.putIfAbsent(blockNumber, ArrayList())
+        transactionTraces.putIfAbsent(blockNumber, ArrayList())
+
          parityService.traceBlock(DefaultBlockParameter.valueOf(blockNumber!!)).send().traces
             .map { trace: Trace ->
                 if (trace.transactionHash == null) {
-                    blockTraces.add(buildTrace(trace))
+                    blockTraces[blockNumber]?.add(buildTrace(trace))
                 } else {
-                    transactionTraces.add(buildTrace(trace))
+                    transactionTraces[blockNumber]?.add(buildTrace(trace))
                 }
             }
     }
 
-    private fun loadTransactions(transactions: List<EthBlock.TransactionResult<Any>>) {
-         transactions
+    private fun loadTransactions(transactions: List<EthBlock.TransactionResult<Any>>, blockNumber: BigInteger) {
+        this.transactions.putIfAbsent(blockNumber, ArrayList())
+        transactions
             .forEach { t ->
                 val ethTransaction: EthBlock.TransactionObject = t as EthBlock.TransactionObject
-                this.transactions.add(buildTransaction(ethTransaction))
+                this.transactions[blockNumber]?.add(buildTransaction(ethTransaction, blockNumber))
             }
     }
 
-    private fun buildTransaction(transaction: EthBlock.TransactionObject): Messages.Transaction {
-        val traces = transactionTraces.filter { trace -> trace.transactionHash == transaction.hash }
-        //transactionTraces.removeIf(Predicate { trace -> trace.transactionHash == transaction.hash })
-        val receipt = buildReceipt(transaction.hash)
+    private fun buildTransaction(transaction: EthBlock.TransactionObject, blockNumber: BigInteger): Messages.Transaction {
+        val traces = transactionTraces[blockNumber]?.filter { trace -> trace.transactionHash == transaction.hash }
+        val receipt = buildReceipt(transaction.hash, blockNumber)
         val transactionM = Messages.Transaction.newBuilder()
             .setChainId(transaction.chainId ?: 0L)
             .setCreates(transaction.creates.orEmpty())
