@@ -29,9 +29,9 @@ class DistributionStreamConfig() {
             }
         }
 
-        fun getJoinStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String = "127.0.0.1:9092"): Properties {
+        fun getJoinStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String = "127.0.0.1:9092", APPLICATION_ID_CONFIG: String): Properties {
             return Properties().apply {
-                setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "join")
+                setProperty(StreamsConfig.APPLICATION_ID_CONFIG, APPLICATION_ID_CONFIG)
                 setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG)
                 setProperty(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().javaClass.name)
                 setProperty(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, JoinSerdes().javaClass.name)

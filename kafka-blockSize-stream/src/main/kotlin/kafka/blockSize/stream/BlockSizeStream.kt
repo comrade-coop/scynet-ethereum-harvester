@@ -6,7 +6,7 @@ import kafka.blockSize.stream.processor.BlockSizeProcessorSupplier
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.*
 
-fun main() {
+fun main(args: Array<String>) {
     BlockSizeStream().start()
 }
 

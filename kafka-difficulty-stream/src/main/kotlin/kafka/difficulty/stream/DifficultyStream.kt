@@ -8,7 +8,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.Topology
 
-fun main() {
+fun main(args: Array<String>) {
     DifficultyStream().start()
 }
 

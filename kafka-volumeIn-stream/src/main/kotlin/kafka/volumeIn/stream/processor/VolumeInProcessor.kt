@@ -4,7 +4,7 @@ import harvester.common.messages.Messages
 import harvester.common.processor.AddressFeatureTickProcessor
 import harvester.common.processor.FeatureCalculator
 
-class VolumeInProcessor : AddressFeatureTickProcessor(null) {
+class VolumeInProcessor : AddressFeatureTickProcessor("3600") {
 
 
     override fun extract(block: Messages.Block) {

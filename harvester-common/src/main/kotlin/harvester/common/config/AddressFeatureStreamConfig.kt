@@ -12,7 +12,7 @@ import java.util.*
 
 class AddressFeatureStreamConfig {
     companion object {
-        fun getStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String, APPLICATION_ID_CONFIG: String): Properties {
+        fun getStreamProperties(BOOTSTRAP_SERVERS_CONFIG: String = "127.0.0.1:9092", APPLICATION_ID_CONFIG: String): Properties {
             return Properties().apply {
                 setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG)
                 setProperty(StreamsConfig.APPLICATION_ID_CONFIG, APPLICATION_ID_CONFIG)
@@ -23,9 +23,9 @@ class AddressFeatureStreamConfig {
             }
         }
 
-        fun getAddressFeatureStoreSupplier(): StoreBuilder<KeyValueStore<String, String>> {
+        fun getAddressFeatureStoreSupplier(name: String = "AddressFeature"): StoreBuilder<KeyValueStore<String, String>> {
             return Stores.keyValueStoreBuilder(
-                    Stores.persistentKeyValueStore("AddressFeature"),
+                    Stores.persistentKeyValueStore(name),
                     Serdes.String(),
                     Serdes.String()
             )

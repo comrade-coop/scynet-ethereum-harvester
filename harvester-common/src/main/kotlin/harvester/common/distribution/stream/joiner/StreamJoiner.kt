@@ -2,18 +2,33 @@ package harvester.common.distribution.stream.joiner
 
 import harvester.common.config.DistributionStreamConfig
 import harvester.common.messages.AddressFeature
+import harvester.common.messages.StreamJoin
 import harvester.common.serialization.AddressFeatureSerdes
 import harvester.common.topics.ITopic
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
+import org.apache.kafka.streams.kstream.ValueJoiner
 
-class StreamJoiner(topic0: ITopic, topic1: ITopic) {
+class StreamJoiner{
+    private var APPLICATION_ID_CONFIG: String? = null
+    private var topic0: String? = null
+    private var topic1: String? = null
+    private var outputTopic: String? = null
 
-    private val topic0: String = topic0.spell()
-    private val topic1: String = topic1.spell()
-    private val outputTopic: String = topic0.spell() + topic1.spell()
+    constructor(topic0: ITopic, topic1: ITopic, APPLICATION_ID_CONFIG: String ){
+        this.topic0 = topic0.spell()
+        this.topic1 = topic1.spell()
+        this.outputTopic = this.topic0 + this.topic1
+        this.APPLICATION_ID_CONFIG = APPLICATION_ID_CONFIG
+    }
+    constructor(topic0: String, topic1: String,  APPLICATION_ID_CONFIG: String){
+        this.topic0 = topic0
+        this.topic1 = topic1
+        this.outputTopic = topic0 + topic1
+        this.APPLICATION_ID_CONFIG = APPLICATION_ID_CONFIG
+    }
     fun start(){
         val builder = StreamsBuilder()
 
@@ -24,9 +39,9 @@ class StreamJoiner(topic0: ITopic, topic1: ITopic) {
                 .join(stream1, StreamValueJoiner())
                 .toStream().to(outputTopic)
 
-        val balanceLastSeen = KafkaStreams(builder.build(), DistributionStreamConfig.getJoinStreamProperties())
-        balanceLastSeen.cleanUp()
-        balanceLastSeen.start()
-        Runtime.getRuntime().addShutdownHook(Thread(balanceLastSeen::close))
+        val stream01 = KafkaStreams(builder.build(), DistributionStreamConfig.getJoinStreamProperties(APPLICATION_ID_CONFIG = APPLICATION_ID_CONFIG!! ))
+        stream01.cleanUp()
+        stream01.start()
+        Runtime.getRuntime().addShutdownHook(Thread(stream01::close))
     }
 }

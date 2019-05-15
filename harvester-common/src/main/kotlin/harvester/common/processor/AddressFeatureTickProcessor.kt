@@ -21,20 +21,20 @@ abstract class AddressFeatureTickProcessor(TICK_TIME_SECONDS: String?) : TickFea
         blockNumberAddressFeatureStore!!.put(currentBlockNumber, builder.build())
     }
 
-    override fun slideTickForward(timestamp: BigInteger) {
-        while (notInTick(timestamp)) {
+    override fun slideTickForward() {
+        while (notInTick(getFirstBlockTimestamp())) {
             val firstBlockAddressFeature = blockNumberAddressFeatureStore!!.get(firstBlockNumber)
             removeBlockEntriesFromFeatureStore(firstBlockAddressFeature)
             blockNumberAddressFeatureStore!!.delete(firstBlockNumber)
-
             setFirstBlockNumber(firstBlockNumber!! + ONE)
-
-            val firstBlockTimestamp = blockNumberAddressFeatureStore!!
-                    .get(firstBlockNumber)
-                    .getAddressFeatureOrDefault("timestamp", NEGATIVE_ONE.toString())
-                    .toBigInteger()
-            setEndOfTick(firstBlockTimestamp)
         }
+    }
+
+    private fun getFirstBlockTimestamp(): BigInteger{
+        return blockNumberAddressFeatureStore!!
+                .get(firstBlockNumber)
+                .getAddressFeatureOrDefault("timestamp", NEGATIVE_ONE.toString())
+                .toBigInteger()
     }
 
     override fun buildFeatureMap(): AddressFeature.AddressFeatureMap {
@@ -72,5 +72,4 @@ abstract class AddressFeatureTickProcessor(TICK_TIME_SECONDS: String?) : TickFea
             addressFeatureStore!!.put(address, FeatureCalculator.subtract(previousFeature, feature))
         }
     }
-
 }
