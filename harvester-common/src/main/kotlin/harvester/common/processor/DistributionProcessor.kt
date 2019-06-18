@@ -16,6 +16,7 @@ abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, sca
     private var context: ProcessorContext? = null
     private var matrixStore: KeyValueStore<String, MatrixBlob.Blob>? = null
     private val matrix: MutableList<Float> = mutableListOf<Float>()
+    private var isInitializedMatrix: Boolean = false
 
     protected val max0: Int = max0
     protected val max1: Int = max1
@@ -28,6 +29,16 @@ abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, sca
     constructor(maxRows: Int, maxColumns: Int, scaler: IScaler): this(maxRows, maxColumns, scaler, scaler)
 
     override fun process(blockNumber: String?, features: StreamJoin.Join?) {
+	if(!isInitializedMatrix){
+		initMatrix()
+		var matrixInStore = matrixStore!!.get("matrix")
+		if(matrixInStore == null){
+		    initMatrix()
+		} else{
+		    matrix.addAll(matrixInStore.dataList)
+		}
+	    isInitializedMatrix = true
+	}
         currentBlock = blockNumber!!.toInt()
         currentTimestamp = System.currentTimeMillis() / 1000L
         if(processed(currentBlock!!)){
@@ -60,18 +71,21 @@ abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, sca
         matrixStore = context!!.getStateStore("Matrix") as KeyValueStore<String, MatrixBlob.Blob>
         addressPositionStore = context.getStateStore("AddressPosition") as KeyValueStore<String, StringList.List>
 
-        var matrixInStore = matrixStore!!.get("matrix")
-        if(matrixInStore == null){
-            initMatrix()
-        } else{
-            matrix.addAll(matrixInStore.dataList)
-        }
+       
 
     }
 
     override fun close() {
     }
-
+	
+    private fun initMatrix(){
+        var matrixInStore = matrixStore!!.get("matrix")
+        if(matrixInStore == null){
+            initMatrixInStore()
+        } else{
+            matrix.addAll(matrixInStore.dataList)
+        }
+    }
     private fun processed(blockNumber: Int): Boolean{
         if (processed.contains(blockNumber)){
             return true
@@ -86,7 +100,7 @@ abstract class DistributionProcessor(max0: Int, max1: Int, scaler0: IScaler, sca
         return false
     }
 
-    private fun initMatrix(){
+    private fun initMatrixInStore(){
         val matrixBlob = initMatrixBlob()
         matrixStore!!.put("matrix", matrixBlob)
         this.matrix.addAll(matrixBlob.dataList)

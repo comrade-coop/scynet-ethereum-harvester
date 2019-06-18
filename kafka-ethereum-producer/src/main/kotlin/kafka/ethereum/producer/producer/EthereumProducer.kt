@@ -23,7 +23,7 @@ class EthereumProducer(
     private val file: File = File("lastProducedBlock.txt")
 
     fun start() = runBlocking {
-        var firstBlockNumber = getLastProducedBlock() + BigInteger.ONE
+        var firstBlockNumber = BigInteger.ONE //getLastProducedBlock() + BigInteger.ONE
         val numberOfBlocks = 500
         try {
             while(true){

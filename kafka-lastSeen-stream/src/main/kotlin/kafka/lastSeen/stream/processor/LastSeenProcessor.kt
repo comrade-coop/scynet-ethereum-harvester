@@ -32,7 +32,7 @@ class LastSeenProcessor() : Processor<String, Messages.Block> {
     override fun init(context: ProcessorContext) {
         this.context = context
 
-        this.addressLastSeenStore = context.getStateStore("AddressLastSeen") as KeyValueStore<String, String>
+        this.addressLastSeenStore = context.getStateStore("AddressFeature") as KeyValueStore<String, String>
     }
 
     override fun close() {

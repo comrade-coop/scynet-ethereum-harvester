@@ -6,7 +6,7 @@ plugins {
 
 group 'ai.scynet.harvester'
 version '1.0-SNAPSHOT'
-mainClassName = 'kafka.balanceLastSeen.stream.MainKt'
+mainClassName = 'kafka.balanceLastSeen.distribution.MainKt'
 
 repositories {
     mavenCentral()

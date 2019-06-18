@@ -13,8 +13,11 @@ fun main(args: Array<String>) {
         Topics.BALANCE,
         Topics.LAST_SEEN,
         BalanceLastSeenDistributionProcessor(BalanceScaler(LogOnePointTwoScaler()), LogOnePointTwoScaler()),
-        object: ITopic {
-            override fun spell(): String {return args[0]}
-        }
+	object: ITopic {
+		override fun spell(): String {return "dst-BalanceLastSeen"}
+	}
+      //  object: ITopic {
+       //     override fun spell(): String {return args[0]}
+       // }
     ).start()
 }
